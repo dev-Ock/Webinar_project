@@ -47,43 +47,7 @@ class Home extends React.Component {
         
         return (
             
-            <Container component="main" className={classes.mainContainer} >
-       
-                <div className={classes.appBarSpacer}/>
-                <div className={classes.mainContent}>
-                    <Toolbar className={classes.toolbar} style={{backgroundColor: this.state.color}}>
-                 
-                        <div style={{textAlign:'center'}} >
-                            <h1>{this.props.authStore.loginUser.name}님 환영합니다.</h1>
-                        </div>
-                            <IconButton
-                                sx={{
-                                    position: 'absolute',
-                                    bottom: '1.5rem',
-                                    right: '1.5rem',
-                                    borderRadius: '50%',
-                                }}
-                                onClick={() => {
-                                    const colors = [
-                                        'yellow',
-                                        'orange',
-                                        'pink',
-                                        'purple',
-                                        'skyblue',
-                                        'grey',
-                                        'green'
-                                    ];
-                            
-                                    const nextColor = colors.indexOf(this.state.color);
-                                    this.setState({color : colors[nextColor + 1] ?? colors[0]})
-                                    console.log(this.state.color)
-                                }}
-                            >
-                                🎨
-                            </IconButton>
-                    </Toolbar>
-                </div>
-            </Container>
+           <div style={{marginTop:"100px"}}>환영합니다</div>
         );
     }
 };

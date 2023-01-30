@@ -119,58 +119,22 @@ export default function SideMenu(props) {
                 <Link to="/service" className={classes.link}>
                     <ListItem button disableRipple onClick={() => handleListItemClick(1)} selected={selectedIndex === 1}>
                         <ListItemIcon></ListItemIcon>
-                        <ListItemText primary="서비스" />
+                        <ListItemText primary="방 목록" />
                     </ListItem>
+                    <ListItem button disableRipple onClick={() => handleListItemClick(2)} selected={selectedIndex === 2}>
+                        <ListItemIcon>
+                            {/*<ComputerIcon />*/}
+                        </ListItemIcon>
+                        <ListItemText primary="방 만들기" />
+                    </ListItem>
+                    {/*{user.type === UserType.ADMIN &&*/}
+                    {/*<ListItem button disableRipple onClick={() => handleListItemClick(3)} selected={selectedIndex === 3}>*/}
+                    {/*    <ListItemIcon>*/}
+                    {/*        /!*<ComputerIcon/>*!/*/}
+                    {/*    </ListItemIcon>*/}
+                    {/*    <ListItemText primary="통합관리자"/>*/}
+                    {/*</ListItem>}*/}
                 </Link>
-
-                <ListItem button onClick={handleSettingOpen} className={classes.link}>
-                    <ListItemIcon><GearSixGrayIcon color={"primary"}/></ListItemIcon>
-                    <ListItemText primary="설정"></ListItemText>
-                </ListItem>
-
-
-                <Link to="/setting/mypage" className={classes.link} >
-                    <Collapse in={settingOpen} timeout="auto" unmountOnExit>
-                        <List component="div" disablePadding>
-                            <ListItem button disableRipple onClick={() => handleListItemClick(2)} selected={selectedIndex === 2}>
-                                <ListItemIcon>
-                                    {/*<ComputerIcon />*/}
-                                </ListItemIcon>
-                                <ListItemText primary="마이페이지" />
-                            </ListItem>
-                        </List>
-                    </Collapse>
-                </Link>
-
-                {user.type === UserType.ADMIN &&
-                    <Link to="/setting/admin/management" className={classes.link}>
-                        <Collapse in={settingOpen} timeout="auto" unmountOnExit>
-                            <List component="div" disablePadding>
-                                <ListItem button disableRipple onClick={() => handleListItemClick(3)} selected={selectedIndex === 3}>
-                                    <ListItemIcon>
-                                        {/*<ComputerIcon/>*/}
-                                    </ListItemIcon>
-                                    <ListItemText primary="통합관리자"/>
-                                </ListItem>
-                            </List>
-                        </Collapse>
-                    </Link>
-                }
-
-                {(user.type === (UserType.ADMIN || UserType.MANAGER)) &&
-                    <Link to="/setting/client/management" className={classes.link}>
-                        <Collapse in={settingOpen} timeout="auto" unmountOnExit>
-                            <List component="div" disablePadding>
-                                <ListItem button disableRipple onClick={() => handleListItemClick(4)} selected={selectedIndex === 4}>
-                                    <ListItemIcon>
-                                        {/*<ComputerIcon />*/}
-                                    </ListItemIcon>
-                                    <ListItemText primary="클라이언트 계정관리" />
-                                </ListItem>
-                            </List>
-                        </Collapse>
-                    </Link>
-                }
             </List>
         </div>
     );

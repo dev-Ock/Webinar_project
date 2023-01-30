@@ -10,12 +10,9 @@ import TopBar from "./components/TopBar";
 import SideMenu from "./components/SideMenu";
 import ScrollToTop from "./components/ScrollToTop";
 // views
-import Mypage from "./views/Mypage";
-import Administration from "./views/Administration";
 import SignUp from "./views/SignUp";
 import Home from "./views/Home";
 import SignIn from "./views/SignIn";
-import Service from "./views/Service"
 import Notfound from './views/Notfound'
 import {AuthTokenStorageKey} from "./repositories/Repository";
 // import 2
@@ -66,9 +63,6 @@ class App extends React.Component {
     render() {
         const {classes} = this.props;
         const {loginState, loginUser, signupUser, doSignup} = this.props.authStore;
-        // console.log('궁금',this.props.authStore.doLogout)
-        // console.log("this.props(in App.js)",this.props)
-        // console.log("store (in App.js",store)
         
         return (
             <>
@@ -98,23 +92,6 @@ class App extends React.Component {
                         
                                     <Switch>
                                         <Route path="/home" component={Home}/>
-                                        <Route path="/service" component={Service}/>
-                                        <Route path="/setting/mypage" component={Mypage}/>
-                                        {/*{*/}
-                                        {/*    loginUser.type === "Admin"*/}
-                                        {/*        ?*/}
-                                        {/*        <Route path="/setting/admin/management"*/}
-                                        {/*               render={() =>*/}
-                                        {/*                   <Administration*/}
-                                        {/*                       typeState={store.typeState}/>}/>*/}
-                                        {/*        : <Route path="/"></Route>*/}
-                                        {/*}*/}
-                                        <Route path="/setting/admin/management"
-                                               render={() => {
-                                                   return loginUser.type === "Admin" ? <Administration typeState={store.typeState}/> :
-                                                       // <Forbidden />
-                                                       <Redirect to={"/"} />
-                                               }} />
                                         <Route path="/" component={Home}/>
                                         {/*<Route component={Notfound}/>*/}
                                     </Switch>
