@@ -1,3 +1,3 @@
 -- USE training;
 --
--- DROP TABLE mng_users;
+-- DROP TABLE users;

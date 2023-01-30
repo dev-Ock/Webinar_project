@@ -74,36 +74,36 @@ public class AuthenticationController {
     }
 
     // 회원정보 수정
-    @PutMapping("/update/user")
-    public ResponseEntity updateUser(HttpServletRequest httpRequest, @RequestBody BaseUser account){
-        log.trace("controller updateUser start... {}", account);
-        int result = authenticationService.updateUser(account);
-        if(result == 1){
-            return new ResponseEntity(result, HttpStatus.OK);
-        }else{
-            return new ResponseEntity(HttpStatus.EXPECTATION_FAILED);
-        }
-    }
+//    @PutMapping("/update/user")
+//    public ResponseEntity updateUser(HttpServletRequest httpRequest, @RequestBody BaseUser account){
+//        log.trace("controller updateUser start... {}", account);
+//        int result = authenticationService.updateUser(account);
+//        if(result == 1){
+//            return new ResponseEntity(result, HttpStatus.OK);
+//        }else{
+//            return new ResponseEntity(HttpStatus.EXPECTATION_FAILED);
+//        }
+//    }
 
     // 회원 삭제 or 탈퇴
-    @DeleteMapping("/delete/user/{userId}")
-    public ResponseEntity removeUser(HttpServletRequest httpRequest,@PathVariable("userId") int userId) {
-        log.trace("controller removeUser start... {}", userId);
-        int result = authenticationService.removeUser(userId);
-        if(result == 1){
-            return new ResponseEntity(result, HttpStatus.OK);
-        }else{
-            return new ResponseEntity(HttpStatus.EXPECTATION_FAILED);
-        }
-    }
+//    @DeleteMapping("/delete/user/{userId}")
+//    public ResponseEntity removeUser(HttpServletRequest httpRequest,@PathVariable("userId") int userId) {
+//        log.trace("controller removeUser start... {}", userId);
+//        int result = authenticationService.removeUser(userId);
+//        if(result == 1){
+//            return new ResponseEntity(result, HttpStatus.OK);
+//        }else{
+//            return new ResponseEntity(HttpStatus.EXPECTATION_FAILED);
+//        }
+//    }
 
-    // 전체 사용자 조회
-    @GetMapping("/get/userlist")
-    public List<BaseUser> getUserlist(HttpServletRequest httpRequest){
-        log.trace("controller getUserlist start...");
-        List <BaseUser> result = authenticationService.getUserlist();
-        return result;
-    }
+//    // 전체 사용자 조회
+//    @GetMapping("/get/userlist")
+//    public List<BaseUser> getUserlist(HttpServletRequest httpRequest){
+//        log.trace("controller getUserlist start...");
+//        List <BaseUser> result = authenticationService.getUserlist();
+//        return result;
+//    }
 
 
     // 예시

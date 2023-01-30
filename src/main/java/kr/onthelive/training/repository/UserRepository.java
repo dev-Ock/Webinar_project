@@ -32,11 +32,11 @@ public class UserRepository {
         return mapper.insertUser(user);
     }
 
-    public int removeUser(int userId) {
-        return mapper.removeUser(userId);
-    }
-
-    public int updateUser(BaseUser user){
-        return mapper.updateUser(user);
-    }
+//    public int removeUser(int userId) {
+//        return mapper.removeUser(userId);
+//    }
+//
+//    public int updateUser(BaseUser user){
+//        return mapper.updateUser(user);
+//    }
 }

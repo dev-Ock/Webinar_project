@@ -10,7 +10,7 @@ public interface UserMapper {
     List<BaseUser> selectUserAll();
     List<BaseUser> selectUsersWhereType(BaseUserType type);
     int insertUser(BaseUser user);
-    int removeUser(int userId);
-    int updateUser(BaseUser user);
+//    int removeUser(int userId);
+//    int updateUser(BaseUser user);
 }
 
