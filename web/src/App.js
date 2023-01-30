@@ -15,7 +15,7 @@ import Home from "./views/Home";
 import SignIn from "./views/SignIn";
 import Notfound from './views/Notfound'
 import {AuthTokenStorageKey} from "./repositories/Repository";
-
+// import 2
 
 
 class App extends React.Component {
