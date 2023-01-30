@@ -8,7 +8,7 @@
 
 프로젝트 적용시 수정해야 할 내용
 
-* Dockerfile : 
+* Dockerfile :  
     1. 경로를 나타내는 '/project/base'
 * pom.xml :
     1. aritifactid 의 'project.base'

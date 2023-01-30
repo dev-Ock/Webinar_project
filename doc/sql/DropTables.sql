@@ -1,6 +1,3 @@
-USE training;
-
-DROP TABLE SPRING_SESSION_ATTRIBUTES;
-DROP TABLE SPRING_SESSION;
-
-DROP TABLE mng_users;
+-- USE training;
+--
+-- DROP TABLE mng_users;
