@@ -30,4 +30,6 @@ out
 gen
 build
 rebel.xml
-s
+
+# application.properties /src/main/resources/mybatis
+application.properties
