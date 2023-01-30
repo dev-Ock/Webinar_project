@@ -1,0 +1,38 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.onthelive.training.repository.mapper.RoomUserHistoryMapper">
+    <resultMap id="BaseRoomUserHistoryResultMap" type="BaseRoomUserHistory">
+        <id property="id"                       column="id" />
+        <result property="roomId"                column="room_id" />
+        <result property="playerId"             column="player_id" />
+        <result property="state"                 column="state" />
+        <result property="createdDatetime"      column="created_datetime" />
+    </resultMap>
+
+    <!-- select -->
+    <select id="selectRoomUserHistory" parameterType="String" resultMap="BaseRoomUserHistoryResultMap">
+        SELECT id,
+               room_id,
+               player_id,
+               state,
+               created_datetime
+        FROM room_user_histories
+        WHERE id = #{value}
+    </select>
+
+    <!-- insert -->
+    <insert id="insertUser" parameterType="BaseRoomUserHistory" >
+        INSERT INTO room_user_histories (
+            id,
+            room_id,
+            player_id,
+            state,
+            created_datetime
+        ) VALUES (
+                     #{id},
+                     #{room_id},
+                     #{player_id},
+                     #{state},
+                     NOW()
+                 )
+    </insert>
+</mapper>
