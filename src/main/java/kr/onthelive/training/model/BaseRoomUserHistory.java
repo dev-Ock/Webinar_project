@@ -20,5 +20,3 @@ public class BaseRoomUserHistory {
     private LocalDateTime createdDatetime;
 
 }
-
-

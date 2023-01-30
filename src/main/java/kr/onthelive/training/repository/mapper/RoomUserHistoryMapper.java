@@ -9,4 +9,3 @@ public interface RoomUserHistoryMapper {
     int insertRoomUserHistory(BaseRoomUserHistory roomUserHistory);
 
 }
-
