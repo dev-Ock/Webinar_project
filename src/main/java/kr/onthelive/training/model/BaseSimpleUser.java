@@ -17,9 +17,9 @@ public class BaseSimpleUser implements Serializable {
     public static final long serialVersionUID = 1L;
 
     private String id;
-    private String clientId;
     private String email;
     private String name;
+    private String phoneNum;
     private BaseUserType type;
     private boolean enabled;
     private LocalDateTime createdDatetime;

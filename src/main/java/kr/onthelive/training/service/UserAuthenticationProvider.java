@@ -68,9 +68,9 @@ public class UserAuthenticationProvider implements AuthenticationProvider {
     private BaseSimpleUser getSimpleUser(BaseUser user) {
         return BaseSimpleUser.builder()
                 .id(user.getId())
-                .clientId(user.getClientId())
                 .email(user.getEmail())
                 .name(user.getName())
+                .phoneNum(user.getPhoneNum())
                 .type(user.getType())
                 .enabled(user.isEnabled())
                 .createdDatetime(user.getCreatedDatetime())

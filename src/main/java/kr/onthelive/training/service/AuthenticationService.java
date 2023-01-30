@@ -56,18 +56,18 @@ public class AuthenticationService {
     }
 
     // 회원정보 수정
-    public int updateUser(BaseUser account){
-        log.trace("service updateUser start... {}", account);
-        BaseUser user = new BaseUser();
-        user.setId(account.getId());
-        user.setEmail(account.getEmail());
-        user.setName(account.getName());
-        user.setType(account.getType());
-
-        int result = userRepository.updateUser(user);
-        log.trace("service updateUser result... {}", result);
-        return result;
-    }
+//    public int updateUser(BaseUser account){
+//        log.trace("service updateUser start... {}", account);
+//        BaseUser user = new BaseUser();
+//        user.setId(account.getId());
+//        user.setEmail(account.getEmail());
+//        user.setName(account.getName());
+//        user.setType(account.getType());
+//
+//        int result = userRepository.updateUser(user);
+//        log.trace("service updateUser result... {}", result);
+//        return result;
+//    }
 
     // 회원가입
     public int signUp(BaseUser account){
@@ -90,19 +90,19 @@ public class AuthenticationService {
         return result;
     }
 
-    public int removeUser(int userId){
-        log.trace("service removeUser start... {}", userId);
-        int result = userRepository.removeUser(userId);
-        log.trace("service removeUser result... {}",result);
-        return result;
-    }
-
-    public List<BaseUser> getUserlist(){
-        log.trace("service getUserlist start...");
-        List<BaseUser> result= userRepository.selectUserAll();
-        log.trace("service getUserlist result... {}", result);
-        return result;
-    }
+//    public int removeUser(int userId){
+//        log.trace("service removeUser start... {}", userId);
+//        int result = userRepository.removeUser(userId);
+//        log.trace("service removeUser result... {}",result);
+//        return result;
+//    }
+//
+//    public List<BaseUser> getUserlist(){
+//        log.trace("service getUserlist start...");
+//        List<BaseUser> result= userRepository.selectUserAll();
+//        log.trace("service getUserlist result... {}", result);
+//        return result;
+//    }
 
 
 //    public List<BaseUser> printMessageAddASD(BaseUser account){

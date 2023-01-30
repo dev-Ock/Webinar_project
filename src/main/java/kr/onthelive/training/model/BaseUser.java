@@ -14,10 +14,10 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class BaseUser {
     private String id;
-    private String clientId;
     private String email;
     private String password;
     private String name;
+    private String phoneNum;
     private BaseUserType type;
     private boolean enabled;
     private LocalDateTime createdDatetime;

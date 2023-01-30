@@ -5,6 +5,7 @@
         <result property="email"                column="email" />
         <result property="password"             column="password" />
         <result property="name"                 column="name" />
+        <result property="phoneNum"             column="phone_num" />
         <result property="type"                 column="type" />
         <result property="enabled"              column="enabled" />
         <result property="createdDatetime"      column="created_datetime" />
@@ -16,11 +17,12 @@
                email,
                password,
                name,
+               phone_num,
                type,
                enabled,
                created_datetime,
                updated_datetime
-        FROM mng_users
+        FROM users
         WHERE email = #{value}
     </select>
 
@@ -29,11 +31,12 @@
                email,
                password,
                name,
+               phone_num,
                type,
                enabled,
                created_datetime,
                updated_datetime
-        FROM mng_users
+        FROM users
     </select>
 
     <select id="selectUsersWhereType" parameterType="BaseUserType" resultMap="BaseUserResultMap">
@@ -41,35 +44,37 @@
                email,
                password,
                name,
+               phone_num,
                type,
                enabled,
                created_datetime,
                updated_datetime
-        FROM mng_users
+        FROM users
         WHERE type = #{value}
         ORDER BY created_datetime DESC
     </select>
 
-    <update id="updateUser" parameterType="BaseUser">
-        UPDATE mng_users
-        SET email = #{email},
-            name = #{name},
-            type = #{type}
-        WHERE id = #{id}
-    </update>
-    
-    <delete id="removeUser" parameterType="int">
-        DELETE
-        FROM mng_users
-        WHERE id = #{value}
-    </delete>
+<!--    <update id="updateUser" parameterType="BaseUser">-->
+<!--        UPDATE users-->
+<!--        SET email = #{email},-->
+<!--            name = #{name},-->
+<!--            type = #{type}-->
+<!--        WHERE id = #{id}-->
+<!--    </update>-->
+<!--    -->
+<!--    <delete id="removeUser" parameterType="int">-->
+<!--        DELETE-->
+<!--        FROM users-->
+<!--        WHERE id = #{value}-->
+<!--    </delete>-->
     
     
     <insert id="insertUser" parameterType="BaseUser" >
-        INSERT INTO mng_users (
+        INSERT INTO users (
             email,
             password,
             name,
+            phone_num,
             type,
             enabled,
             created_datetime,
@@ -78,28 +83,11 @@
             #{email},
             #{password},
             #{name},
+            #{phoneNum},
             #{type},
             #{enabled},
             NOW(),
             NOW()
         )
-<!--        <selectKey keyProperty="email,-->
-<!--            password,-->
-<!--            name,-->
-<!--            type,-->
-<!--            enabled,-->
-<!--            created_datetime,-->
-<!--            updated_datetime" order="AFTER"  resultType="BaseUser">-->
-<!--            SELECT-->
-<!--            email,-->
-<!--            password,-->
-<!--            name,-->
-<!--            type,-->
-<!--            enabled,-->
-<!--            created_datetime,-->
-<!--            updated_datetime-->
-<!--            FROM mng_users-->
-<!--            WHERE email = #{email}-->
-<!--        </selectKey>-->
     </insert>
 </mapper>

@@ -23,7 +23,9 @@ public class UserService {
 
     private static final String DEFAULT_ADMIN_EMAIL = "admin@onthelive.kr";
     private static final String DEFAULT_ADMIN_PASSWORD = "1234";
-    private static final String DEFAULT_ADMIN_NAME = "administrator";
+    private static final String DEFAULT_ADMIN_NAME = "coffee";
+    private static final String DEFAULT_ADMIN_PHONE_NUM = "01012345678";
+
     private static final Map<String, Boolean> notAcceptableIdMap = new HashMap<>();
     static {
         notAcceptableIdMap.put("check", false);
@@ -53,9 +55,9 @@ public class UserService {
 
             final BaseUser newAdmin = BaseUser.builder()
                     .email(DEFAULT_ADMIN_EMAIL)
-                    .clientId(null)
                     .password(DEFAULT_ADMIN_PASSWORD)
                     .name(DEFAULT_ADMIN_NAME)
+                    .phoneNum(DEFAULT_ADMIN_PHONE_NUM)
                     .type(BaseUserType.Admin)
                     .enabled(true)
                     .build();
