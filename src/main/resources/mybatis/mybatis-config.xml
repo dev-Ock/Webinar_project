@@ -7,16 +7,20 @@
         <setting name="defaultExecutorType" value="REUSE"/>
     </settings>
 
+    <!-- typeAliases 추가 -->
     <typeAliases>
         <typeAlias type="kr.onthelive.training.model.BaseUser" alias="BaseUser" />
         <typeAlias type="kr.onthelive.training.model.support.BaseUserType" alias="BaseUserType" />
+        <typeAlias type="kr.onthelive.training.model.BaseRoomUserHistory" alias="BaseRoomUserHistory" />
     </typeAliases>
 
     <typeHandlers>
         <typeHandler handler="kr.onthelive.training.repository.typehandler.BooleanYnTypeHandler" javaType="Boolean" />
     </typeHandlers>
 
+    <!-- mapper 추가 -->
     <mappers>
         <mapper resource="mybatis/mapper/mariadb/UserMapper.xml" />
+<!--        <mapper resource="mybatis/mapper/mariadb/RoomUserHistory.xml" />-->
     </mappers>
 </configuration>
