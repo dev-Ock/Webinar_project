@@ -11,7 +11,7 @@
     </resultMap>
 
     <!-- select -->
-    <select id="selectRoomUser" parameterType="String" resultMap="BaseRoomUserResultMap">
+    <select id="selectRoomUser" parameterType="String">
         SELECT id,
                room_id,
                publisher_id,
@@ -24,7 +24,7 @@
     </select>
 
     <!-- insert -->
-    <insert id="insertUser" parameterType="BaseRoomUser" >
+    <insert id="insertRoomUser" parameterType="BaseRoomUser" >
         INSERT INTO room_users (
             id,
             room_id,
