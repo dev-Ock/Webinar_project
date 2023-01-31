@@ -4,6 +4,9 @@ files/
 # DS_Store
 .DS_Store
 
+#properties
+application.properties
+
 # IntelliJ or WebStorm
 .idea/
 .idea/workspace.xml
