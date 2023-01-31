@@ -92,11 +92,11 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-export const UserType = {
-    ADMIN : "Admin",
-    MANAGER : "MANAGER",
-    OPERATOR : "OPERATOR",
-}
+// export const UserType = {
+//     ADMIN : "Admin",
+//     MANAGER : "Manager",
+//     OPERATOR : "Operator",
+// }
 
 export default function SideMenu(props) {
     const classes = useStyles();
