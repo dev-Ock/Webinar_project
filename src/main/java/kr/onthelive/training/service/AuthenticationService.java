@@ -86,6 +86,8 @@ public class AuthenticationService {
         user.setPassword(encodedPassword);
         user.setName(account.getName());
         user.setPhoneNum(account.getPhoneNum());
+        user.setType(account.getType());
+        user.setPhoneNum(account.getPhoneNum());
         user.setType(BaseUserType.User);
         user.setEnabled(true);
 
