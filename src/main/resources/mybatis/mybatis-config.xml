@@ -13,6 +13,7 @@
         <typeAlias type="kr.onthelive.training.model.support.BaseUserType" alias="BaseUserType" />
         <typeAlias type="kr.onthelive.training.model.BaseRoomUserHistory" alias="BaseRoomUserHistory" />
         <typeAlias type="kr.onthelive.training.model.BaseRoomUser" alias="BaseRoomUser" />
+        <typeAlias type="kr.onthelive.training.model.BaseRoomHistory" alias="BaseRoomHistory" />
     </typeAliases>
 
     <typeHandlers>
@@ -22,10 +23,9 @@
     <!-- mapper 추가 -->
     <mappers>
         <mapper resource="mybatis/mapper/mariadb/UserMapper.xml" />
-
-     
         <mapper resource="mybatis/mapper/mariadb/RoomUserMapper.xml" />
         <mapper resource="mybatis/mapper/mariadb/RoomUserHistoryMapper.xml" />
+<!--        <mapper resource="mybatis/mapper/mariadb/RoomHistoryMapper.xml" />-->
 
     </mappers>
 </configuration>

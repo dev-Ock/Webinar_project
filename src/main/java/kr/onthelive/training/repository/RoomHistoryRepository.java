@@ -12,7 +12,7 @@ public class RoomHistoryRepository {
     @Autowired
     public RoomHistoryRepository(RoomHistoryMapper mapper) { this.mapper = mapper;}
 
-    public BaseRoomHistory selectRoom(String id) { return mapper.selectRoom((id)); }
+//    public BaseRoomHistory selectRoom(String id) { return mapper.selectRoom((id)); }
 
     public int insertRoomHistory(BaseRoomHistory roomHistory) { return mapper.insertRoomHistory(roomHistory); }
 
