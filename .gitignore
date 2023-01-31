@@ -1,6 +1,9 @@
 # Large binary file
 files/
 
+# DS_Store
+.DS_Store
+
 # IntelliJ or WebStorm
 .idea/
 .idea/workspace.xml
@@ -43,5 +46,5 @@ buildNumber.properties
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 
-# application.properties /src/main/resources/mybatis
-application.properties
+# properties
+src/main/resources/application.properties
