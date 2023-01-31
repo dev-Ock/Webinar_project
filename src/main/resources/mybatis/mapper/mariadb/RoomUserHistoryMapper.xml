@@ -20,7 +20,7 @@
     </select>
 
     <!-- insert -->
-    <insert id="insertUser" parameterType="BaseRoomUserHistory" >
+    <insert id="insertRoomUserHistory" parameterType="BaseRoomUserHistory" >
         INSERT INTO room_user_histories (
             id,
             room_id,
@@ -29,9 +29,9 @@
             created_datetime
         ) VALUES (
                      #{id},
-                     #{room_id},
-                     #{player_id},
-                     #{state},
+                     #{roomId},
+                     #{playerId},
+                     #{state:default},
                      NOW()
                  )
     </insert>
