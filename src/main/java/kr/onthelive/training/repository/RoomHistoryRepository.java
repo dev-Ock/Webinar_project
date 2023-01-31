@@ -2,9 +2,10 @@ package kr.onthelive.training.repository;
 
 import kr.onthelive.training.model.BaseRoomHistory;
 import kr.onthelive.training.repository.mapper.RoomHistoryMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-
+@Slf4j
 @Repository
 public class RoomHistoryRepository {
     private RoomHistoryMapper mapper;
@@ -14,7 +15,10 @@ public class RoomHistoryRepository {
 
 //    public BaseRoomHistory selectRoom(String id) { return mapper.selectRoom((id)); }
 
-    public int insertRoomHistory(BaseRoomHistory roomHistory) { return mapper.insertRoomHistory(roomHistory); }
+    public int insertRoomHistory(BaseRoomHistory roomHistory) {
+        log.trace(" insertRoomHistory result... {}", roomHistory);
+
+        return mapper.insertRoomHistory(roomHistory); }
 
 
 }

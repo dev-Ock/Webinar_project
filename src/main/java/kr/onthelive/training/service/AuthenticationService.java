@@ -78,6 +78,7 @@ public class AuthenticationService {
         user.setEmail(account.getEmail());
         user.setPassword(account.getPassword());
         user.setName(account.getName());
+        user.setPhoneNum(account.getPhoneNum());
         user.setType(account.getType());
         user.setEnabled(true);
 

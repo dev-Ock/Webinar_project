@@ -25,7 +25,6 @@ public class RoomHistoryService {
 
         roomHistory.setRoomId(roominfo.getRoomId());
         roomHistory.setState(roominfo.getState());
-        roomHistory.setCreatedDateTime(LocalDateTime.now());
 
         int result = roomHistoryRepository.insertRoomHistory(roomHistory);
         log.trace("service setRoomHistory result... {}", result);

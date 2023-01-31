@@ -7,17 +7,6 @@
         <result property="createdDatetime"      column="created_datetime" />
     </resultMap>
 
-<!--    <select id="selectRoom" parameterType="String" resultMap="BaseRoomHistoryResultMap">-->
-<!--        SELECT id,-->
-<!--               room_id,-->
-<!--               state,-->
-<!--               created_datetime,-->
-<!--        FROM room_histories-->
-<!--        WHERE room_id = #{value}-->
-<!--    </select>-->
-
-
-
 
 
 
@@ -26,7 +15,7 @@
         INSERT INTO room_histories (
             room_id,
             state,
-            created_datetime,
+            created_datetime
         ) VALUES (
                      #{roomId},
                      #{state},
