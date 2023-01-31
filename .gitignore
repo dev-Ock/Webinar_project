@@ -1,6 +1,9 @@
 # Large binary file
 files/
 
+# DS_Store
+.DS_Store
+
 # IntelliJ or WebStorm
 .idea/
 .idea/workspace.xml
