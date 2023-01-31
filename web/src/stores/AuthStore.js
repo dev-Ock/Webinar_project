@@ -28,7 +28,6 @@ const EmptyLogin = {
 const EmptyUser = {
     id             : '',
     name           : '',
-    type           : '',
     createdDatetime: '',
     updatedDatetime: '',
 };
@@ -37,7 +36,7 @@ const EmptySignupUser = {
     email   : '',
     password: '',
     name    : '',
-    type    : ''
+    phone_num : ''
 }
 
 const EmptyUpdateUser = {
@@ -45,7 +44,6 @@ const EmptyUpdateUser = {
     password: '',
     email: '',
     name : '',
-    type : ''
 }
 
 const EmptyUserList = [];
@@ -59,18 +57,18 @@ export default class AuthStore {
     userList = Object.assign([], EmptyUserList)
     signupUser = Object.assign({}, EmptySignupUser)
     updateUser = Object.assign({}, EmptyUpdateUser)
-    
-    
-    
+
+
+
     constructor(props) {
         this.authRepository = props.authRepository; // Appstore.js 로부터 받음
         // console.log("props (in AuthStore.js)",props)
         // this.authState = AuthState.None;
         // this.user = undefined;
-        
+
         makeAutoObservable(this);
     }
-    
+
     // 회원 정보 update 하기 전, 기존 정보 setting
     setUpdateUser = (user) => {
         this.updateUser = {
@@ -78,18 +76,17 @@ export default class AuthStore {
             password : user.password,
             email: user.email,
             name : user.name,
-            type : user.type,
         };
         return this.updateUser
     }
-    
-    
+
+
     // 회원 정보 각 항목 update
     onUpdateUser = (key, value) => {
         this.updateUser[key] = value
         return this.updateUser
     }
-    
+
     // 회원 정보 update 최종 단계
     * finalUpdateUser() {
         try{
@@ -102,14 +99,14 @@ export default class AuthStore {
         }
 
     }
-    
+
     // 회원가입할 유저 정보 담기
     onSignupUser = (key, value) => {
         this.signupUser[key] = value
         return this.signupUser
     }
-    
-    
+
+
     // 회원가입 유저 정보 서버로 보내기
     * doSignup() {
         // console.log("signupUser",this.signupUser)
@@ -119,11 +116,11 @@ export default class AuthStore {
             console.log('doSignup try 진입 시작')
             const param = this.signupUser
             // const user = yield this.authRepository.signUp(param)
-            const user = yield this.authRepository.signUp(param)
-            
+            yield this.authRepository.signUp(param)
+
             // this.loginState = State.Authenticated; // 회원가입 후 서버에서 유저 정보를 주면 자동 로그인이 되고 메인 페이지로 들어가게 하기 위해.
             this.loginState = State.NotAuthenticated; // 현재는 회원가입 후 서버에서 유저 정보를 주는 코드를 구현하지 않았기 때문에 회원가입 후 로그인 컴포넌트를 띄운다.
-            
+
             // this.loginUser = {
             //     id             : user.id,
             //     name           : user.name,
@@ -131,8 +128,8 @@ export default class AuthStore {
             //     createdDatetime: user['created_datetime'],
             //     updatedDatetime: user['updated_datetime'],
             // };
-            
-            
+
+
             // console.log("회원가입된 정보 loginUser", this.loginUser)
             this.signupUser = Object.assign({}, EmptySignupUser)
         } catch (e) {
@@ -142,7 +139,7 @@ export default class AuthStore {
             this.loginUser = Object.assign({}, EmptyUser);
         }
     }
-    
+
     // example
     * printMessage() {
         console.log("printMessage start...");
@@ -152,36 +149,36 @@ export default class AuthStore {
             // let message = "seoungWoo";
             // let url = `/printMessage?data=${message}`;
             // const data = yield this.authRepository.printMessage(url);
-            
+
             const data = yield this.authRepository.printMessage(param);
-            
+
             console.log("printMessage success..! : ", data);
         } catch (e) {
             console.log('printMessage fail...', e);
         }
     }
-    
+
     // 로그인 페이지 id 입력
     changeLoginId = (id) => {
         this.login.id = id; // 초기화를 안 해 놓으면 error가 날 수 있다
     };
-    
+
     // 로그인 페이지 password 입력
     changeLoginPassword = (password) => {
         this.login.password = password;
     };
-    
-    
+
+
     // 로그인
     * doLogin() {
         this.loginState = State.Pending;
-        
+
         try {
             // console.log("this.login : ",this)
-            
+
             const param = this.login;
             const user = yield  this.authRepository.signIn(param);
-            
+
             this.loginState = State.Authenticated;
             this.loginUser = user;
         } catch (e) {
@@ -190,9 +187,9 @@ export default class AuthStore {
             this.loginUser = Object.assign({}, EmptyUser);
         }
     }
-    
 
-    
+
+
     // 로그인했는 지 체크
     * checkLogin() {
         // const token = localStorage.getItem(LocalStorageTokenKey);
@@ -215,28 +212,28 @@ export default class AuthStore {
             console.log("token이 없어서 추가 조치하기 전")
             this.invalidateLogin();
             console.log("token이 없어서 추가 조치한 후")
-            
+
         }
     }
-    
+
     // 로그인이 유효하지 않을 때
     invalidateLogin = () => {
         this.login = Object.assign({}, EmptyLogin);
         this.loginState = State.NotAuthenticated;
         this.loginUser = Object.assign({}, EmptyUser);
     };
-    
+
     // 로그아웃
     * doLogout() {
         // localStorage.removeItem(LocalStorageTokenKey);
         sessionStorage.removeItem(AuthTokenStorageKey);
         console.log("doLogout try 전")
-        
+
         try {
             // console.log("this.authRepository44",this.authRepository) // 콘솔에 제대로 뜸
             console.log("doLogout try 진입")
             yield this.authRepository.signOut();
-            
+
             this.login = Object.assign({}, EmptyLogin);
             this.loginState = State.NotAuthenticated;
             this.loginUser = Object.assign({}, EmptyUser);
@@ -247,7 +244,7 @@ export default class AuthStore {
             this.loginUser = Object.assign({}, EmptyUser);
         }
     }
-    
+
     // 전체 사용자 조회
     * getUsers() {
         try {
@@ -261,13 +258,13 @@ export default class AuthStore {
             console.log(e)
         }
     }
-    
+
     // 회원 삭제 or 탈퇴
     * removeUser(id) {
         try {
             const paramId = `/${id}`
             yield this.authRepository.removeUser(paramId)
-            
+
             console.log("로그인유저",this.loginUser)
         } catch (e) {
             console.log(e)

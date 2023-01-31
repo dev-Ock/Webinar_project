@@ -26,7 +26,7 @@ function Copyright(props) {
         <Typography variant="body2" color="primary" align="center" {...props}>
             {'Copyright © '}
             <Link color="inherit" href="../components#">
-                Nani's Website
+                Ock's Website
             </Link>{' '}
             {new Date().getFullYear()}
             {'.'}
@@ -37,30 +37,19 @@ function Copyright(props) {
 const theme = createTheme();
 
 function SignUp(props) {
-    
+
     const {typeState, signupOpen, setSignupOpen} = props
     const {signupUser, onSignupUser, doSignup} = props.authStore
-    
+
     const [type, setType] = React.useState('');
-    
+
     // 회원가입 email, password, name 등록
     const mainHandleChange = (event) => {
-        // console.log("onSignupUser : ",onSignupUser)
-        // console.log(event.target.name, " : ", event.target.value)
         onSignupUser(event.target.id, event.target.value)
         // onSignupUser[event.target.id]= event.target.value
         console.log("onSignupUser : ", signupUser)
     }
-    
-    // 회원가입 type 등록
-    const typeHandleChange = (event) => {
-        setType(event.target.value);
-        onSignupUser(event.target.name, typeState[event.target.value])
-        // onSignupUser[event.target.name] = typeState[event.target.value]
-        // console.log(event.target.name, " : ", typeState[event.target.value])
-        console.log("onSignupUser", signupUser)
-    };
-    
+
     // 회원가입 최종 정보 등록
     let handleSubmit = (e) => {
         e.preventDefault()
@@ -125,25 +114,17 @@ function SignUp(props) {
                                 />
                             </Grid>
                             <Grid item xs={12}>
-                                <Box sx={{minWidth: 120}}>
-                                    <FormControl fullWidth>
-                                        <InputLabel id="demo-simple-select-label">Type</InputLabel>
-                                        <Select
-                                            labelId="type"
-                                            name="type"
-                                            id="type"
-                                            value={type}
-                                            label="Type"
-                                            onChange={typeHandleChange}
-                                        >
-                                            <MenuItem value={10}>Admin</MenuItem>
-                                            <MenuItem value={20}>Manager</MenuItem>
-                                            <MenuItem value={30}>Operator</MenuItem>
-                                        </Select>
-                                    </FormControl>
-                                </Box>
+                                <TextField
+                                    autoComplete="phoneNum"
+                                    name="phoneNum"
+                                    required
+                                    fullWidth
+                                    id="phoneNum"
+                                    label="Phone Number"
+                                    onChange={mainHandleChange}
+                                />
                             </Grid>
-                        
+
                         </Grid>
                         <Button
                             type="submit"
