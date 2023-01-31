@@ -37,19 +37,19 @@ function Copyright(props) {
 const theme = createTheme();
 
 function SignUp(props) {
-
+    
     const {typeState, signupOpen, setSignupOpen} = props
     const {signupUser, onSignupUser, doSignup} = props.authStore
-
+    
     const [type, setType] = React.useState('');
-
+    
     // 회원가입 email, password, name 등록
     const mainHandleChange = (event) => {
         onSignupUser(event.target.id, event.target.value)
         // onSignupUser[event.target.id]= event.target.value
         console.log("onSignupUser : ", signupUser)
     }
-
+    
     // 회원가입 최종 정보 등록
     let handleSubmit = (e) => {
         e.preventDefault()
@@ -57,7 +57,7 @@ function SignUp(props) {
         props.authStore.doSignup()
         props.setSignupOpen(!props.signupOpen)
     };
-
+    
     return (
         <ThemeProvider theme={theme}>
             <Container component="main" maxWidth="xs">
@@ -82,6 +82,7 @@ function SignUp(props) {
                             <Grid item xs={12}>
                                 <TextField
                                     autoComplete="email"
+                                    placeholder="example@onthelive.kr"
                                     name="email"
                                     required
                                     fullWidth
@@ -89,10 +90,12 @@ function SignUp(props) {
                                     label="Email Address"
                                     onChange={mainHandleChange}
                                 />
+                                <Button style={{display:'inline-block', float:'right'}}>중복 확인</Button>
                             </Grid>
                             <Grid item xs={12}>
                                 <TextField
                                     autoComplete="new-password"
+                                    placeholder="4자 이상"
                                     name="password"
                                     type="password"
                                     required
@@ -101,6 +104,20 @@ function SignUp(props) {
                                     label="Password"
                                     onChange={mainHandleChange}
                                 />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <TextField
+                                    autoComplete="rePassword"
+                                    placeholder="4자 이상"
+                                    name="rePassword"
+                                    type="rePassword"
+                                    required
+                                    fullWidth
+                                    id="rePassword"
+                                    label="Confirm password"
+                                    onChange={mainHandleChange}
+                                />
+                                <Button style={{display:'inline-block', float:'right'}}>일치 확인</Button>
                             </Grid>
                             <Grid item xs={12}>
                                 <TextField
@@ -116,6 +133,7 @@ function SignUp(props) {
                             <Grid item xs={12}>
                                 <TextField
                                     autoComplete="phoneNum"
+                                    placeholder="-을 빼고 입력해주세요."
                                     name="phoneNum"
                                     required
                                     fullWidth
@@ -124,7 +142,7 @@ function SignUp(props) {
                                     onChange={mainHandleChange}
                                 />
                             </Grid>
-
+                        
                         </Grid>
                         <Button
                             type="submit"

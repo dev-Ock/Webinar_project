@@ -16,12 +16,12 @@ public class RoomUserRepository {
         this.mapper = mapper;
     }
 
-    // select
+    // 룸 유저 한 명 조회
     public BaseRoomUser selectRoomUser(String id) {
         return mapper.selectRoomUser(id);
     }
 
-    // insert
+    // 새로운 룸 유저 추가
     public int insertRoomUser(BaseRoomUser roomUser) {
         log.debug("여기 리파지토리 insertRoomUser : {}", roomUser);
         return mapper.insertRoomUser(roomUser);

@@ -33,11 +33,10 @@ public class AuthenticationController {
     }
 
     // 회원가입
-    @PostMapping("/signUp")
+    @PostMapping("/signup")
     public ResponseEntity signUp(HttpServletRequest httpRequest, HttpSession session, @RequestBody BaseUser account) {
         log.trace("printMessage start... {}", account);
         int result = authenticationService.signUp(account);
-// 47번 참고
         return new ResponseEntity<>(result,HttpStatus.OK);
     }
 

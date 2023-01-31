@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -18,6 +19,14 @@ public class RoomHistoryService {
         this.roomHistoryRepository = roomHistoryRepository;
     }
 
+    // 룸 전체 기록 조회
+    public List<BaseRoomHistory> getRoomHistoryList(){
+        final List<BaseRoomHistory> roomHistory = roomHistoryRepository.selectRoomHistoryList();
+        return roomHistory;
+    }
+
+
+    // 룸 기록 추가
     public int setRoomHistory(BaseRoomHistory roominfo) {
         log.debug("test : {}", roominfo);
 
