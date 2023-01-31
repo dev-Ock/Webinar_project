@@ -2,6 +2,8 @@ import React from "react";
 import {BrowserRouter as Router, Redirect, Route, Switch} from "react-router-dom";
 import {inject, observer} from "mobx-react";
 import {withStyles} from "@material-ui/core/styles";
+import {CircularProgress} from "@material-ui/core";
+
 import {Box, CssBaseline} from "@material-ui/core";
 import {styles} from './AppStyles';
 import * as store from "./stores/AuthStore";
@@ -69,7 +71,9 @@ class App extends React.Component {
             {
                 this.state.interval === true
                 ?
-                    <div><h1>waiting...</h1></div>
+                    <div><h1> 가 waiting...</h1>
+                        <CircularProgress size={22}/>
+                    </div>
                 :
                     <Box className={classes.root} display="flex" flexDirection="row" justifyContent="center"
                          alignItems="stretch">
