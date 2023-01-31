@@ -1,5 +1,6 @@
 package kr.onthelive.training.model;
 
+import kr.onthelive.training.model.support.BaseRoomUserState;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,7 +17,7 @@ public class BaseRoomUserHistory {
     private String id;
     private String roomId;
     private String playerId;
-    private String state;
+    private BaseRoomUserState state;
     private LocalDateTime createdDatetime;
 
 }
