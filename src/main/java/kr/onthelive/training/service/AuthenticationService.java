@@ -11,10 +11,11 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpSession;
-import java.util.List;
+
 
 @Service
 @Slf4j
@@ -22,11 +23,15 @@ public class AuthenticationService {
     private AuthenticationManager authenticationManager;
     private UserRepository userRepository;
 
+    private PasswordEncoder passwordEncoder;
+
     @Autowired
     public AuthenticationService(AuthenticationManager authenticationManager,
-                                 UserRepository userRepository) {
+                                 UserRepository userRepository,
+                                 PasswordEncoder passwordEncoder) {
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     //
@@ -75,10 +80,13 @@ public class AuthenticationService {
 
         BaseUser user = new BaseUser();
 
+        final String encodedPassword = passwordEncoder.encode(account.getPassword());
+
         user.setEmail(account.getEmail());
-        user.setPassword(account.getPassword());
+        user.setPassword(encodedPassword);
         user.setName(account.getName());
-        user.setType(account.getType());
+        user.setPhoneNum(account.getPhoneNum());
+        user.setType(BaseUserType.User);
         user.setEnabled(true);
 
         int result = userRepository.insertUser(user);
