@@ -22,7 +22,10 @@
     <!-- mapper 추가 -->
     <mappers>
         <mapper resource="mybatis/mapper/mariadb/UserMapper.xml" />
-        <mapper resource="mybatis/mapper/mariadb/RoomUserHistory.xml" />
-        <mapper resource="mybatis/mapper/mariadb/RoomUser.xml" />
+
+     
+        <mapper resource="mybatis/mapper/mariadb/RoomUserMapper.xml" />
+        <mapper resource="mybatis/mapper/mariadb/RoomUserHistoryMapper.xml" />
+
     </mappers>
 </configuration>
