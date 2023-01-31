@@ -1,0 +1,64 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.onthelive.training.repository.mapper.RoomMapper">
+    <resultMap id="BaseRoomResultMap" type="BaseRoom">
+        <id property="id"                       column="id" />
+        <result property="title"                column="title" />
+        <result property="publisherId"          column="publisher_id" />
+        <result property="description"          column="description" />
+        <result property="password"             column="password" />
+        <result property="maximum"              column="maximum" />
+        <result property="state"                column="state" />
+        <result property="streamUrl"            column="stream_url" />
+        <result property="startTime"            column="start_time" />
+        <result property="link"                 column="link" />
+        <result property="createdDatetime"      column="created_datetime" />
+        <result property="updatedDatetime"      column="updated_datetime" />
+    </resultMap>
+
+    <!-- select -->
+    <select id="selectRoom" parameterType="String" resultMap="BaseRoomResultMap">
+        SELECT id,
+               title,
+               publisher_id,
+               description,
+               password,
+               maximum,
+               state,
+               stream_url,
+               start_time,
+               link,
+               created_datetime,
+               updated_datetime
+        FROM rooms
+        WHERE id = #{value}
+    </select>
+
+    <!-- insert -->
+    <insert id="insertRoom" parameterType="BaseRoom" >
+        INSERT INTO rooms (
+            title,
+            publisher_id,
+            description,
+            password,
+            maximum,
+            state,
+            stream_url,
+            start_time,
+            link,
+            created_datetime,
+            updated_datetime
+        ) VALUES (
+                     #{title},
+                     #{publisherId},
+                     #{description},
+                     #{password},
+                     #{maximum},
+                     #{state},
+                     #{streamUrl},
+                     #{startTime},
+                     #{link},
+                     NOW(),
+                     NOW()
+                 )
+    </insert>
+</mapper>
