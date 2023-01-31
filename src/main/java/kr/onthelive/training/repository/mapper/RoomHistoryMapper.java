@@ -5,5 +5,7 @@ import kr.onthelive.training.model.support.BaseRoomState;
 
 public interface RoomHistoryMapper {
     BaseRoomHistory selectRoom(String id);
-//    List<BaseRoom>
+//    List<BaseRoomHistory> selectRoomHistoryAll();
+//    List<BaseRoomHistory> selectRoomHistoriesWhereState(BaseRoomHistory state);
+    int insertRoomHistory(BaseRoomHistory roomHistory);
 }
