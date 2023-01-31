@@ -1,6 +1,7 @@
 package kr.onthelive.training.service;
 
 import kr.onthelive.training.model.BaseRoomUser;
+import kr.onthelive.training.model.BaseSimpleUser;
 import kr.onthelive.training.model.support.BaseRoomUserState;
 import kr.onthelive.training.repository.RoomUserRepository;
 import kr.onthelive.training.repository.UserRepository;
@@ -18,26 +19,22 @@ import java.time.LocalDateTime;
 public class RoomUserService {
 //    private static final Logger logger = LoggerFactory.getLogger(RoomUserService.class);
     private RoomUserRepository roomUserRepository;
-@Autowired
+    @Autowired
     public RoomUserService(RoomUserRepository roomUserRepository
                                 ) {
 
         this.roomUserRepository = roomUserRepository;
     }
 
-
-    // 미정
-
-    // 룸유저추가
-
-    public void RoomUserUp(BaseRoomUser roomUser){
-        log.trace("서비스 RoomUserUp printMessage start... {}", roomUser);
-
- roomUserRepository.insertRoomUser(roomUser);
-
-
+    // 룸 유저 한 명 조회
+    public BaseRoomUser getRoomUser(String id){
+        BaseRoomUser result =  roomUserRepository.selectRoomUser(id);
+        return result;
     }
 
-// 미정
-
+    // 새로운 룸 유저 추가
+    public void RoomUserUp(BaseRoomUser roomUser){
+        log.trace("서비스 RoomUserUp printMessage start... {}", roomUser);
+        roomUserRepository.insertRoomUser(roomUser);
+    }
 }

@@ -7,10 +7,16 @@
         <result property="createdDatetime"      column="created_datetime" />
     </resultMap>
 
+    <!-- select -->
+    <select id="selectRoomHistoryList" parameterType="String" resultMap="BaseRoomHistoryResultMap">
+        SELECT id,
+               room_id,
+               state,
+               created_datetime
+        FROM room_histories
+    </select>
 
-
-
-
+    <!-- insert -->
     <insert id="insertRoomHistory" parameterType="BaseRoomHistory" >
         INSERT INTO room_histories (
             room_id,

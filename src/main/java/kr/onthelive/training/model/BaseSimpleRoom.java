@@ -1,7 +1,6 @@
 package kr.onthelive.training.model;
 
 import kr.onthelive.training.model.support.BaseRoomState;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,12 +12,16 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class BaseRoomHistory {
-
+public class BaseSimpleRoom {
     private String id;
-    private String roomId;
+    private String title;
+    private String publisherId;
+    private String description;
+    private String maximum;
     private BaseRoomState state;
+    private String streamUrl;
+    private String startTime;
+    private String link;
     private LocalDateTime createdDatetime;
-
-
+    private LocalDateTime updatedDatetime;
 }

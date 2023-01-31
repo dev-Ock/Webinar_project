@@ -11,6 +11,7 @@
     <typeAliases>
         <typeAlias type="kr.onthelive.training.model.BaseUser" alias="BaseUser" />
         <typeAlias type="kr.onthelive.training.model.BaseRoom" alias="BaseRoom" />
+        <typeAlias type="kr.onthelive.training.model.BaseSimpleRoom" alias="BaseSimpleRoom" />
         <typeAlias type="kr.onthelive.training.model.BaseRoomUser" alias="BaseRoomUser" />
         <typeAlias type="kr.onthelive.training.model.BaseRoomUserHistory" alias="BaseRoomUserHistory" />
         <typeAlias type="kr.onthelive.training.model.support.BaseUserType" alias="BaseUserType" />
