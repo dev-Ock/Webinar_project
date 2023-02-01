@@ -56,10 +56,7 @@ class SignIn extends React.Component {
  
     
     render() {
-    
-        // console.log("##this.props",this.props) // classes와 autoStore이 들어있다.
-        const { classes, setSignupOpen } = this.props; // import {styles} from "./styles/SignInStyles.js". Q) 그런데 어떻게 styles가 아니라 classes 라는 이름으로 this.props에 들어있는거지?
-
+        const { classes, setSignupOpen } = this.props;
         const { loginState, login } = this.props.authStore;
 
         return (
@@ -69,7 +66,6 @@ class SignIn extends React.Component {
                         <div className={classes.paper}>
                             {/*<Avatar className={classes.lockOutAvatar}><LockOutlinedIcon/></Avatar>*/}
                             <Typography component="h1" variant="h5" className={classes.titleStyle}>
-                                {/*{loginState === store.State.Failed ? 'Sign in failed.' : 'Please sign in.'}*/}
                                 Login
                             </Typography>
                             <div className={classes.form}>
@@ -122,10 +118,6 @@ class SignIn extends React.Component {
                                         <Button style={{cursor:"pointer", backgroundColor:"lightyellow"}} onClick={this.onSetSignupOpen}>
                                             Don't have an account? Sign Up
                                         </Button>
-                                        {/*<Link to={"/signup"}   variant="body2" onClick={this.onSignUp} style={{cursor:"pointer", backgroundColor:"lightyellow"}}>*/}
-                                        {/*<Link href="/signup"   variant="body2"  style={{cursor:"pointer", backgroundColor:"lightyellow"}}>*/}
-                                        {/*    {"Don't have an account? Sign Up"}*/}
-                                        {/*</Link>*/}
                                     </Grid>
                                 </Grid>
                             </div>

@@ -37,7 +37,6 @@ public class AuthenticationService {
     //
     public BaseUserToken getToken(String id, String rawPassword, HttpSession session) {
         final Authentication request = new UsernamePasswordAuthenticationToken(id, rawPassword);
-//        log.trace("AuthenticationService getToken request... {}",request);
         final Authentication result = authenticationManager.authenticate(request);
         log.trace("AuthenticationService getToken result... {}",result);
 
@@ -53,9 +52,16 @@ public class AuthenticationService {
                 .build();
     }
 
+    // email로 user 조회
+    public BaseSimpleUser getUserByEmail(String email) {
+        final BaseSimpleUser simpleUser  = userRepository.selectUserByEmail(email);
+        return simpleUser;
+    }
+
+
     //
     public BaseSimpleUser getUser() {
-        final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        final Authentication authentication = SecurityContextHolder.getContext().getAuthentication(); // spring에서 제공
 
         return (BaseSimpleUser) authentication.getDetails();
     }

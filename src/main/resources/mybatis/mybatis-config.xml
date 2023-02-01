@@ -10,6 +10,7 @@
     <!-- typeAliases 추가 -->
     <typeAliases>
         <typeAlias type="kr.onthelive.training.model.BaseUser" alias="BaseUser" />
+        <typeAlias type="kr.onthelive.training.model.BaseSimpleUser" alias="BaseSimpleUser" />
         <typeAlias type="kr.onthelive.training.model.BaseRoom" alias="BaseRoom" />
         <typeAlias type="kr.onthelive.training.model.BaseSimpleRoom" alias="BaseSimpleRoom" />
         <typeAlias type="kr.onthelive.training.model.BaseRoomUser" alias="BaseRoomUser" />
