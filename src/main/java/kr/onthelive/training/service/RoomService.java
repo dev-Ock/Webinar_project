@@ -2,6 +2,7 @@ package kr.onthelive.training.service;
 
 import kr.onthelive.training.model.BaseRoom;
 import kr.onthelive.training.model.BaseSimpleRoom;
+import kr.onthelive.training.model.BaseRoomHistory;
 import kr.onthelive.training.repository.RoomRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +28,12 @@ public class RoomService {
     }
 
     // 새로운 룸 추가
-    public void write(BaseRoom baseRoom) {
+    public void write(BaseRoom baseInfo) {
+        log.debug("BaseRoomService baseRoom : {}", baseInfo);
+
+        BaseRoom baseRoom = new BaseRoom();
+
+//        baseRoom.setRoomTitle(baseInfo.getRoomTitle);
 
         roomRepository.insertRoom(baseRoom);
     }
