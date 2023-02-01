@@ -1,4 +1,5 @@
 import {makeAutoObservable} from "mobx";
+import { createContext, useState } from 'react';
 import {AuthTokenStorageKey} from "../repositories/Repository";
 
 export const LocalStorageTokenKey = '_BASKITOP_AUTHENTICATION_TOKEN_';
@@ -13,8 +14,11 @@ const EmptyRoom = {
     createdAt: '',
     startedAt: '',
 };
+const EmptyRoomList = [];
 
-export default class AuthStore {
+export default class RoomStore {
+
+    roomList = Object.assign([], EmptyRoomList)
     constructor(props) {
         this.roomRepository = props.roomRepository;
 
@@ -91,5 +95,20 @@ export default class AuthStore {
             // this.loginUser = Object.assign({}, EmptyUser);
         }
     }
+
+    * selectRoomList() {
+        console.log("selectroom확인")
+            try {
+                const roomList = yield this.roomRepository.getRoomList()
+                this.roomList = roomList
+                console.log('param확인', roomList)
+
+            } catch (e) {
+                console.log('방목록 조회 error', e)
+            }
+
+    };
+
+
 
 }
