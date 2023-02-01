@@ -1,6 +1,7 @@
 package kr.onthelive.training.controller;
 
 import kr.onthelive.training.model.BaseRoom;
+import kr.onthelive.training.model.BaseSimpleRoom;
 import kr.onthelive.training.service.RoomService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 @RestController
 @Slf4j
@@ -21,6 +23,15 @@ public class RoomController {
         this.roomService = roomService;
     }
 
+    // 룸 목록 전체 조회 (password 제외)
+    @GetMapping("/read/list")
+    public List<BaseSimpleRoom> getRoomList(HttpServletRequest httpRequest){
+        log.trace("controller getRoomList start...");
+        List<BaseSimpleRoom> result = roomService.getRoomList();
+        return result;
+    }
+
+    // 새로운 룸 추가
     @PostMapping("/insert")
     public ResponseEntity<BaseRoom> createRoom(HttpServletRequest httpRequest,
                                                @RequestBody BaseRoom room) {

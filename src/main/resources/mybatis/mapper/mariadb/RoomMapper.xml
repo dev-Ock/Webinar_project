@@ -15,8 +15,23 @@
         <result property="updatedDatetime"      column="updated_datetime" />
     </resultMap>
 
+    <resultMap id="BaseSimpleRoomResultMap" type="BaseSimpleRoom">
+        <id property="id"                       column="id" />
+        <result property="title"                column="title" />
+        <result property="publisherId"          column="publisher_id" />
+        <result property="description"          column="description" />
+        <result property="maximum"              column="maximum" />
+        <result property="state"                column="state" />
+        <result property="streamUrl"            column="stream_url" />
+        <result property="startTime"            column="start_time" />
+        <result property="link"                 column="link" />
+        <result property="createdDatetime"      column="created_datetime" />
+        <result property="updatedDatetime"      column="updated_datetime" />
+    </resultMap>
 
-    <select id="selectRoom" parameterType="String" resultMap="BaseRoomResultMap">
+    <!-- select -->
+    <select id="selectRoomList" parameterType="String" resultMap="BaseSimpleRoomResultMap">
+<!--    <select id="selectRoom" parameterType="String" resultMap="BaseRoomResultMap">-->
         SELECT id,
                title,
                publisher_id,
@@ -30,7 +45,7 @@
                created_datetime,
                updated_datetime
         FROM rooms
-        WHERE id = #{value}
+--         WHERE id = #{value}
     </select>
 
 

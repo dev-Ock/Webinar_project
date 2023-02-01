@@ -2,20 +2,20 @@ package kr.onthelive.training.controller;
 
 
 import kr.onthelive.training.model.BaseRoomHistory;
+import kr.onthelive.training.model.BaseSimpleRoom;
 import kr.onthelive.training.service.RoomHistoryService;
 import kr.onthelive.training.service.RoomUserHistoryService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
 import javax.servlet.http.HttpSession;
 import org.springframework.http.HttpStatus;
 
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 @RestController
 @Slf4j
@@ -28,6 +28,15 @@ public class RoomHistoryController {
         this.roomHistoryService = roomHistoryService;
     }
 
+    // 룸 전체 기록 조회
+    @GetMapping("/read/list")
+    public  List<BaseRoomHistory> getRoomHistoryList(HttpServletRequest httpRequest){
+        log.trace("controller getRoomHistory start...");
+        List<BaseRoomHistory> result = roomHistoryService.getRoomHistoryList();
+        return result;
+    }
+
+    // 룸 기록 추가
     @PostMapping("/insert")
     public ResponseEntity setRoomHistory(HttpServletRequest httpRequest, HttpSession seesion, @RequestBody BaseRoomHistory roominfo) {
         log.trace("roomHistory insert... {}", roominfo);

@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 
 @RestController
 @Slf4j
-@RequestMapping("/api/v1/roomuserhistory/")
+@RequestMapping("/api/v1/roomuserhistories/")
 public class RoomUserHistoryController {
 
     private RoomUserHistoryService roomUserHistoryService;
@@ -22,8 +22,8 @@ public class RoomUserHistoryController {
         this.roomUserHistoryService = roomUserHistoryService;
     }
 
-    // id로 조회(test)
-    @GetMapping("/getRoomUserHistory/{id}")
+    // id로 룸 유저 기록 조회
+    @GetMapping("/read/{id}")
     public ResponseEntity<BaseRoomUserHistory> getRoomUserHistory(HttpServletRequest httpRequest, @PathVariable("id") String id) {
         log.trace("controller.getRoomUserHistory start... {}", id);
         final BaseRoomUserHistory roomUserHistory = roomUserHistoryService.getRoomUserHistory(id);
@@ -31,8 +31,8 @@ public class RoomUserHistoryController {
         return new ResponseEntity<>(roomUserHistory, HttpStatus.OK);
     }
 
-    // 입력(test)
-    @PostMapping("/createRoomUserHistory")
+    // 룸 유저 기록 입력
+    @PostMapping("/insert")
     public ResponseEntity createRoomUserHistory(HttpServletRequest httpRequest, @RequestBody BaseRoomUserHistory roomUserHistory){
 
         log.trace("controller.createRoomUserHistory start... {}", roomUserHistory);

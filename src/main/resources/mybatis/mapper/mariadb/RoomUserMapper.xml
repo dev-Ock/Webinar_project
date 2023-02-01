@@ -11,7 +11,7 @@
     </resultMap>
 
     <!-- select -->
-    <select id="selectRoomUser" parameterType="String">
+    <select id="selectRoomUser" parameterType="String" resultMap="BaseRoomUserResultMap">
         SELECT id,
                room_id,
                publisher_id,

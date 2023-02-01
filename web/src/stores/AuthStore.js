@@ -32,6 +32,10 @@ const EmptyUser = {
     updatedDatetime: '',
 };
 
+const EmptyCheckEmail = {
+    email : ''
+}
+
 const EmptySignupUser = {
     email   : '',
     password: '',
@@ -57,7 +61,7 @@ export default class AuthStore {
     userList = Object.assign([], EmptyUserList)
     signupUser = Object.assign({}, EmptySignupUser)
     updateUser = Object.assign({}, EmptyUpdateUser)
-
+    checkEmail = Object.assign({},EmptyCheckEmail)
 
 
     constructor(props) {
@@ -69,6 +73,22 @@ export default class AuthStore {
         makeAutoObservable(this);
     }
 
+    
+    // email 중복 검사
+    *onCheckEmail(email) {
+        try{
+            this.checkEmail = {
+                email : email
+            }
+            const param = this.checkEmail;
+            const result = yield this.authRepository.checkEmailDuplication(param);
+            console.log("email 중복 검사 결과",result)
+            return toJS(result)
+        }catch(e){
+            console.log(e)
+        }
+    }
+    
     // 회원 정보 update 하기 전, 기존 정보 setting
     setUpdateUser = (user) => {
         this.updateUser = {
