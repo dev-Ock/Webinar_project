@@ -32,10 +32,29 @@ public class AuthenticationController {
         this.authenticationService = authenticationService;
     }
 
+
+    // email로 user 조회
+    @GetMapping("/read/{email}")
+    public int getUserByEmail(HttpServletRequest httpRequest, @PathVariable("email") String email){
+        log.trace("controller getUserByEmail start... {}", email);
+        BaseSimpleUser simpleUser = authenticationService.getUserByEmail(email);
+        int result;
+        if(simpleUser == null){
+            result = 0;
+        }else{
+            result = 1;
+        }
+        return result;
+    }
+
     // 회원가입
     @PostMapping("/signup")
     public ResponseEntity signUp(HttpServletRequest httpRequest, HttpSession session, @RequestBody BaseUser account) {
         log.trace("printMessage start... {}", account);
+        if(account.getEmail() == null || account.getPassword() == null || account.getName() == null || account.getPhoneNum() == null){
+            String result = "shortage of information";
+            return new ResponseEntity(result, HttpStatus.EXPECTATION_FAILED);
+        }
         int result = authenticationService.signUp(account);
         return new ResponseEntity<>(result,HttpStatus.OK);
     }
@@ -51,6 +70,7 @@ public class AuthenticationController {
     // 로그인한 회원인지 check
     @GetMapping("/signcheck")
     public ResponseEntity<BaseSimpleUser> check(HttpServletRequest httpRequest) {
+        log.trace("controller signcheck start...{}",httpRequest);
         final BaseSimpleUser user = authenticationService.getUser();
 
         if(user == null) {

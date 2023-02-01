@@ -71,7 +71,7 @@ class App extends React.Component {
             {
                 this.state.interval === true
                 ?
-                    <div><h1> 가 waiting...</h1>
+                    <div><h1> waiting...</h1>
                         <CircularProgress size={22}/>
                     </div>
                 :
@@ -95,9 +95,9 @@ class App extends React.Component {
                                 { loginState === store.State.Authenticated ? (
                         
                                     <Switch>
-                                        <Route path="/home" component={Home}/>
-                                        <Route path="/" component={Home}/>
-                                        {/*<Route component={Notfound}/>*/}
+                                        <Route exact path="/home" component={Home}/>
+                                        <Route exact path="/" component={Home}/>
+                                        <Route component={Notfound}/>
                                     </Switch>
                     
                                 ) : (

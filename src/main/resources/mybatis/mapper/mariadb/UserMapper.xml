@@ -12,6 +12,17 @@
         <result property="updatedDatetime"      column="updated_datetime" />
     </resultMap>
 
+    <resultMap id="BaseSimpleUserResultMap" type="BaseSimpleUser">
+        <id property="id"                       column="id" />
+        <result property="email"                column="email" />
+        <result property="name"                 column="name" />
+        <result property="phoneNum"             column="phone_num" />
+        <result property="type"                 column="type" />
+        <result property="enabled"              column="enabled" />
+        <result property="createdDatetime"      column="created_datetime" />
+        <result property="updatedDatetime"      column="updated_datetime" />
+    </resultMap>
+
     <select id="selectUser" parameterType="String" resultMap="BaseUserResultMap">
         SELECT id,
                email,
@@ -52,6 +63,21 @@
         FROM users
         WHERE type = #{value}
         ORDER BY created_datetime DESC
+    </select>
+
+<!--  email로 user 조회  -->
+    <select id="selectUserByEmail" parameterType="String" resultMap="BaseSimpleUserResultMap">
+        SELECT id,
+               email,
+               password,
+               name,
+               phone_num,
+               type,
+               enabled,
+               created_datetime,
+               updated_datetime
+        FROM users
+        WHERE email = #{value}
     </select>
 
 <!--    <update id="updateUser" parameterType="BaseUser">-->
