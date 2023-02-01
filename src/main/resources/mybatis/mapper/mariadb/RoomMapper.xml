@@ -31,10 +31,12 @@
 
     <!-- select -->
     <select id="selectRoomList" parameterType="String" resultMap="BaseSimpleRoomResultMap">
+<!--    <select id="selectRoom" parameterType="String" resultMap="BaseRoomResultMap">-->
         SELECT id,
                title,
                publisher_id,
                description,
+               password,
                maximum,
                state,
                stream_url,
@@ -43,9 +45,10 @@
                created_datetime,
                updated_datetime
         FROM rooms
+--         WHERE id = #{value}
     </select>
 
-    <!-- insert -->
+
     <insert id="insertRoom" parameterType="BaseRoom" >
         INSERT INTO rooms (
             title,

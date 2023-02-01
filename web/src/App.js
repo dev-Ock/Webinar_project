@@ -15,6 +15,7 @@ import ScrollToTop from "./components/ScrollToTop";
 import SignUp from "./views/SignUp";
 import Home from "./views/Home";
 import SignIn from "./views/SignIn";
+import RoomMake from "./views/RoomMake"
 import Notfound from './views/Notfound'
 import {AuthTokenStorageKey} from "./repositories/Repository";
 // import 2
@@ -95,9 +96,12 @@ class App extends React.Component {
                                 { loginState === store.State.Authenticated ? (
                         
                                     <Switch>
-                                        <Route exact path="/home" component={Home}/>
+
+                                       <Route path="/room-make" component={RoomMake}/>
+                                       <Route path="/home" component={Home}/>
                                         <Route exact path="/" component={Home}/>
                                         <Route component={Notfound}/>
+
                                     </Switch>
                     
                                 ) : (
