@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 
 @RestController
 @Slf4j
-@RequestMapping("/api/v1/room/")
+@RequestMapping("/api/v1/rooms/")
 public class RoomController {
 
     private RoomService roomService;

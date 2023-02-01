@@ -19,7 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 
 @RestController
 @Slf4j
-@RequestMapping("api/v1/roomhistory")
+@RequestMapping("api/v1/roomhistories")
 public class RoomHistoryController {
     private RoomHistoryService roomHistoryService;
 
@@ -28,7 +28,7 @@ public class RoomHistoryController {
         this.roomHistoryService = roomHistoryService;
     }
 
-    @PostMapping("/setRoomInfo")
+    @PostMapping("/insert")
     public ResponseEntity setRoomHistory(HttpServletRequest httpRequest, HttpSession seesion, @RequestBody BaseRoomHistory roominfo) {
         log.trace("roomHistory insert... {}", roominfo);
         int result = roomHistoryService.setRoomHistory(roominfo);

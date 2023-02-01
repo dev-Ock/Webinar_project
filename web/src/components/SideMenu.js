@@ -116,16 +116,10 @@ export default function SideMenu(props) {
         <div className={classes.menu}>
             <List>
                 {/*<ListSubheader inset>관리</ListSubheader>*/}
-                <Link to="/service" className={classes.link}>
+                <Link to="/room-list" className={classes.link}>
                     <ListItem button disableRipple onClick={() => handleListItemClick(1)} selected={selectedIndex === 1}>
                         <ListItemIcon></ListItemIcon>
                         <ListItemText primary="방 목록" />
-                    </ListItem>
-                    <ListItem button disableRipple onClick={() => handleListItemClick(2)} selected={selectedIndex === 2}>
-                        <ListItemIcon>
-                            {/*<ComputerIcon />*/}
-                        </ListItemIcon>
-                        <ListItemText primary="방 만들기" />
                     </ListItem>
                     {/*{user.type === UserType.ADMIN &&*/}
                     {/*<ListItem button disableRipple onClick={() => handleListItemClick(3)} selected={selectedIndex === 3}>*/}
@@ -134,6 +128,15 @@ export default function SideMenu(props) {
                     {/*    </ListItemIcon>*/}
                     {/*    <ListItemText primary="통합관리자"/>*/}
                     {/*</ListItem>}*/}
+                </Link>
+
+                <Link to="/room-make" className={classes.link}>
+                    <ListItem button disableRipple onClick={() => handleListItemClick(2)} selected={selectedIndex === 2}>
+                        <ListItemIcon>
+                            {/*<ComputerIcon />*/}
+                        </ListItemIcon>
+                        <ListItemText primary="방 만들기" />
+                    </ListItem>
                 </Link>
             </List>
         </div>

@@ -15,7 +15,7 @@
         <result property="updatedDatetime"      column="updated_datetime" />
     </resultMap>
 
-    <!-- select -->
+
     <select id="selectRoom" parameterType="String" resultMap="BaseRoomResultMap">
         SELECT id,
                title,
@@ -33,7 +33,7 @@
         WHERE id = #{value}
     </select>
 
-    <!-- insert -->
+
     <insert id="insertRoom" parameterType="BaseRoom" >
         INSERT INTO rooms (
             title,
