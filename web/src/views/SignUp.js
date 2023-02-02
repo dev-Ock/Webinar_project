@@ -192,6 +192,12 @@ function SignUp(props) {
         }
     }
     
+    // By clicking 'SIGN UP' key, 회원가입 최종 정보 확인 및 등록
+    const handleSubmitByClick = (e) => {
+        e.preventDefault();
+        return onSubmit();
+    }
+    
     // 회원가입 최종 정보 확인 및 등록
     const onSubmit = () => {
         const key = ['email', 'password', 'name', 'phoneNum']
@@ -205,6 +211,7 @@ function SignUp(props) {
         props.authStore.doSignup()
         alert("회원가입이 완료되었습니다. 로그인해 주세요.")
         props.setSignupOpen(!props.signupOpen)
+        return;
     }
     
     
@@ -358,7 +365,7 @@ function SignUp(props) {
                             fullWidth
                             variant="contained"
                             sx={{mt: 3, mb: 2}}
-                            onClick={handleSubmit}
+                            onClick={handleSubmitByClick}
                         >
                             Sign Up
                         </Button>
