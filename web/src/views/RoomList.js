@@ -21,14 +21,14 @@ const styles = theme => ({
 
     mainContainer: {
         flexGrow: 1,
-            padding: theme.spacing(5)
+        padding: theme.spacing(5)
     },
     appBarSpacer: theme.mixins.toolbar,
-        mainContent: {
+    mainContent: {
         marginTop: theme.spacing(2),
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
     },
     toolbar: {
         width: '100%',
@@ -36,23 +36,28 @@ const styles = theme => ({
 
 })
 
-class RoomList extends React.Component{
+class RoomList extends React.Component {
     constructor(props) {
         super(props);
 
         this.state = {
             private: false,
-            interval : true,
+            interval: true,
+            pending: true,
         };
+        console.log("test", this.props.roomStore.roomListLength)
 
     }
+
     componentDidMount() {
         console.log("Room list mount")
-        setInterval(()=>{
-            this.setState({interval : false})
-        },50)
+        setInterval(() => {
+            this.setState({interval: false})
+        }, 50)
         this.props.roomStore.selectRoomList();
+
     }
+
     // handleSubmitRoomList() {
     //     this.props.roomStore.selectRoomList();
     // }
@@ -60,53 +65,60 @@ class RoomList extends React.Component{
     render() {
 
         const {classes} = this.props
-        const {roomList} = this.props.roomStore;
+        const {roomList,roomListLength} = this.props.roomStore;
+// console.log('룸리스트확인', roomList)s
 
-        if (roomList ===[]) {
-            return (
-                <div>
-                    no data!
-                </div>
-            );
-        }
 
         return (
-            <Container component="main" className={classes.mainContainer}>
-                <div className={classes.appBarSpacer} />
-                <Toolbar className={classes.toolbar}>
-                    <Typography variant="h4" component="h2">
-                        Webinar
-                    </Typography>
-                </Toolbar>
-                <Grid container >
-                    {roomList.map(room =>
-                        <Grid item  key={room.id} >
-                    <Card>
-                        <CardActionArea variant='body1'>
-                        <CardHeader className={cardHeaderClasses.title} title={room.title} subheader={room.name}/>
-                        <CardContent>
-                            <Typography variant='body2'  component='p'>
-                                {room.description}
+            <>
+                {
+                    this.props.roomStore.roomListLength === 0
+                        ?
+                    <div style={{marginTop: "100px"}}><h1>no room</h1></div>
+                    :
+                        <Container component="main" className={classes.mainContainer}>
+                        <div className={classes.appBarSpacer}/>
+                        <Toolbar className={classes.toolbar}>
+                            <Typography variant="h4" component="h2">
+                                Webinar
                             </Typography>
-                            <Typography  color='textSecondary' component='p'>
-                                {room.state}
-                            </Typography>
-                        </CardContent>
-                        </CardActionArea>
-                    </Card>
+                        </Toolbar>
+                        <Grid container>
+                            {roomList.map(room =>
+                                <Grid item key={room.id}>
+                                    <Card>
+                                        <CardActionArea variant='body1'>
+                                            <CardHeader className={cardHeaderClasses.title} title={room.title}
+                                                        subheader={room.name}/>
+                                            <CardContent>
+                                                <Typography variant='body2' component='p'>
+                                                    {room.description}
+                                                </Typography>
+                                                <Typography color='textSecondary' component='p'>
+                                                    {room.state}
+                                                </Typography>
+                                            </CardContent>
+                                        </CardActionArea>
+                                    </Card>
+                                </Grid>
+                            )}
                         </Grid>
-                        )}
-                </Grid>
-            </Container>
-    )
+                    </Container>
+
+
+                }
+            </>
+
+
+        )
 
     }
 
 
 };
 export default withSnackbar(withRouter(
-        withStyles(styles) (
-            inject('roomStore','authStore')(
+        withStyles(styles)(
+            inject('roomStore', 'authStore')(
                 observer(RoomList)
             )
         )

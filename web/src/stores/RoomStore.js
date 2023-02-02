@@ -1,4 +1,4 @@
-import {makeAutoObservable} from "mobx";
+import {makeAutoObservable, toJS} from "mobx";
 import { createContext, useState } from 'react';
 import {AuthTokenStorageKey} from "../repositories/Repository";
 
@@ -99,23 +99,11 @@ export default class RoomStore {
             // this.loginUser = Object.assign({}, EmptyUser);
         }
     }
-//이름 합쳐진 테이블 가져오기 전
-    // * selectRoomList() {
-    //     console.log("selectroom확인")
-    //         try {
-    //             const roomList = yield this.roomRepository.getRoomList()
-    //             this.roomList = roomList
-    //             console.log('param확인', roomList)
-    //
-    //         } catch (e) {
-    //             console.log('방목록 조회 error', e)
-    //         }
-    //
-    // };
-    * selectRoomList() {
-        console.log("selectroomusername확인")
+//일반 룸 테이블 데이터 조회
+    * selectJustRoomList() {
+        console.log("selectroom확인")
             try {
-                const roomList = yield this.roomRepository.getRoomUserNameList()
+                const roomList = yield this.roomRepository.getRoomList()
                 this.roomList = roomList
                 console.log('param확인', roomList)
 
@@ -124,6 +112,23 @@ export default class RoomStore {
             }
 
     };
+
+    roomListLength = toJS(this.roomList.length);
+
+    * selectRoomList() {
+        console.log("selectroomusername확인")
+            try {
+                const roomList = yield this.roomRepository.getRoomUserNameList()
+                this.roomList = roomList
+                this.roomListLength = toJS(roomList).length
+                console.log('param확인', toJS(roomList).length)
+
+            } catch (e) {
+                console.log('방목록 조회 error', e)
+            }
+
+    };
+
 
 
 
