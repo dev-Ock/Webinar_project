@@ -27,11 +27,28 @@ export default class AuthRepository extends Repository {
     //     })
     // }
     
+    
+    // 이메일 중복 검사
+    checkEmailDuplication = (paramEmail) => {
+        console.log('authRepository checkEmailDuplication 접근')
+        return new Promise((resolve,reject)=>{
+            this.getRequestPromise('get', this.requestPrefix + `/read`+ paramEmail)
+                .then(data => {
+                    console.log("checkEmailDuplication", data)
+                    resolve(data)
+                })
+                .catch(error => {
+                    console.log('[error] checkEmailDuplication', error)
+                    reject(error)
+                })
+        })
+    }
+    
     // 회원가입
     signUp = (param) => {
         console.log('authRepository sighUp 접근')
         return new Promise((resolve,reject) => {
-            this.getRequestPromise('post', this.requestPrefix + '/signUp', param)
+            this.getRequestPromise('post', this.requestPrefix + '/signup', param)
                 .then(data => {
                     console.log("signUp data",data)
                     resolve(data)

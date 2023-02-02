@@ -1,5 +1,6 @@
 package kr.onthelive.training.repository;
 
+import kr.onthelive.training.model.BaseSimpleUser;
 import kr.onthelive.training.repository.mapper.UserMapper;
 import kr.onthelive.training.model.BaseUser;
 import kr.onthelive.training.model.support.BaseUserType;
@@ -31,6 +32,13 @@ public class UserRepository {
     public int insertUser(BaseUser user) {
         return mapper.insertUser(user);
     }
+
+    // email로 user 조회
+    public BaseSimpleUser selectUserByEmail(String email) {
+        return mapper.selectUserByEmail(email);
+    }
+
+
 
 //    public int removeUser(int userId) {
 //        return mapper.removeUser(userId);
