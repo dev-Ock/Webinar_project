@@ -40,4 +40,19 @@ export default class RoomRepository extends Repository {
                 });
         });
     }
+    getRoomUserNameList = () => {
+        return new Promise((resolve, reject) => {
+            this.getRequestPromise('get', this.requestPrefix + '/read/withnamelist')
+                .then(data => {
+                    resolve(data);
+                    console.log("룸과유저네임")
+                })
+                .catch(error => {
+                    console.log('roomusernamelistㄱㅎ',error)
+                    // this.removeAuthTokenFromStorage()
+
+                    reject(error);
+                });
+        });
+    }
 }

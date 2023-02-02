@@ -99,11 +99,23 @@ export default class RoomStore {
             // this.loginUser = Object.assign({}, EmptyUser);
         }
     }
-
+//이름 합쳐진 테이블 가져오기 전
+    // * selectRoomList() {
+    //     console.log("selectroom확인")
+    //         try {
+    //             const roomList = yield this.roomRepository.getRoomList()
+    //             this.roomList = roomList
+    //             console.log('param확인', roomList)
+    //
+    //         } catch (e) {
+    //             console.log('방목록 조회 error', e)
+    //         }
+    //
+    // };
     * selectRoomList() {
-        console.log("selectroom확인")
+        console.log("selectroomusername확인")
             try {
-                const roomList = yield this.roomRepository.getRoomList()
+                const roomList = yield this.roomRepository.getRoomUserNameList()
                 this.roomList = roomList
                 console.log('param확인', roomList)
 
