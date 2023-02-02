@@ -15,7 +15,8 @@ import ScrollToTop from "./components/ScrollToTop";
 import SignUp from "./views/SignUp";
 import Home from "./views/Home";
 import SignIn from "./views/SignIn";
-import RoomMake from "./views/RoomMake"
+import RoomMake from "./views/RoomMake";
+import RoomList from "./views/RoomList";
 import Notfound from './views/Notfound'
 import {AuthTokenStorageKey} from "./repositories/Repository";
 // import 2
@@ -72,7 +73,7 @@ class App extends React.Component {
             {
                 this.state.interval === true
                 ?
-                    <div><h1> 가 waiting...</h1>
+                    <div><h1> waiting...</h1>
                         <CircularProgress size={22}/>
                     </div>
                 :
@@ -97,9 +98,10 @@ class App extends React.Component {
                         
                                     <Switch>
                                         <Route path="/home" component={Home}/>
-                                        {/*<Route path="/" component={Home}/>*/}
+                                        <Route exact path="/" component={Home}/>
                                         <Route path="/room-make" component={RoomMake}/>
-                                        {/*<Route component={Notfound}/>*/}
+                                        <Route path="/room-list" component={RoomList}/>
+                                        <Route component={Notfound}/>
                                     </Switch>
                     
                                 ) : (

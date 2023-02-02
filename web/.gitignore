@@ -32,4 +32,4 @@ build
 rebel.xml
 
 # application.properties /src/main/resources/mybatis
-application.properties
+package.json
