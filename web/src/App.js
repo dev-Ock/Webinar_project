@@ -97,9 +97,9 @@ class App extends React.Component {
                         
                                     <Switch>
                                         <Route path="/home" component={Home}/>
-                                        {/*<Route path="/" component={Home}/>*/}
+                                        <Route exact path="/" component={Home}/>
                                         <Route path="/room-make" component={RoomMake}/>
-                                        {/*<Route component={Notfound}/>*/}
+                                        <Route component={Notfound}/>
                                     </Switch>
                     
                                 ) : (
