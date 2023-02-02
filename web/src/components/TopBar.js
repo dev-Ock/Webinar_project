@@ -7,6 +7,7 @@ import MenuIcon from '@material-ui/icons/Menu';
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import OnTheLiveLogo from "../common/images/onthelive_logo.svg";
 import clsx from "clsx";
+import {Typography} from "@mui/material";
 
 const logoWidth = 120;
 
@@ -74,7 +75,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function TopBar(props) {
     const classes = useStyles();
-    const { mobileOpen, setMobileOpen, isLoggedIn, doLogout, menuOpen} = props;
+    const { mobileOpen, setMobileOpen, isLoggedIn, doLogout, menuOpen, user} = props;
 
     const handleDrawerToggle = () => {
         setMobileOpen(!mobileOpen);
@@ -109,11 +110,9 @@ export default function TopBar(props) {
                 >
                     <MenuIcon />
                 </IconButton>
-                {/*<Typography variant="h6" noWrap className={classes.title}>*/}
-                {/*    <Link to='/' className={classes.link}>*/}
-                {/*        Project Base*/}
-                {/*    </Link>*/}
-                {/*</Typography>*/}
+                <Typography variant="h6" noWrap className={classes.title}>
+                    {user.name}님 환영합니다.
+                </Typography>
 
                 {/* 로그아웃 이모티콘 */}
                 {isLoggedIn ? (
