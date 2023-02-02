@@ -163,7 +163,7 @@ export default function SideMenu(props) {
                         className={classes.drawerOpen}
                 >
                     <Box className={classes.toolbar}>
-                        <Link to='/'  className={classes.link} style={{width: '100%'}}>
+                        <Link to='/home'  className={classes.link} style={{width: '100%'}}>
                             <img src={OnTheLiveLogo} alt="OnTheLive" className={classes.logo}/>
                         </Link>
                         <IconButton
