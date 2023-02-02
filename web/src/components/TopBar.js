@@ -79,6 +79,14 @@ export default function TopBar(props) {
     const handleDrawerToggle = () => {
         setMobileOpen(!mobileOpen);
     };
+    
+    const setLogout = () => {
+        doLogout();
+        return (
+            window.location.href = "/"
+        )
+    }
+    
     // if (window.location.pathname === '/service') return null;
     return (
         <AppBar position="fixed" className={isLoggedIn ? menuOpen ? clsx(classes.appBar, classes.appBarLogin) : clsx(classes.appBar, classes.appBarLoginMenuClose) : classes.appBar}>
@@ -111,7 +119,7 @@ export default function TopBar(props) {
                 {isLoggedIn ? (
                     <Box display='flex'>
                         <Box className={classes.userInfoStyle}>
-                            <IconButton onClick={doLogout} className={classes.iconBtnStyle}>
+                            <IconButton onClick={setLogout} className={classes.iconBtnStyle}>
                                 <ExitToAppIcon />
                             </IconButton>
                         </Box>

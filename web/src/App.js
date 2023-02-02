@@ -69,56 +69,56 @@ class App extends React.Component {
         
         return (
             <>
-            {
-                this.state.interval === true
-                ?
-                    <div><h1> waiting...</h1>
-                        <CircularProgress size={22}/>
-                    </div>
-                :
-                    <Box className={classes.root} display="flex" flexDirection="row" justifyContent="center"
-                         alignItems="stretch">
-                        <Router>
-                            <CssBaseline/>
-                            {/*<Route path="/signup" render={()=> <SignUp typeState={store.typeState} />}/>*/}
-                            <Route path="/" component={ScrollToTop}>
-                                <TopBar mobileOpen={this.state.mobileOpen}
-                                        menuOpen={this.state.menuOpen}
-                                        setMobileOpen={this.setMobileOpen}
-                                        user={loginUser}
-                                        isLoggedIn={loginState === store.State.Authenticated}
-                                        doLogout={() => this.props.authStore.doLogout()}/>
-                                <SideMenu handleDrawerToggle={this.handleDrawerToggle}
-                                          menuOpen={this.state.menuOpen}
-                                          user={loginUser}
-                                          isLoggedIn={loginState === store.State.Authenticated}/>
-                    
-                                { loginState === store.State.Authenticated ? (
-                        
-                                    <Switch>
-
-                                       <Route path="/room-make" component={RoomMake}/>
-                                       <Route path="/home" component={Home}/>
-                                        <Route exact path="/" component={Home}/>
-                                        <Route component={Notfound}/>
-
-                                    </Switch>
-                    
-                                ) : (
-                                    this.state.signupOpen === false
-                                        ?
-                                        <Route path="/" render={() => <SignIn signupOpen={this.state.signupOpen}
-                                                                              setSignupOpen={this.setSignupOpen}/>}/>
-                                        :
-                                        <Route path="/" render={() => <SignUp typeState={store.typeState}
-                                                                              signupOpen={this.state.signupOpen}
-                                                                              setSignupOpen={this.setSignupOpen}/>}/>
-                    
-                                )}
-                            </Route>
-                        </Router>
-                    </Box>
-            }
+                {
+                    this.state.interval === true
+                        ?
+                        <div><h1> waiting...</h1>
+                            <CircularProgress size={22}/>
+                        </div>
+                        :
+                        <Box className={classes.root} display="flex" flexDirection="row" justifyContent="center"
+                             alignItems="stretch">
+                            <Router>
+                                <CssBaseline/>
+                                {/*<Route path="/signup" render={()=> <SignUp typeState={store.typeState} />}/>*/}
+                                <Route path="/" component={ScrollToTop}>
+                                    <TopBar mobileOpen={this.state.mobileOpen}
+                                            menuOpen={this.state.menuOpen}
+                                            setMobileOpen={this.setMobileOpen}
+                                            user={loginUser}
+                                            isLoggedIn={loginState === store.State.Authenticated}
+                                            doLogout={() => this.props.authStore.doLogout()}/>
+                                    <SideMenu handleDrawerToggle={this.handleDrawerToggle}
+                                              menuOpen={this.state.menuOpen}
+                                              user={loginUser}
+                                              isLoggedIn={loginState === store.State.Authenticated}/>
+                                    
+                                    { loginState === store.State.Authenticated ? (
+                                        
+                                        <Switch>
+                                            
+                                            <Route path="/room-make" component={RoomMake}/>
+                                            <Route path="/home" component={Home}/>
+                                            <Route exact path="/" component={Home}/>
+                                            <Route component={Notfound}/>
+                                        
+                                        </Switch>
+                                    
+                                    ) : (
+                                        this.state.signupOpen === false
+                                            ?
+                                            <Route path="/" render={() => <SignIn signupOpen={this.state.signupOpen}
+                                                                                  setSignupOpen={this.setSignupOpen}/>}/>
+                                            :
+                                            <Route path="/" render={() => <SignUp typeState={store.typeState}
+                                                                                  signupOpen={this.state.signupOpen}
+                                                                                  setSignupOpen={this.setSignupOpen}/>}/>
+                                    
+                                    )}
+                                </Route>
+                            </Router>
+                        </Box>
+                }
             </>
         );
     }
