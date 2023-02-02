@@ -177,8 +177,32 @@ function SignUp(props) {
         }
     }
     
-    // 회원가입 최종 정보 확인 및 등록
-    let handleSubmit = (e) => {
+    // prevent KeyDown function
+    const preventKeyDown = (e) => {
+        if (e.keyCode === 13) {
+            e.preventDefault()
+        }
+    }
+    
+    
+    // By pushing enter key, 회원가입 최종 전보 확인 및 등록
+    const handleSubmitByKey = (e) => {
+        if (e.keyCode === 13) {
+            const type = ['email', 'password', 'name', 'phoneNum']
+    
+            for (let i = 0; i < type.length; i++) {
+                if (!signupUser[type[i]]) {
+                    return alert(`${type[i]} 입력해주세요`);
+                }
+            }
+            props.authStore.doSignup()
+            alert("회원가입이 완료되었습니다. 로그인해 주세요.")
+            props.setSignupOpen(!props.signupOpen)
+        }
+    }
+    
+    // By clicking 'SIGN UP' key, 회원가입 최종 정보 확인 및 등록
+    const handleSubmit = (e) => {
         e.preventDefault()
         console.log("total_onSignupUser", signupUser)
         
@@ -186,7 +210,7 @@ function SignUp(props) {
         
         for (let i = 0; i < type.length; i++) {
             if (!signupUser[type[i]]) {
-                return alert(`${type[i]} 오류`);
+                return alert(`${type[i]} 입력해주세요`);
             }
         }
         //
@@ -241,6 +265,8 @@ function SignUp(props) {
                                     label="Email Address"
                                     value={props.authStore.signupTempUser.email}
                                     onChange={checkEmail}
+                                    onKeyDown={preventKeyDown}
+                                    
                                 />
                                 <span style={{color: "red"}}>{emailMessage}</span>
                                 
@@ -267,6 +293,7 @@ function SignUp(props) {
                                     label="Password"
                                     value={props.authStore.signupTempUser.password}
                                     onChange={checkPasswordReg}
+                                    onKeyDown={preventKeyDown}
                                 />
                                 <span style={{color: "red"}}>{pwMessage}</span>
                             
@@ -283,6 +310,7 @@ function SignUp(props) {
                                     label="Confirm password"
                                     value={props.authStore.signupTempUser.confirmPassword}
                                     onChange={setConfirmPassword}
+                                    onKeyDown={preventKeyDown}
                                 />
                                 {
                                     pwConfirm
@@ -307,7 +335,7 @@ function SignUp(props) {
                                     value={props.authStore.signupTempUser.name}
                                     onChange={changeName}
                                     onBlur={setName}
-                                
+                                    onKeyDown={preventKeyDown}
                                 />
                                 <span style={{color: "red"}}>{nameMessage}</span>
                                 
@@ -333,6 +361,7 @@ function SignUp(props) {
                                     label="Phone Number"
                                     value={props.authStore.signupTempUser.phoneNum}
                                     onChange={checkPhoneNum}
+                                    onKeyUp={handleSubmitByKey}
                                 />
                                 <span style={{color: "red"}}>{phoneNumMessage}</span>
                                 {
