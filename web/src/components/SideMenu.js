@@ -1,6 +1,7 @@
 import React from "react";
 import {Link} from "react-router-dom";
 
+
 import {
     Box, Collapse,
     Drawer,
@@ -105,6 +106,7 @@ export default function SideMenu(props) {
     const [settingOpen, setSettingOpen] = React.useState(false);
     const [selectedIndex, setSelectedIndex] = React.useState(1);
 
+
     const handleListItemClick = (index) => {
         setSelectedIndex(index);
     };
@@ -112,12 +114,13 @@ export default function SideMenu(props) {
         setSettingOpen(!settingOpen);
     }
 
+
     const drawer = (
         <div className={classes.menu}>
             <List>
                 {/*<ListSubheader inset>관리</ListSubheader>*/}
                 <Link to="/room-list" className={classes.link}>
-                    <ListItem button disableRipple onClick={() => handleListItemClick(1)} selected={selectedIndex === 1}>
+                    <ListItem button disableRipple onClick={ () => handleListItemClick(1) }  selected={selectedIndex === 1}  >
                         <ListItemIcon></ListItemIcon>
                         <ListItemText primary="방 목록" />
                     </ListItem>
@@ -163,7 +166,7 @@ export default function SideMenu(props) {
                         className={classes.drawerOpen}
                 >
                     <Box className={classes.toolbar}>
-                        <Link to='/'  className={classes.link} style={{width: '100%'}}>
+                        <Link to='/home'  className={classes.link} style={{width: '100%'}}>
                             <img src={OnTheLiveLogo} alt="OnTheLive" className={classes.logo}/>
                         </Link>
                         <IconButton

@@ -25,4 +25,19 @@ export default class RoomRepository extends Repository {
                 });
         });
     }
+    getRoomList = () => {
+        return new Promise((resolve, reject) => {
+            this.getRequestPromise('get', this.requestPrefix + '/read/list')
+                .then(data => {
+                    resolve(data);
+                    console.log("여기오륜가")
+                })
+                .catch(error => {
+                    console.log('roomlistㄱㅎ',error)
+                    // this.removeAuthTokenFromStorage()
+
+                    reject(error);
+                });
+        });
+    }
 }

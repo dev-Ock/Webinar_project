@@ -132,7 +132,7 @@ export default class AuthStore {
 
 
     // 로그인
-    * doLogin() {
+    * doLogin() { //메모리에 저장됌.
         this.loginState = State.Pending;
 
         try {
