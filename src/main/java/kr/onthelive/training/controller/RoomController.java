@@ -1,6 +1,7 @@
 package kr.onthelive.training.controller;
 
 import kr.onthelive.training.model.BaseRoom;
+import kr.onthelive.training.model.BaseRoomUserName;
 import kr.onthelive.training.model.BaseSimpleRoom;
 import kr.onthelive.training.service.RoomService;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +29,12 @@ public class RoomController {
     public List<BaseSimpleRoom> getRoomList(HttpServletRequest httpRequest){
         log.trace("controller getRoomList start...");
         List<BaseSimpleRoom> result = roomService.getRoomList();
+        return result;
+    }
+    @GetMapping("/read/withnamelist")
+    public List<BaseRoomUserName> getRoomUserNameList(HttpServletRequest httpRequest){
+        log.trace("controller getRoomUserNameList start...");
+        List<BaseRoomUserName> result = roomService.getRoomUserNameList();
         return result;
     }
 

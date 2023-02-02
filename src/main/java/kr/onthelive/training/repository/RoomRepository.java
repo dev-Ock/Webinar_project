@@ -23,6 +23,7 @@ public class RoomRepository {
         return mapper.selectRoomList();
     }
 
+
     // 새로운 룸 추가
     public int insertRoom(BaseRoom room) {
         return mapper.insertRoom(room);
