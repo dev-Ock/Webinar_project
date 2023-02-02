@@ -29,6 +29,8 @@
         <result property="updatedDatetime"      column="updated_datetime" />
     </resultMap>
 
+
+
     <!-- select -->
     <!--    <select id="selectRoom" parameterType="String" resultMap="BaseRoomResultMap">-->
     <select id="selectRoomList" parameterType="String" resultMap="BaseSimpleRoomResultMap">
@@ -47,6 +49,7 @@
         FROM rooms
 
     </select>
+
 
 
     <insert id="insertRoom" parameterType="BaseRoom" >

@@ -1,5 +1,5 @@
 import React from "react";
-import {BrowserRouter as Router, Redirect, Route, Switch} from "react-router-dom";
+import {BrowserRouter as Router, Route, Switch} from "react-router-dom";
 import {inject, observer} from "mobx-react";
 import {withStyles} from "@material-ui/core/styles";
 import {CircularProgress} from "@material-ui/core";
@@ -82,7 +82,6 @@ class App extends React.Component {
                          alignItems="stretch">
                         <Router>
                             <CssBaseline/>
-                            {/*<Route path="/signup" render={()=> <SignUp typeState={store.typeState} />}/>*/}
                             <Route path="/" component={ScrollToTop}>
                                 <TopBar mobileOpen={this.state.mobileOpen}
                                         menuOpen={this.state.menuOpen}
@@ -112,8 +111,7 @@ class App extends React.Component {
                                         <Route path="/" render={() => <SignIn signupOpen={this.state.signupOpen}
                                                                               setSignupOpen={this.setSignupOpen}/>}/>
                                         :
-                                        <Route path="/" render={() => <SignUp typeState={store.typeState}
-                                                                              signupOpen={this.state.signupOpen}
+                                        <Route path="/" render={() => <SignUp signupOpen={this.state.signupOpen}
                                                                               setSignupOpen={this.setSignupOpen}/>}/>
                     
                                 )}

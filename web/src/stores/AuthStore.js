@@ -1,6 +1,5 @@
 import {makeAutoObservable, toJS} from "mobx";
 import {AuthTokenStorageKey} from "../repositories/Repository";
-import axios from "axios";
 
 export const State = {
     Authenticated   : 'Authenticated',
@@ -9,16 +8,25 @@ export const State = {
     Failed          : 'Failed',
 };
 
-// 회원가입 type 유형
-export const typeState = {
-    10: 'Admin',
-    20: 'Manager',
-    30: 'Operator'
+const EmptySignupTempUser = {
+    email   : '',
+    password: '',
+    confirmPassword: "",
+    name    : '',
+    phoneNum : ''
 }
 
+const EmptySignupCheckUser = {
+    email : "",
+    password: ""
+}
 
-const log = "[authStore] ";
-// export const LocalStorageTokenKey = '_BASKITOP_AUTHENTICATION_TOKEN_';
+const EmptySignupUser = {
+    email   : '',
+    password: '',
+    name    : '',
+    phoneNum : ''
+}
 
 const EmptyLogin = {
     id      : '',
@@ -32,17 +40,6 @@ const EmptyUser = {
     updatedDatetime: '',
 };
 
-const EmptySignupEmail = {
-    email : ""
-}
-
-const EmptySignupUser = {
-    email   : '',
-    password: '',
-    name    : '',
-    phoneNum : ''
-}
-
 const EmptyUpdateUser = {
     id: '',
     password: '',
@@ -52,14 +49,13 @@ const EmptyUpdateUser = {
 
 const EmptyUserList = [];
 
-
-
 export default class AuthStore {
     login = Object.assign({}, EmptyLogin);// login.id 1. error 방지용 / 2. 명시적(무엇이 있는지)
     loginState = State.NotAuthenticated;
     loginUser = Object.assign({}, EmptyUser);
     userList = Object.assign([], EmptyUserList)
-    signupEmail = Object.assign({}, EmptySignupEmail)
+    signupTempUser = Object.assign({},EmptySignupTempUser)
+    signupCheckUser = Object.assign({}, EmptySignupCheckUser)
     signupUser = Object.assign({}, EmptySignupUser)
     updateUser = Object.assign({}, EmptyUpdateUser)
 
@@ -73,20 +69,22 @@ export default class AuthStore {
         makeAutoObservable(this);
     }
     
-    // 중복검사할 email 담기
-    onSignupEmail = (key, value) => {
-        // console.log("signupEmail", this.signupEmail)
-        this.signupEmail[key] = value;
-        // console.log("signupEmail", this.signupEmail)
-        return this.signupEmail;
+    // 회원가입 전 임시 정보 담기
+    onSignupTempUser = (key, value) => {
+        this.signupTempUser[key] = value;
+        return this.signupTempUser;
+    }
+    
+    // 중복 검사할 email, 일치 검사할 password 담기
+    onSignupCheckUser = (key, value) => {
+        this.signupCheckUser[key] = value;
+        return this.signupCheckUser;
     }
     
     // email 중복 검사
-    *onCheckEmail() {
+    *onSignupDuplicationCheckEmail() {
         try{
-            console.log(this.signupEmail);
-            const param = `/${this.signupEmail.email}`
-            console.log('param',param)
+            const param = `/${this.signupCheckUser.email}`
             const result = yield this.authRepository.checkEmailDuplication(param);
             console.log("email 중복 검사 결과",result)
             return result;
@@ -94,39 +92,6 @@ export default class AuthStore {
             console.log(e)
         }
     }
-    
-    // 회원 정보 update 하기 전, 기존 정보 setting
-    setUpdateUser = (user) => {
-        this.updateUser = {
-            id : user.id,
-            password : user.password,
-            email: user.email,
-            name : user.name,
-        };
-        return this.updateUser
-    }
-
-
-    // 회원 정보 각 항목 update
-    onUpdateUser = (key, value) => {
-        this.updateUser[key] = value
-        return this.updateUser
-    }
-
-    // 회원 정보 update 최종 단계
-    * finalUpdateUser() {
-        try{
-            const param = this.updateUser
-            const result =  yield this.authRepository.updateUser(param)
-            console.log("~~~",result)
-            return toJS(result)
-        }catch(e){
-            console.log('printMessage fail...', e);
-        }
-
-    }
-
-
     
     // 회원가입할 유저 정보 담기
     onSignupUser = (key, value) => {
@@ -138,52 +103,20 @@ export default class AuthStore {
 
     // 회원가입 유저 정보 서버로 보내기
     * doSignup() {
-        // console.log("signupUser",this.signupUser)
-        //
-        // console.log("onSignupUser",this.onSignupUser)
         try {
             console.log('doSignup try 진입 시작')
             const param = this.signupUser
-            // const user = yield this.authRepository.signUp(param)
             yield this.authRepository.signUp(param)
-
-            // this.loginState = State.Authenticated; // 회원가입 후 서버에서 유저 정보를 주면 자동 로그인이 되고 메인 페이지로 들어가게 하기 위해.
             this.loginState = State.NotAuthenticated; // 현재는 회원가입 후 서버에서 유저 정보를 주는 코드를 구현하지 않았기 때문에 회원가입 후 로그인 컴포넌트를 띄운다.
-
-            // this.loginUser = {
-            //     id             : user.id,
-            //     name           : user.name,
-            //     type           : user.type,
-            //     createdDatetime: user['created_datetime'],
-            //     updatedDatetime: user['updated_datetime'],
-            // };
-
-
-            // console.log("회원가입된 정보 loginUser", this.loginUser)
-            this.signupUser = Object.assign({}, EmptySignupUser)
+            this.signupTempUser = Object.assign({},EmptySignupTempUser);
+            this.signupCheckUser = Object.assign({}, EmptySignupCheckUser);
+            this.signupUser = Object.assign({}, EmptySignupUser);
+            
         } catch (e) {
             console.log('회원가입 error', e)
             this.loginState = State.Failed;
             this.loginToken = '';
             this.loginUser = Object.assign({}, EmptyUser);
-        }
-    }
-
-    // example
-    * printMessage() {
-        console.log("printMessage start...");
-        try {
-            const param = this.updateUser
-            // const data = yield this.authRepository.updateUser(param)
-            // let message = "seoungWoo";
-            // let url = `/printMessage?data=${message}`;
-            // const data = yield this.authRepository.printMessage(url);
-
-            const data = yield this.authRepository.printMessage(param);
-
-            console.log("printMessage success..! : ", data);
-        } catch (e) {
-            console.log('printMessage fail...', e);
         }
     }
 
@@ -216,9 +149,7 @@ export default class AuthStore {
             this.loginUser = Object.assign({}, EmptyUser);
         }
     }
-
-
-
+    
     // 로그인했는 지 체크
     * checkLogin() {
         // const token = localStorage.getItem(LocalStorageTokenKey);
@@ -235,7 +166,7 @@ export default class AuthStore {
                 console.log("checkoLogin 실패")
                 this.loginState = State.NotAuthenticated;
                 this.loginUser = Object.assign({}, EmptyUser);
-                console.log(log + "error : ", e);
+                console.log("error : ", e);
             }
         } else {
             console.log("token이 없어서 추가 조치하기 전")
@@ -251,14 +182,44 @@ export default class AuthStore {
         this.loginState = State.NotAuthenticated;
         this.loginUser = Object.assign({}, EmptyUser);
     };
-
+    
+    // 회원 정보 update 하기 전, 기존 정보 setting
+    setUpdateUser = (user) => {
+        this.updateUser = {
+            id : user.id,
+            password : user.password,
+            email: user.email,
+            name : user.name,
+        };
+        return this.updateUser
+    }
+    
+    
+    // 회원 정보 각 항목 update
+    onUpdateUser = (key, value) => {
+        this.updateUser[key] = value
+        return this.updateUser
+    }
+    
+    // 회원 정보 update 최종 단계
+    * finalUpdateUser() {
+        try{
+            const param = this.updateUser
+            const result =  yield this.authRepository.updateUser(param)
+            console.log("~~~",result)
+            return toJS(result)
+        }catch(e){
+            console.log('printMessage fail...', e);
+        }
+        
+    }
+    
     // 로그아웃
     * doLogout() {
-        // localStorage.removeItem(LocalStorageTokenKey);
-        sessionStorage.removeItem(AuthTokenStorageKey);
         console.log("doLogout try 전")
 
         try {
+            sessionStorage.removeItem(AuthTokenStorageKey);
             // console.log("this.authRepository44",this.authRepository) // 콘솔에 제대로 뜸
             console.log("doLogout try 진입")
             yield this.authRepository.signOut();
@@ -273,21 +234,7 @@ export default class AuthStore {
             this.loginUser = Object.assign({}, EmptyUser);
         }
     }
-
-    // 전체 사용자 조회
-    * getUsers() {
-        try {
-            const users = yield  this.authRepository.getUserList(); // TypeError: Cannot read properties of undefined (reading 'authRepository')
-            this.userList = users
-            // console.log("전체 사용자 조회 userList",this.userList)
-            // console.log("users",users)
-            // console.log("this.userList",this.userList.map(i => console.log(i)))
-            // console.log("yeah2")
-        } catch (e) {
-            console.log(e)
-        }
-    }
-
+    
     // 회원 삭제 or 탈퇴
     * removeUser(id) {
         try {
@@ -300,6 +247,20 @@ export default class AuthStore {
         } finally {
             // 전체 사용자 조회
             this.getUsers();
+        }
+    }
+    
+    // 전체 사용자 조회
+    * getUsers() {
+        try {
+            const users = yield  this.authRepository.getUserList(); // TypeError: Cannot read properties of undefined (reading 'authRepository')
+            this.userList = users
+            // console.log("전체 사용자 조회 userList",this.userList)
+            // console.log("users",users)
+            // console.log("this.userList",this.userList.map(i => console.log(i)))
+            // console.log("yeah2")
+        } catch (e) {
+            console.log(e)
         }
     }
 }

@@ -1,10 +1,8 @@
 package kr.onthelive.training.model;
 
 import kr.onthelive.training.model.support.BaseUserType;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.springframework.stereotype.Service;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;

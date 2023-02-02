@@ -15,26 +15,13 @@ import {
 import {withSnackbar} from "notistack";
 import {withRouter} from "react-router-dom";
 import {inject, observer} from "mobx-react";
+import {CardActionArea, cardClasses, cardHeaderClasses} from "@mui/material";
 
-const dummy = [{
-    id: 'm1',
-    title: 'This is a first meetup',
-    description:
-        'This is a first, amazing meetup which you definitely should not miss. It will be a lot of fun!',
-},
-    {
-        id: 'm2',
-        title: 'This is a second meetup',
-        description:
-            'This is a first, amazing meetup which you definitely should not miss. It will be a lot of fun!',
-    },]
 const styles = theme => ({
-    itemArea:{
-        width : 360
-    },
+
     mainContainer: {
         flexGrow: 1,
-            padding: theme.spacing(3)
+            padding: theme.spacing(5)
     },
     appBarSpacer: theme.mixins.toolbar,
         mainContent: {
@@ -46,6 +33,7 @@ const styles = theme => ({
     toolbar: {
         width: '100%',
     }
+
 })
 
 class RoomList extends React.Component{
@@ -65,42 +53,51 @@ class RoomList extends React.Component{
         },50)
         this.props.roomStore.selectRoomList();
     }
-    handleSubmitRoomList() {
-        this.props.roomStore.selectRoomList();
-    }
+    // handleSubmitRoomList() {
+    //     this.props.roomStore.selectRoomList();
+    // }
 
     render() {
 
         const {classes} = this.props
         const {roomList} = this.props.roomStore;
 
+        if (roomList ===[]) {
+            return (
+                <div>
+                    no data!
+                </div>
+            );
+        }
+
         return (
-            <Container omponent="main" className={classes.mainContainer}>
+            <Container component="main" className={classes.mainContainer}>
                 <div className={classes.appBarSpacer} />
                 <Toolbar className={classes.toolbar}>
                     <Typography variant="h4" component="h2">
                         Webinar
                     </Typography>
                 </Toolbar>
-                <Grid container spacing={3} item >
+                <Grid container >
                     {roomList.map(room =>
-                        <Grid item key={room.id}>
+                        <Grid item  key={room.id} >
                     <Card>
-                        <CardHeader title={room.title} subheader={room.publisherId}/>
+                        <CardActionArea variant='body1'>
+                        <CardHeader className={cardHeaderClasses.title} title={room.title} subheader={room.name}/>
                         <CardContent>
-                            <Typography variant='body2' color='textSecondary' component='p'>
+                            <Typography variant='body2'  component='p'>
                                 {room.description}
                             </Typography>
-                            <Typography variant='body2' color='textSecondary' component='p'>
+                            <Typography  color='textSecondary' component='p'>
                                 {room.state}
                             </Typography>
                         </CardContent>
+                        </CardActionArea>
                     </Card>
                         </Grid>
                         )}
                 </Grid>
             </Container>
-
     )
 
     }

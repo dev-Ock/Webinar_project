@@ -7,6 +7,7 @@ import MenuIcon from '@material-ui/icons/Menu';
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import OnTheLiveLogo from "../common/images/onthelive_logo.svg";
 import clsx from "clsx";
+import {Typography} from "@mui/material";
 
 const logoWidth = 120;
 
@@ -74,11 +75,19 @@ const useStyles = makeStyles((theme) => ({
 
 export default function TopBar(props) {
     const classes = useStyles();
-    const { mobileOpen, setMobileOpen, isLoggedIn, doLogout, menuOpen} = props;
+    const { mobileOpen, setMobileOpen, isLoggedIn, doLogout, menuOpen, user} = props;
 
     const handleDrawerToggle = () => {
         setMobileOpen(!mobileOpen);
     };
+    
+    const setLogout = () => {
+        doLogout();
+        return (
+            window.location.href = "/"
+        )
+    }
+    
     // if (window.location.pathname === '/service') return null;
     return (
         <AppBar position="fixed" className={isLoggedIn ? menuOpen ? clsx(classes.appBar, classes.appBarLogin) : clsx(classes.appBar, classes.appBarLoginMenuClose) : classes.appBar}>
@@ -101,17 +110,15 @@ export default function TopBar(props) {
                 >
                     <MenuIcon />
                 </IconButton>
-                {/*<Typography variant="h6" noWrap className={classes.title}>*/}
-                {/*    <Link to='/' className={classes.link}>*/}
-                {/*        Project Base*/}
-                {/*    </Link>*/}
-                {/*</Typography>*/}
+                {isLoggedIn ? <Typography variant="h6" noWrap className={classes.title}>
+                    {user.name}님 환영합니다.
+                </Typography>:''}
 
                 {/* 로그아웃 이모티콘 */}
                 {isLoggedIn ? (
                     <Box display='flex'>
                         <Box className={classes.userInfoStyle}>
-                            <IconButton onClick={doLogout} className={classes.iconBtnStyle}>
+                            <IconButton onClick={setLogout} className={classes.iconBtnStyle}>
                                 <ExitToAppIcon />
                             </IconButton>
                         </Box>
