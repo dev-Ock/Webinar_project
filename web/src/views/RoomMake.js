@@ -10,19 +10,24 @@ import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
 import Button from '@mui/material/Button';
 import {inject, observer} from "mobx-react";
-
+import { useState } from "react";
 import { withStyles, makeStyles } from '@material-ui/core/styles';
 
 import {withSnackbar} from "notistack";
 import {withRouter} from "react-router-dom";
-
+import ConferenceRoom from '../assets/images/conferenceRoom.png'
 
 const styles = {
-    media: {
-        margin: 100,
+    roomMakeImg: {
+        width: "100%",
+        alignItems   : 'center'
+    },
+    roomMakeImgOutDiv:{
+        paddingTop: 70,
+        paddingLeft: 110,
+        paddingRight: 110,
     }
 }
-
 
 class RoomMake extends React.Component {
     constructor(props) {
@@ -30,9 +35,13 @@ class RoomMake extends React.Component {
 
         this.state = {
             private: false,
+            titleMessage: "",
+            passwordMessage: "",
+            linkMessage: "",
+            startTimeMessage: "",
         };
-
     }
+
     //비밀번호 input
     privateInput(){
         this.setState({
@@ -50,9 +59,23 @@ class RoomMake extends React.Component {
         window.location.replace("/room-make")
     }
 
+
+
     // 방 만들기 폼 입력값 받는 함수
     handleChangeTitle = (e) => {
-        this.props.roomStore.changeTitle(e.target.value);
+
+        const inputTitle = e.target.value.trim().length;
+        // console.log("입력값 확인",e.target.value, inputTitle)
+        if(inputTitle >= 3 && inputTitle <= 120 ){
+            this.props.roomStore.changeTitle(e.target.value.trim());
+            this.setState({
+                titleMessage : ""
+            })
+        } else {
+            this.setState({
+                titleMessage : "방 제목은 3자이상 120자 이하로 작성해주세요."
+            })
+        }
     };
 
     handleChangeDescription = (e) => {
@@ -69,14 +92,42 @@ class RoomMake extends React.Component {
         this.props.roomStore.changeLink(e.target.value);
     };
 
-
-    handleChangeRoomPassword = (e) => {
-        this.props.roomStore.changePassword(e.target.value);
+    preventSpacebar = (e) => {
+        if(e.keyCode === 32) {
+            e.preventDefault()
+        }
     };
 
-    handleSubmitRoomForm = () => {
+    handleChangeRoomPassword = (e) => {
+        // 복붙을 하는 경우에도 공백 입력 방지 : .replace(/\s/g, "")
+        const inputPassword = e.target.value.toString().replace(/\s/g, "").length;
+
+        this.props.roomStore.changePassword(e.target.value.replace(/ /g, ""));
+
+        if(inputPassword >= 4){
+            this.setState({
+                passwordMessage : ""
+            })
+        }else {
+            this.setState({
+                passwordMessage : "패스워드는 공백 미포함 4자리 이상으로 설정해주세요."
+            })
+        }
+    };
+
+    handleSubmitRoomForm = (e) => {
+        e.preventDefault()
         const nowPublisherId = this.props.authStore.loginUser.id
-        console.log(nowPublisherId);
+        const inputCheck = ((id) => { return document.getElementById(id).value.trim().length});
+
+        // 필수항목 체크 (방제목, 최대인원수, 방설정)
+        if(inputCheck("title")<3){
+            return alert("방 제목은 3자이상 120자 이하로 작성해주세요!")
+        }else if(!inputCheck("maximum")){
+            return alert("최대 참여인원 수를 입력해 주세요! (숫자만 입력)")
+        }else if(this.state.private){
+            return alert("패스워드를 입력해 주세요! 패스워드는 공백 미포함 4자리 이상으로 작성해주셔야 합니다.")
+        }
 
         //nowPublisherId 유효성 체크
         if(nowPublisherId > 0){
@@ -91,12 +142,14 @@ class RoomMake extends React.Component {
 
         return(
             <Container component="main" maxWidth="sm">
-                <div className={classes.media}></div>
+                <div className={classes.roomMakeImgOutDiv}>
+                    <img src={ConferenceRoom}  className={classes.roomMakeImg} />
+                </div>
                 <TextField
                     id="title"
                     name="title"
                     type="text"
-                    label="방제목(최소 5자 최대 120자)"
+                    label="방제목"
                     margin="normal"
                     onChange={this.handleChangeTitle}
                     inputProps={{
@@ -106,6 +159,7 @@ class RoomMake extends React.Component {
                     fullWidth
                     required
                 />
+                <span style={{color:"red"}}> {this.state.titleMessage} </span>
                 <TextField
                     id="description"
                     name="description"
@@ -148,7 +202,6 @@ class RoomMake extends React.Component {
                         label="(선택) 회의 시작 시간"
                         margin="normal"
                         type="time"
-                        defaultValue="10:00"
                         className={classes.textField}
                         onChange={this.handleChangeStartTime}
                         InputLabelProps={{
@@ -173,34 +226,42 @@ class RoomMake extends React.Component {
                 </div>
 
                 <FormControl>
-                    <FormLabel id="demo-row-radio-buttons-group-label">방설정</FormLabel>
+                    <FormLabel id="passwordOption">방설정</FormLabel>
                     <RadioGroup
                         row
                         aria-labelledby="demo-row-radio-buttons-group-label"
                         name="row-radio-buttons-group"
+                        defaultValue="public"
                     >
-                        <FormControlLabel value="public" control={<Radio />} label="공개방"onClick={this.openInput.bind(this)}/>
-                        <FormControlLabel value="private" control={<Radio />} label="비공개방" onClick={this.privateInput.bind(this)}/>
+                        <FormControlLabel id="public" value="public" control={<Radio />} label="공개방"onClick={this.openInput.bind(this)}/>
+                        <FormControlLabel id="private" value="private" control={<Radio />} label="비공개방" onClick={this.privateInput.bind(this)}/>
                     </RadioGroup>
                 </FormControl>
+
                 {
                     this.state.private ?
+                        <div>
+
                             <TextField
                                 id="room-password"
                                 name="room-password"
-                                label="비밀번호"
+                                label="패스워드"
                                 type="password"
                                 margin="normal"
                                 onChange={this.handleChangeRoomPassword}
+                                onKeyDown={this.preventSpacebar}
                                 fullWidth
                                 required
-                            /> : ''
+                            />
+                        <span style={{color:"red"}}> {this.state.passwordMessage} </span>
+                        </div>
+                        : ''
                 }
                 <div></div>
 
                 <Stack direction="row" spacing={2} justifyContent="flex-start"
                        alignItems="flex-start" direction="row-reverse">
-                    <Button variant="contained" color="primary" onClick={() => this.handleSubmitRoomForm()}>
+                    <Button variant="contained" color="primary" onClick={(e) => this.handleSubmitRoomForm(e)}>
                         방만들기
                     </Button>
                     <Button variant="contained" color="success" onClick={this.reload.bind(this)}>
@@ -211,8 +272,7 @@ class RoomMake extends React.Component {
             </Container>
         );
     }
-};
-// publisherId,
+}
 
 export default withSnackbar(withRouter(
         withStyles(styles) (

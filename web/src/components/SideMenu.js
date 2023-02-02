@@ -141,6 +141,15 @@ export default function SideMenu(props) {
                         <ListItemText primary="방 만들기" />
                     </ListItem>
                 </Link>
+
+                <Link to="/room-history" className={classes.link}>
+                    <ListItem button disableRipple onClick={() => handleListItemClick(3)} selected={selectedIndex === 3}>
+                        <ListItemIcon>
+                            {/*<ComputerIcon />*/}
+                        </ListItemIcon>
+                        <ListItemText primary="방 히스토리" />
+                    </ListItem>
+                </Link>
             </List>
         </div>
     );
