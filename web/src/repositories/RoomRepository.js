@@ -7,6 +7,7 @@ export default class RoomRepository extends Repository {
         this.requestPrefix = props.serverContextPath + "/api/v1/rooms";
     }
 
+    // 방 만들기 Create room
     makeRoom = (param) => {
         return new Promise((resolve, reject) => {
             this.getRequestPromise('post', this.requestPrefix + '/insert', param)
@@ -25,6 +26,14 @@ export default class RoomRepository extends Repository {
                 });
         });
     }
+
+    // streamUrl 가져오기
+    // getStreamUrl = () => {
+    //     return new Promise((resolve, reject) => {
+    //         this.getRequestPromise('get', this.requestPrefix + '/')
+    //     })
+    // }
+
     getRoomList = () => {
         return new Promise((resolve, reject) => {
             this.getRequestPromise('get', this.requestPrefix + '/read/list')
