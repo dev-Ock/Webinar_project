@@ -185,52 +185,28 @@ function SignUp(props) {
     }
     
     
-    // By pushing enter key, 회원가입 최종 전보 확인 및 등록
+    // By pushing enter key, 회원가입 최종 전보 확인 및 등록 (with onSubmit 메소드)
     const handleSubmitByKey = (e) => {
         if (e.keyCode === 13) {
-            const type = ['email', 'password', 'name', 'phoneNum']
-    
-            for (let i = 0; i < type.length; i++) {
-                if (!signupUser[type[i]]) {
-                    return alert(`${type[i]} 입력해주세요`);
-                }
-            }
-            props.authStore.doSignup()
-            alert("회원가입이 완료되었습니다. 로그인해 주세요.")
-            props.setSignupOpen(!props.signupOpen)
+            onSubmit();
         }
     }
     
-    // By clicking 'SIGN UP' key, 회원가입 최종 정보 확인 및 등록
-    const handleSubmit = (e) => {
-        e.preventDefault()
-        console.log("total_onSignupUser", signupUser)
-        
-        const type = ['email', 'password', 'name', 'phoneNum']
-        
-        for (let i = 0; i < type.length; i++) {
-            if (!signupUser[type[i]]) {
-                return alert(`${type[i]} 입력해주세요`);
+    // 회원가입 최종 정보 확인 및 등록
+    const onSubmit = () => {
+        const key = ['email', 'password', 'name', 'phoneNum']
+        const keyName = ['Email', 'Password', 'Name', 'Phone Number']
+    
+        for (let i = 0; i < key.length; i++) {
+            if (!signupUser[key[i]]) {
+                return alert(`${keyName[i]} 입력해주세요`);
             }
         }
-        //
-        // if (!signupUser.email) {
-        //     return alert("Email을 적고 중복 확인을 해 주세요");
-        // }
-        // if (!signupUser.password) {
-        //     return alert("Password를 적고 일치하는 지 확인해주세요");
-        // }
-        // if (!signupUser.name) {
-        //     return alert("Name을 적어주세요");
-        // }
-        // if (!signupUser.phoneNum) {
-        //     return alert("Phone Number를 자릿수에 맞게 -를 빼고 적어주세요");
-        // }
-        
         props.authStore.doSignup()
         alert("회원가입이 완료되었습니다. 로그인해 주세요.")
         props.setSignupOpen(!props.signupOpen)
-    };
+    }
+    
     
     return (
         <ThemeProvider theme={theme}>
@@ -300,9 +276,9 @@ function SignUp(props) {
                             </Grid>
                             <Grid item xs={12}>
                                 <TextField
-                                    autoComplete="rePassword"
+                                    autoComplete="confirmPassword"
                                     placeholder="Password를 다시 한 번 입력해주세요"
-                                    name="rePassword"
+                                    name="confirmPassword"
                                     type="password"
                                     required
                                     fullWidth
