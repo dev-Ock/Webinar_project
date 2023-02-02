@@ -17,6 +17,7 @@ import Home from "./views/Home";
 import SignIn from "./views/SignIn";
 import RoomMake from "./views/RoomMake";
 import RoomList from "./views/RoomList";
+import RoomHistory from "./views/RoomHistory";
 import Notfound from './views/Notfound'
 import {AuthTokenStorageKey} from "./repositories/Repository";
 // import 2
@@ -101,6 +102,7 @@ class App extends React.Component {
                                         <Route exact path="/" component={Home}/>
                                         <Route path="/room-make" component={RoomMake}/>
                                         <Route path="/room-list" component={RoomList}/>
+                                        <Route path="/room-history" component={RoomHistory}/>
                                         <Route component={Notfound}/>
                                     </Switch>
                     
