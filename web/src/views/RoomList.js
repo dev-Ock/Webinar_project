@@ -70,12 +70,8 @@ class RoomList extends React.Component {
 
 
         return (
-            <>
-                {
-                    this.props.roomStore.roomListLength === 0
-                        ?
-                    <div style={{marginTop: "100px"}}><h1>no room</h1></div>
-                    :
+
+
                         <Container component="main" className={classes.mainContainer}>
                         <div className={classes.appBarSpacer}/>
                         <Toolbar className={classes.toolbar}>
@@ -83,6 +79,11 @@ class RoomList extends React.Component {
                                 Webinar
                             </Typography>
                         </Toolbar>
+                            {
+                            this.props.roomStore.roomListLength === 0
+                                ?
+                                <div className={classes.mainContainer}><h1>시청할 수 있는 웨비나가 없습니다.</h1></div>
+                                :
                         <Grid container>
                             {roomList.map(room =>
                                 <Grid item key={room.id}>
@@ -103,11 +104,12 @@ class RoomList extends React.Component {
                                 </Grid>
                             )}
                         </Grid>
+    }
                     </Container>
 
 
-                }
-            </>
+
+
 
 
         )
