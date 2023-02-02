@@ -17,6 +17,7 @@ public class RoomService {
 
     @Autowired
     public RoomService(RoomRepository roomRepository){
+
         this.roomRepository = roomRepository;
     }
 
@@ -33,7 +34,15 @@ public class RoomService {
 
         BaseRoom baseRoom = new BaseRoom();
 
-//        baseRoom.setRoomTitle(baseInfo.getRoomTitle);
+        baseRoom.setTitle(baseInfo.getTitle());
+        baseRoom.setPublisherId(baseInfo.getPublisherId());
+        baseRoom.setDescription(baseInfo.getDescription());
+        baseRoom.setPassword(baseInfo.getPassword());
+        baseRoom.setMaximum(baseInfo.getMaximum());
+        baseRoom.setState(baseInfo.getState());
+        baseRoom.setStreamUrl(baseInfo.getStreamUrl());
+        baseRoom.setStartTime(baseInfo.getStartTime());
+        baseRoom.setLink(baseInfo.getLink());
 
         roomRepository.insertRoom(baseRoom);
     }

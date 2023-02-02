@@ -4,15 +4,24 @@ import {AuthTokenStorageKey} from "../repositories/Repository";
 
 export const LocalStorageTokenKey = '_BASKITOP_AUTHENTICATION_TOKEN_';
 
+export const RoomStateType = {
+    Wait : "Wait",
+    Progress : "Progress",
+    Complete : "Complete",
+    Fail : "Fail"
+
+}
 
 const EmptyRoom = {
     title: '',
-    descriptions: '',
+    publisherId: '',
+    description: '',
     password: '',
-    status: '',
-    url: '',
-    createdAt: '',
-    startedAt: '',
+    maximum:'',
+    state: '',
+    streamUrl: '',
+    startTime: '',
+    link: ''
 };
 const EmptyRoomList = [];
 
@@ -34,59 +43,54 @@ export default class RoomStore {
         this.roomMake.title = title;
     };
 
-    changeDescriptions = (descriptions) => {
-        this.roomMake.descriptions = descriptions;
+    changeDescription = (description) => {
+        this.roomMake.description = description;
+    };
+    changeMaximum = (maximum) => {
+        this.roomMake.maximum = maximum;
+    };
+    changeStartTime = (startTime) => {
+        this.roomMake.startTime = startTime;
+    };
+    changeLink = (link) => {
+        this.roomMake.link = link;
     };
 
     changePassword = (password) => {
         this.roomMake.password = password;
     };
 
+
     invalidateLogin = () => {
         this.roomMake = Object.assign({}, EmptyRoom);
     };
 
     // 방만들기 정보 서버로 보내기
-    * doMakeRoom () {
-        try {
+    * doMakeRoom (userId) {
 
-            console.log('makeroom try 진입 시작')
-            const param = this.roomMake
-
-            this.roomMake = {
-                userId          : "1",
-                status          : "wait",
-                url             : "1234",
-                createdAt       : param['created_at'],
-                startedAt       : param['started_at'],
-            };
-
-            console.log('param확인', param)
-            const room = yield this.roomRepository.makeRoom(param)
-
-            const random = (length = 8) => {
-                const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            // streamUrl 생성 함수
+            function random (length){
                 let str = '';
-
+                const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
                 for (let i = 0; i < length; i++) {
                     str += chars.charAt(Math.floor(Math.random() * chars.length));
                 }
-
                 return str;
+            }
+            const randomStreamUrl = random(8)
+            // console.log("랜덤 생성확인", randomStreamUrl)
 
-            };
+        try {
+            this.roomMake.publisherId = userId;
+            this.roomMake.state = RoomStateType.Wait;
+            this.roomMake.streamUrl = randomStreamUrl;
+            // console.log('makeroom try 진입, user정보 : ', this.roomMake )
 
-            this.roomMake = {
-                title           : room.title,
-                descriptions    : room.descriptions,
-                password        : room.password,
-                status          : "wait",
-                url             : random(6),
-                createdAt       : room['created_at'],
-                startedAt       : room['started_at'],
-            };
+            const param = this.roomMake
+            // console.log('param확인', param)
+            yield this.roomRepository.makeRoom(param)
+            console.log("roomMake Success!",this.roomMake)
 
-            console.log("방 정보 roomMake",this.roomMake)
             this.roomMake = Object.assign({}, EmptyRoom)
         } catch (e) {
             console.log('방정보 error',e)
