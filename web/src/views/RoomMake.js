@@ -39,6 +39,7 @@ class RoomMake extends React.Component {
             passwordMessage: "",
             linkMessage: "",
             startTimeMessage: "",
+            passwordCheck: false
         };
     }
 
@@ -99,22 +100,25 @@ class RoomMake extends React.Component {
     };
 
     handleChangeRoomPassword = (e) => {
-        // 복붙을 하는 경우에도 공백 입력 방지 : .replace(/\s/g, "")
         const inputPassword = e.target.value.toString().replace(/\s/g, "").length;
+        // 복붙을 하는 경우에도 공백 입력 방지 : .replace(/\s/g, "")
 
         this.props.roomStore.changePassword(e.target.value.replace(/ /g, ""));
 
         if(inputPassword >= 4){
             this.setState({
-                passwordMessage : ""
+                passwordMessage : "",
+                passwordCheck : true
             })
         }else {
             this.setState({
-                passwordMessage : "패스워드는 공백 미포함 4자리 이상으로 설정해주세요."
+                passwordMessage : "패스워드는 공백 미포함 4자리 이상으로 설정해주세요.",
+                passwordCheck : false
             })
         }
     };
 
+    // '방만들기' 클릭 시 폼 내용 검사 후 등록
     handleSubmitRoomForm = (e) => {
         e.preventDefault()
         const nowPublisherId = this.props.authStore.loginUser.id
@@ -126,15 +130,22 @@ class RoomMake extends React.Component {
         }else if(!inputCheck("maximum")){
             return alert("최대 참여인원 수를 입력해 주세요! (숫자만 입력)")
         }else if(this.state.private){
-            return alert("패스워드를 입력해 주세요! 패스워드는 공백 미포함 4자리 이상으로 작성해주셔야 합니다.")
+            console.log("this.state.private", this.state.private)
+            if( this.state.passwordCheck !== true ){
+                return alert("패스워드를 입력해 주세요! 패스워드는 공백 미포함 4자리 이상으로 작성해야 합니다.")
+            }
         }
 
         //nowPublisherId 유효성 체크
-        if(nowPublisherId > 0){
-        this.props.roomStore.doMakeRoom(this.props.authStore.loginUser.id);
-        } else {
-            alert('잘못된 접근입니다.')
+        if(nowPublisherId <= 0){
+            return alert('잘못된 접근입니다.')
         }
+
+         this.props.roomStore.doMakeRoom(this.props.authStore.loginUser.id);
+        // 폼 검증 후 최종적으로 성공하면 페이지 이동
+        // 방송페이지 url은 백에서 보내주는 값..?
+        // window.location.replace('/방송페이지')
+        return window.location.replace('/home')
     };
 
     render() {
