@@ -110,9 +110,9 @@ export default function TopBar(props) {
                 >
                     <MenuIcon />
                 </IconButton>
-                <Typography variant="h6" noWrap className={classes.title}>
+                {isLoggedIn ? <Typography variant="h6" noWrap className={classes.title}>
                     {user.name}님 환영합니다.
-                </Typography>
+                </Typography>:''}
 
                 {/* 로그아웃 이모티콘 */}
                 {isLoggedIn ? (
