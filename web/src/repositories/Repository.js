@@ -1,6 +1,7 @@
 import axios from "axios";
 
 export const AuthTokenStorageKey = '__OTL_Authentication_Token__';
+export const RoomMakeStreamUrl = '__OTL_RoomMake_StreamUrl__';
 
 // const LogPrefix = '[Repository]';
 export class Repository {
@@ -38,5 +39,16 @@ export class Repository {
 
     removeAuthTokenFromStorage = () => {
         sessionStorage.removeItem(AuthTokenStorageKey);
+    }
+
+    // streamUrl store 저장할때까지 임시로 seesionStorage에 저장
+    // getRoomStreamURlToStorage = () => {
+    //     sessionStorage.getItem(RoomMakeStreamUrl);
+    // }
+    setRoomStreamURlToStorage = (streamUrl) => {
+        sessionStorage.setItem(RoomMakeStreamUrl, streamUrl);
+    }
+    removeRoomStreamURlToStorage = () => {
+        sessionStorage.removeItem(RoomMakeStreamUrl);
     }
 }
