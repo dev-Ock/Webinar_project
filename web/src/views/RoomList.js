@@ -15,13 +15,13 @@ import {
 import {withSnackbar} from "notistack";
 import {withRouter} from "react-router-dom";
 import {inject, observer} from "mobx-react";
-import {CardActionArea, cardClasses, cardHeaderClasses} from "@mui/material";
+import {CardActionArea, cardClasses, cardHeaderClasses, gridClasses} from "@mui/material";
 
 const styles = theme => ({
 
     mainContainer: {
         flexGrow: 1,
-        padding: theme.spacing(5)
+        padding: theme.spacing(3)
     },
     appBarSpacer: theme.mixins.toolbar,
     mainContent: {
@@ -32,7 +32,15 @@ const styles = theme => ({
     },
     toolbar: {
         width: '100%',
-    }
+    },
+    card:{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(1, 1fr)',
+        gridTemplateRows: 'repeat(auto-fill, 1fr)',
+        gap: '1em',
+        minWidth:'300px',
+        minHeight : '200px'
+    },
 
 })
 
@@ -84,18 +92,18 @@ class RoomList extends React.Component {
                                 ?
                                 <div className={classes.mainContainer}><h1>시청할 수 있는 웨비나가 없습니다.</h1></div>
                                 :
-                        <Grid container>
+                        <Grid container spacing={3}>
                             {roomList.map(room =>
-                                <Grid item key={room.id}>
+                                <Grid item key={room.id} className={classes.card}>
                                     <Card>
                                         <CardActionArea variant='body1'>
                                             <CardHeader className={cardHeaderClasses.title} title={room.title}
                                                         subheader={room.name}/>
                                             <CardContent>
-                                                <Typography variant='body2' component='p'>
+                                                <Typography variant='body1' component='p'>
                                                     {room.description}
                                                 </Typography>
-                                                <Typography color='textSecondary' component='p'>
+                                                <Typography variant='body2' color='textSecondary' component='p'>
                                                     {room.state}
                                                 </Typography>
                                             </CardContent>
