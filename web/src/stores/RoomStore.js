@@ -1,6 +1,6 @@
 import {makeAutoObservable, toJS} from "mobx";
 import { createContext, useState } from 'react';
-import {AuthTokenStorageKey} from "../repositories/Repository";
+import {RoomMakeStreamUrl} from "../repositories/Repository";
 
 export const LocalStorageTokenKey = '_BASKITOP_AUTHENTICATION_TOKEN_';
 
