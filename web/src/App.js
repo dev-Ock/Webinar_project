@@ -19,8 +19,7 @@ import RoomMake from "./views/RoomMake";
 import RoomList from "./views/RoomList";
 import RoomHistory from "./views/RoomHistory";
 import Notfound from './views/Notfound'
-import {AuthTokenStorageKey} from "./repositories/Repository";
-// import 2
+// import {AuthTokenStorageKey} from "./repositories/Repository";
 
 
 class App extends React.Component {

@@ -1,12 +1,10 @@
-import {makeAutoObservable} from "mobx";
+import {makeAutoObservable, toJS} from "mobx";
 import { createContext, useState } from 'react';
-import {AuthTokenStorageKey, RoomMakeStreamUrl} from "../repositories/Repository";
-import {withSnackbar} from "notistack";
-import {withRouter} from "react-router-dom";
-import {withStyles} from "@material-ui/core/styles";
-import {inject, observer} from "mobx-react";
+import {AuthTokenStorageKey} from "../repositories/Repository";
 
 export const LocalStorageTokenKey = '_BASKITOP_AUTHENTICATION_TOKEN_';
+
+
 
 export const RoomMakeState = { // 방 만들기 성공 여부
     Empty: "Empty",
@@ -36,8 +34,6 @@ const EmptyRoom = {
 const EmptyRoomList = [];
 
 export default class RoomStore {
-
-
 
     roomList = Object.assign([], EmptyRoomList)
     constructor(props) {
@@ -127,26 +123,29 @@ export default class RoomStore {
 
 
     }
+//일반 룸 테이블 데이터 조회
+    * selectJustRoomList() {
+        console.log("selectroom확인")
+            try {
+                const roomList = yield this.roomRepository.getRoomList()
+                this.roomList = roomList
+                console.log('param확인', roomList)
 
-//이름 합쳐진 테이블 가져오기 전
-    // * selectRoomList() {
-    //     console.log("selectroom확인")
-    //         try {
-    //             const roomList = yield this.roomRepository.getRoomList()
-    //             this.roomList = roomList
-    //             console.log('param확인', roomList)
-    //
-    //         } catch (e) {
-    //             console.log('방목록 조회 error', e)
-    //         }
-    //
-    // };
+            } catch (e) {
+                console.log('방목록 조회 error', e)
+            }
+
+    };
+
+    roomListLength = toJS(this.roomList.length);
+
     * selectRoomList() {
         console.log("selectroomusername확인")
             try {
                 const roomList = yield this.roomRepository.getRoomUserNameList()
                 this.roomList = roomList
-                console.log('param확인', roomList)
+                this.roomListLength = toJS(roomList).length
+                console.log('param확인', toJS(roomList).length)
 
             } catch (e) {
                 console.log('방목록 조회 error', e)

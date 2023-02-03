@@ -63,7 +63,7 @@
     <select id="selectRoomDetailList" parameterType="String" resultMap="BaseRoomUserNameResultMap">
         SELECT rooms.id,
                rooms.title,
-               rooms.publisher_id,
+               rooms.publisher_id as publisherId,
                rooms.description,
                rooms.password,
                rooms.maximum,
