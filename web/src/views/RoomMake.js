@@ -10,12 +10,13 @@ import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
 import Button from '@mui/material/Button';
 import {inject, observer} from "mobx-react";
-import { useState } from "react";
 import { withStyles, makeStyles } from '@material-ui/core/styles';
 
 import {withSnackbar} from "notistack";
 import {withRouter} from "react-router-dom";
 import ConferenceRoom from '../assets/images/conferenceRoom.png'
+import {RoomMakeStreamUrl} from "../repositories/Repository";
+import {RoomMakeState} from "../stores/RoomStore";
 
 const styles = {
     roomMakeImg: {
@@ -37,9 +38,9 @@ class RoomMake extends React.Component {
             private: false,
             titleMessage: "",
             passwordMessage: "",
-            linkMessage: "",
-            startTimeMessage: "",
-            passwordCheck: false
+            passwordCheck: false,
+            // linkMessage: "",
+            // startTimeMessage: "",
         };
     }
 
@@ -101,7 +102,7 @@ class RoomMake extends React.Component {
 
     handleChangeRoomPassword = (e) => {
         const inputPassword = e.target.value.toString().replace(/\s/g, "").length;
-        // 복붙을 하는 경우에도 공백 입력 방지 : .replace(/\s/g, "")
+        // .replace(/\s/g, "") :복붙을 하는 경우에도 공백 입력 걸러냄
 
         this.props.roomStore.changePassword(e.target.value.replace(/ /g, ""));
 
@@ -136,20 +137,40 @@ class RoomMake extends React.Component {
             }
         }
 
-        //nowPublisherId 유효성 체크
+        // nowPublisherId 유효성 체크
         if(nowPublisherId <= 0){
-            return alert('잘못된 접근입니다.')
+            return alert('잘못된 접근입니다. 새로고침 후 다시시도 해 주세요.')
         }
+        // room 정보 백으로 보냄
+        this.props.roomStore.doMakeRoom(this.props.authStore.loginUser.id);
 
-         this.props.roomStore.doMakeRoom(this.props.authStore.loginUser.id);
-        // 폼 검증 후 최종적으로 성공하면 페이지 이동
-        // 방송페이지 url은 백에서 보내주는 값..?
-        // window.location.replace('/방송페이지')
-        return window.location.replace('/home')
+        // 이 if 문은 doMakeRoom 함수의 yield에서 지연 되는 시간동안 두번 돌게 됨. else if문은 그사이에 시간 버는 용
+        if( this.props.roomStore.roomMakeState == "Success" ){
+            // 이 내부는 동작 안함,,,
+            console.log("RoomMake-Success 진입")
+            const streamUrl = sessionStorage.getItem(RoomMakeStreamUrl)
+            return window.location.replace('/'+ {streamUrl} )
+
+        } else if (this.props.roomStore.roomMakeState == "Pending") {
+
+            let enterRoomMessage = window.confirm("바로 입장하시겠습니까? 취소를 누르면 반든 방 목록으로 이동합니다.")
+            const streamUrl = sessionStorage.getItem(RoomMakeStreamUrl)
+
+            // confirm에서 취소버튼을 누른 경우 방목록으로 이동
+            if(streamUrl.length > 0){
+                enterRoomMessage ?  window.location.replace('/'+ streamUrl ) : window.location.replace('/room-history')
+            }
+        } else {
+            alert( "방 만들기에 실패하였습니다. 잠시후 다시 시도 해주세요! " )
+            return window.location.replace('/home')
+        }
     };
+
+
 
     render() {
         const { classes } = this.props;
+        // const { roomMakeState } = this.props.roomStore
 
         return(
             <Container component="main" maxWidth="sm">

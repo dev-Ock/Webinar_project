@@ -1,5 +1,6 @@
 import {Repository} from "./Repository";
 
+
 export default class RoomRepository extends Repository {
     constructor(props) {
         super();
@@ -12,27 +13,22 @@ export default class RoomRepository extends Repository {
         return new Promise((resolve, reject) => {
             this.getRequestPromise('post', this.requestPrefix + '/insert', param)
                 .then(data => {
-                    console.log('roomdata',data)
-                    // const token = data.token;
-                    // this.setAuthTokenToStorage(token);
+                    const streamUrl = data.streamUrl;
+                    this.setRoomStreamURlToStorage(streamUrl);
+                    // this.roomMakeState = RoomMakeState.Success; // 효과없음
 
-                    resolve(data.room);
+                    console.log('DB에 넣은 room data : ',data)
+                    console.log("RoomMakeState Success로 변경 : ", this.roomMakeState)
+
+                    resolve(data);
                 })
                 .catch(error => {
                     console.log('roomerror',error)
-                    // this.removeAuthTokenFromStorage();
-
+                    this.removeRoomStreamURlToStorage();
                     reject(error);
                 });
         });
     }
-
-    // streamUrl 가져오기
-    // getStreamUrl = () => {
-    //     return new Promise((resolve, reject) => {
-    //         this.getRequestPromise('get', this.requestPrefix + '/')
-    //     })
-    // }
 
     getRoomList = () => {
         return new Promise((resolve, reject) => {
