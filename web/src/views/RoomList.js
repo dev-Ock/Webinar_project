@@ -15,7 +15,7 @@ import {
 import {withSnackbar} from "notistack";
 import {withRouter} from "react-router-dom";
 import {inject, observer} from "mobx-react";
-import {CardActionArea, cardClasses, cardHeaderClasses, gridClasses} from "@mui/material";
+import {CardActionArea, CardActions, cardHeaderClasses, gridClasses} from "@mui/material";
 
 const styles = theme => ({
 
@@ -100,14 +100,19 @@ class RoomList extends React.Component {
                                             <CardHeader className={cardHeaderClasses.title} title={room.title}
                                                         subheader={room.name}/>
                                             <CardContent>
-                                                <Typography variant='body1' component='p'>
-                                                    {room.description}
+                                                <Typography variant='body1' component='div'>
+                                                    {room.description?room.description: '입력한 내용이 없습니다.'}
                                                 </Typography>
-                                                <Typography variant='body2' color='textSecondary' component='p'>
+                                                <Typography variant='body2' color='textSecondary'>
                                                     {room.state}
                                                 </Typography>
                                             </CardContent>
                                         </CardActionArea>
+                                        <CardActions>
+                                            <Button size="small" color="primary">
+                                                입장하기
+                                            </Button>
+                                        </CardActions>
                                     </Card>
                                 </Grid>
                             )}
