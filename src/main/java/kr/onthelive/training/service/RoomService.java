@@ -38,8 +38,8 @@ public class RoomService {
         return BaseRoomUserName;
     }
 
-    // 새로운 룸 추가
-    public void write(BaseRoom baseInfo) {
+    // 새로운 룸 추가하고 해당 룸 정보 return
+    public BaseRoom write(BaseRoom baseInfo) {
         log.debug("BaseRoomService baseRoom : {}", baseInfo);
 
         BaseRoom baseRoom = new BaseRoom();
@@ -55,6 +55,12 @@ public class RoomService {
         baseRoom.setLink(baseInfo.getLink());
 
         roomRepository.insertRoom(baseRoom);
+
+        String id = baseRoom.getId();
+        BaseRoom roomData =  roomRepository.selectRoomById(id);
+        log.trace("RoomService roomData... {}", roomData);
+        return roomData;
+
     }
 
 

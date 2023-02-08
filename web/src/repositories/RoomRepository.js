@@ -1,4 +1,4 @@
-import {Repository} from "./Repository";
+import {Repository, RoomMakeID, RoomMakePublisherId, RoomMakeStreamUrl} from "./Repository";
 
 
 export default class RoomRepository extends Repository {
@@ -8,23 +8,31 @@ export default class RoomRepository extends Repository {
         this.requestPrefix = props.serverContextPath + "/api/v1/rooms";
     }
 
-    // 방 만들기 Create room
+    // 세미나 만들기 Create room
     makeRoom = (param) => {
         return new Promise((resolve, reject) => {
             this.getRequestPromise('post', this.requestPrefix + '/insert', param)
                 .then(data => {
-                    const streamUrl = data.streamUrl;
-                    this.setRoomStreamURlToStorage(streamUrl);
+                    console.log('DB에 넣고 다시 받은 room data : ',data)
+                    
+                    this.setRoomdataToStorage(this.RoomMakeID,data.id)
+                    this.setRoomdataToStorage(this.RoomMakePublisherId,data.publisherId)
+                    this.setRoomdataToStorage(this.RoomMakeStreamUrl,data.streamUrl)
+                    
+                    // this.setRoomStreamURlToStorage(data.streamUrl);
                     // this.roomMakeState = RoomMakeState.Success; // 효과없음
-
-                    console.log('DB에 넣은 room data : ',data)
-                    console.log("RoomMakeState Success로 변경 : ", this.roomMakeState)
+                
+                    // console.log("RoomMakeState Success로 변경 : ", this.roomMakeState)
 
                     resolve(data);
                 })
                 .catch(error => {
-                    console.log('roomerror',error)
-                    this.removeRoomStreamURlToStorage();
+                    console.log('RoomRepository makeRoom error',error)
+                    this.removeRoomdataFromStorage(this.RoomMakeID)
+                    this.removeRoomdataFromStorage(this.RoomMakePublisherId)
+                    this.removeRoomdataFromStorage(this.RoomMakeStreamUrl)
+                    
+                    // this.removeRoomStreamURlToStorage();
                     reject(error);
                 });
         });

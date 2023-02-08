@@ -19,6 +19,8 @@ import RoomMake from "./views/RoomMake";
 import RoomList from "./views/RoomList";
 import RoomHistory from "./views/RoomHistory";
 import Notfound from './views/Notfound'
+import PublisherRoom from "./views/PublisherRoom";
+import PlayerRoom from "./views/PlayerRoom";
 // import {AuthTokenStorageKey} from "./repositories/Repository";
 
 
@@ -44,10 +46,6 @@ class App extends React.Component {
         },50)
         this.props.authStore.checkLogin();
     }
-    
-    // componentDidUpdate(prevProps, prevState, snapshot) {
-    //
-    // }
     
     // setState
     setMobileOpen(mobileOpen) {
@@ -101,6 +99,8 @@ class App extends React.Component {
                                         <Route path="/room-make" component={RoomMake}/>
                                         <Route path="/room-list" component={RoomList}/>
                                         <Route path="/room-history" component={RoomHistory}/>
+                                        <Route path="/publisher-room" component={PublisherRoom}/>
+                                        <Route path="/player-room" component={PlayerRoom}/>
                                         <Route component={Notfound}/>
                                     </Switch>
                     
