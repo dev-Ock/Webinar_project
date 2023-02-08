@@ -10,9 +10,11 @@ export const RoomMakeStreamUrl = '__OTL_RoomMake_StreamUrl__';
 // const LogPrefix = '[Repository]';
 export class Repository {
     getRequestPromise = (method, url, data, contentType) => {
-        const token = sessionStorage.getItem(AuthTokenStorageKey);
-        const headers = Boolean(token) ? {'X-Auth-Token': token, 'Content-Type': (contentType ? contentType : 'application/json')} : {};
-
+        // const token = sessionStorage.getItem(AuthTokenStorageKey);
+        // const headers = Boolean(token) ? {'X-Auth-Token': token, 'Content-Type': (contentType ? contentType : 'application/json')} : {};
+        //
+        const headers = {"Content-Type": "application/json"}
+        console.log('headers',headers)
         return new Promise((resolve, reject) => {
             const config = {
                 method: method,
@@ -32,6 +34,31 @@ export class Repository {
                 });
         });
     }
+    
+    postRequestPromise = (method, url, data, contentType) => {
+        const token = sessionStorage.getItem(AuthTokenStorageKey);
+        const headers = Boolean(token) ? {'X-Auth-Token': token, 'Content-Type': (contentType ? contentType : 'application/json')} : {};
+        
+        return new Promise((resolve, reject) => {
+            const config = {
+                method: method,
+                url: url,
+                headers: headers,
+                data: data,
+            };
+            
+            console.log("url : ", config.url)
+            // console.log(LogPrefix, 'HTTP requesting :', config);
+            axios.request(config)
+                .then(response => {
+                    resolve(response.data);
+                })
+                .catch(error => {
+                    reject(error);
+                });
+        });
+    }
+    
     
     getAuthTokenFromStorage = () => {
         return sessionStorage.getItem(AuthTokenStorageKey);

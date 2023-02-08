@@ -1,5 +1,5 @@
 import {Repository, RoomMakeID, RoomMakePublisherId, RoomMakeStreamUrl} from "./Repository";
-
+import axios from "axios";
 
 export default class RoomRepository extends Repository {
     constructor(props) {
@@ -58,5 +58,54 @@ export default class RoomRepository extends Repository {
                     reject(error);
                 });
         });
+    }
+    
+    serverPublishConnection = (data) => {
+        // roomRepository로 이동
+    
+        const getRequestPromise2 = (method, url, data, contentType) => {
+            const headers = {"Content-Type": "application/json"}
+        
+            return new Promise((resolve, reject) => {
+                const config = {
+                    method: method,
+                    url: url,
+                    headers: headers,
+                    data: data,
+                };
+            
+                console.log("url : ", config.url);
+            
+                axios
+                    .request(config)
+                    .then((result) => {
+                        console.log("axios response", result);
+                        resolve(result.data);
+                    })
+                    .catch((error) => {
+                        reject(error);
+                    });
+            });
+        };
+        
+        
+            console.log("roomRepository onPublish 접근");
+            return new Promise((resolve, reject) => {
+                // getRequestPromise("post", conf.apiUrl, data)
+                this.getRequestPromise(
+                    "post",
+                    "http://haict.onthe.live:1985/rtc/v1/publish/",
+                    data
+                )
+                    .then((result) => {
+                        console.log("roomRepository onPublish 결과 : ", result);
+                        resolve(result);
+                    })
+                    .catch((error) => {
+                        console.log("error", error);
+                        reject(error);
+                    });
+            });
+            
     }
 }

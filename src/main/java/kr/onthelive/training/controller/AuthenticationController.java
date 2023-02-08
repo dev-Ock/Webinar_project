@@ -72,7 +72,7 @@ public class AuthenticationController {
     public ResponseEntity<BaseSimpleUser> check(HttpServletRequest httpRequest) {
         log.trace("controller signcheck start...{}",httpRequest);
         final BaseSimpleUser user = authenticationService.getUser();
-
+        log.trace("controller signcheck user...{}",user);
         if(user == null) {
             throw new BaseException(ErrorCode.CanNotFoundUser, "Can not found a user");
         }

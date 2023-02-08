@@ -62,7 +62,7 @@ public class AuthenticationService {
     //
     public BaseSimpleUser getUser() {
         final Authentication authentication = SecurityContextHolder.getContext().getAuthentication(); // spring에서 제공
-
+        log.trace("AuthenticationService getUser authentication... {}", authentication.getDetails());
         return (BaseSimpleUser) authentication.getDetails();
     }
 
