@@ -1,5 +1,5 @@
 import {Repository, RoomMakeID, RoomMakePublisherId, RoomMakeStreamUrl} from "./Repository";
-
+import axios from "axios";
 
 export default class RoomRepository extends Repository {
     constructor(props) {
@@ -58,5 +58,25 @@ export default class RoomRepository extends Repository {
                     reject(error);
                 });
         });
+    }
+    
+    serverPublishConnection = (data) => {
+            console.log("roomRepository onPublish 접근");
+            return new Promise((resolve, reject) => {
+                this.postSRSserverRequestPromise(
+                    "post",
+                    "http://haict.onthe.live:1985/rtc/v1/publish/",
+                    data
+                )
+                    .then((result) => {
+                        console.log("roomRepository onPublish 결과 : ", result);
+                        resolve(result);
+                    })
+                    .catch((error) => {
+                        console.log("error", error);
+                        reject(error);
+                    });
+            });
+            
     }
 }

@@ -33,6 +33,30 @@ export class Repository {
         });
     }
     
+    postSRSserverRequestPromise = (method, url, data, contentType) => {
+ 
+        const headers = {"Content-Type": "application/json" }
+        return new Promise((resolve, reject) => {
+            const config = {
+                method: method,
+                url: url,
+                headers: headers,
+                data: data,
+            };
+            
+            console.log("url : ", config.url)
+            // console.log(LogPrefix, 'HTTP requesting :', config);
+            axios.request(config)
+                .then(response => {
+                    resolve(response.data);
+                })
+                .catch(error => {
+                    reject(error);
+                });
+        });
+    }
+    
+    
     getAuthTokenFromStorage = () => {
         return sessionStorage.getItem(AuthTokenStorageKey);
     }
