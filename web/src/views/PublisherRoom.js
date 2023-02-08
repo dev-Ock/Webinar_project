@@ -22,17 +22,19 @@ class PublisherRoom extends React.Component {
         super(props);
     }
     
-    // SRS server 연결
-    async onServerPublishConnection(){
+    // SRS server-Publisher 연결
+    async onServerPublisherConnection(){
         const streamUrl = sessionStorage.getItem(Repository.RoomMakeStreamUrl)
-        await this.props.roomStore.serverPublishConnection(streamUrl);
+        await this.props.roomStore.serverPublisherConnection(streamUrl);
     }
     
     
     render() {
         return (
             <div>
-                <h1 style={{ color: "green", marginLeft: "20px" }}>여기는 publisher</h1>
+                <div style={{textAlign:'center', marginTop:'100px' }}>
+                    <h1 style={{ color: "red" }}>여기는 publisher</h1>
+                </div>
                 <div className="call">
                     <div className="myStream">
                         {/* <label>my video</label> */}
@@ -48,7 +50,7 @@ class PublisherRoom extends React.Component {
                         <div style={{ textAlign: "center" }}>
                             <button
                                 style={{ fontSize: "25px" }}
-                                onClick={this.onServerPublishConnection.bind(this)}>
+                                onClick={this.onServerPublisherConnection.bind(this)}>
                                     방송 시작
                             </button>
                             <br />
