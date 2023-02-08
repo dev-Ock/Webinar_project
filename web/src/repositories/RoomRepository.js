@@ -60,8 +60,7 @@ export default class RoomRepository extends Repository {
         });
     }
     
-    serverPublishConnection = (data) => {
-            console.log("roomRepository onPublish 접근");
+    onSRSserverPublisherConnection = (data) => {
             return new Promise((resolve, reject) => {
                 this.postSRSserverRequestPromise(
                     "post",
@@ -69,7 +68,7 @@ export default class RoomRepository extends Repository {
                     data
                 )
                     .then((result) => {
-                        console.log("roomRepository onPublish 결과 : ", result);
+                        console.log("roomRepository onSRSserverPublisherConnection 결과 : ", result);
                         resolve(result);
                     })
                     .catch((error) => {
@@ -78,5 +77,25 @@ export default class RoomRepository extends Repository {
                     });
             });
             
+    }
+    
+    onSRSserverPlayerConnection = (data) => {
+        return new Promise((resolve, reject) => {
+            this.postSRSserverRequestPromise(
+                    "post",
+                    "http://haict.onthe.live:1985/rtc/v1/play/",
+                    data
+                )
+                .then((result) => {
+                    console.log("roomRepository onSRSserverPlayerConnection 결과 : ", result);
+                    resolve(result);
+                })
+                .catch((error) => {
+                    console.log("error", error);
+                    reject(error);
+                });
+        });
+    
+    
     }
 }

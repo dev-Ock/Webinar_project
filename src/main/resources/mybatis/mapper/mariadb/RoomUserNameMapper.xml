@@ -60,7 +60,7 @@
 
     <!-- select -->
     <!--rooms 목록과 users 의 name 컬럼 조인문-->
-    <select id="selectRoomDetailList" parameterType="String" resultMap="BaseRoomUserNameResultMap">
+    <select id="selectRoomDetailList" parameterType="String" resultMap="BaseRoomUserNameResultMap" >
         SELECT rooms.id,
                rooms.title,
                rooms.publisher_id as publisherId,
@@ -77,6 +77,7 @@
         FROM rooms
                  JOIN users
                       ON rooms.publisher_id = users.id
+        ORDER BY rooms.id DESC;
     </select>
 
 

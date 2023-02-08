@@ -65,7 +65,6 @@ class App extends React.Component {
     render() {
         const {classes} = this.props;
         const {loginState, loginUser, signupUser, doSignup} = this.props.authStore;
-        
         return (
             <>
             {

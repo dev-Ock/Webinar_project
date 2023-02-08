@@ -59,13 +59,21 @@ class RoomList extends React.Component {
 
     componentDidMount() {
         console.log("Room list mount")
-        setInterval(() => {
-            this.setState({interval: false})
-        }, 50)
-        this.props.roomStore.selectRoomList();
-
+        // setInterval(() => {
+        //     this.setState({interval: false})
+        // }, 50)
+        const roomList = this.props.roomStore.selectRoomList();
+        // roomList.then(list => console.log('roomList2',list[0].streamUrl))
     }
-
+    
+    enterRoom = async (e,streamUrl) => {
+        e.preventDefault();
+        console.log(streamUrl)
+        await this.props.roomStore.beforePlayerRoom(streamUrl)
+        await window.location.replace('/player-room')
+    }
+    
+    
     // handleSubmitRoomList() {
     //     this.props.roomStore.selectRoomList();
     // }
@@ -74,12 +82,11 @@ class RoomList extends React.Component {
 
         const {classes} = this.props
         const {roomList,roomListLength} = this.props.roomStore;
+        // console.log('roomList', roomList)
 // console.log('룸리스트확인', roomList)s
 
 
         return (
-
-
                         <Container component="main" className={classes.mainContainer}>
                         <div className={classes.appBarSpacer}/>
                         <Toolbar className={classes.toolbar}>
@@ -109,7 +116,7 @@ class RoomList extends React.Component {
                                             </CardContent>
                                         </CardActionArea>
                                         <CardActions>
-                                            <Button size="small" color="primary">
+                                            <Button size="small" color="primary" onClick={(e)=>{this.enterRoom(e,room.streamUrl)}}>
                                                 입장하기
                                             </Button>
                                         </CardActions>
