@@ -15,9 +15,9 @@ export default class RoomRepository extends Repository {
                 .then(data => {
                     console.log('DB에 넣고 다시 받은 room data : ',data)
                     
-                    this.setRoomdataToStorage(this.RoomMakeID,data.id)
-                    this.setRoomdataToStorage(this.RoomMakePublisherId,data.publisherId)
-                    this.setRoomdataToStorage(this.RoomMakeStreamUrl,data.streamUrl)
+                    this.setRoomdataToStorage(RoomMakeID,data.id)
+                    this.setRoomdataToStorage(RoomMakePublisherId,data.publisherId)
+                    this.setRoomdataToStorage(RoomMakeStreamUrl,data.streamUrl)
                     
                     // this.setRoomStreamURlToStorage(data.streamUrl);
                     // this.roomMakeState = RoomMakeState.Success; // 효과없음
@@ -28,9 +28,9 @@ export default class RoomRepository extends Repository {
                 })
                 .catch(error => {
                     console.log('RoomRepository makeRoom error',error)
-                    this.removeRoomdataFromStorage(this.RoomMakeID)
-                    this.removeRoomdataFromStorage(this.RoomMakePublisherId)
-                    this.removeRoomdataFromStorage(this.RoomMakeStreamUrl)
+                    this.removeRoomdataFromStorage(RoomMakeID)
+                    this.removeRoomdataFromStorage(RoomMakePublisherId)
+                    this.removeRoomdataFromStorage(RoomMakeStreamUrl)
                     
                     // this.removeRoomStreamURlToStorage();
                     reject(error);

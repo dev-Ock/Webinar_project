@@ -50,9 +50,9 @@ export class Repository {
     //     sessionStorage.getItem(RoomMakeStreamUrl);
     // }
     
-    // setRoomStreamURlToStorage = (streamUrl) => {
-    //     sessionStorage.setItem(RoomMakeStreamUrl, streamUrl);
-    // }
+    setRoomStreamURlToStorage = (streamUrl) => {
+        sessionStorage.setItem(RoomMakeStreamUrl, streamUrl);
+    }
     
     setRoomdataToStorage = (key, value) => {
         sessionStorage.setItem(key, value);

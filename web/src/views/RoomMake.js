@@ -150,7 +150,7 @@ class RoomMake extends React.Component {
                 let enterRoomMessage = window.confirm("바로 입장하시겠습니까? 취소를 누르면 세미나 목록으로 이동합니다.")
                 if(enterRoomMessage){
                     return window.location.replace('/publisher-room')
-                
+
                 }else{
                     this.props.roomStore.removeRoomData();
                     return window.location.replace('/room-history')
@@ -158,6 +158,7 @@ class RoomMake extends React.Component {
             })
             .catch((e) => {
                 console.log("error", e);
+                this.props.roomStore.removeRoomData();
                 alert( "세미나 만들기에 실패하였습니다. 잠시후 다시 시도 해주세요! " )
                 return window.location.replace('/home')
             })

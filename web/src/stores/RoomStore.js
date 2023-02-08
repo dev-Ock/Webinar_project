@@ -90,17 +90,7 @@ export default class RoomStore {
     }
 
 
-    // room 만든 후, 바로 안 들어갈 때 sessionStorage의 room data 삭제
-    removeRoomData (){
-        try{
-            sessionStorage.removeItem(Repository.RoomMakeID )
-            sessionStorage.removeItem(Repository.RoomMakePublisherId )
-            sessionStorage.removeItem(Repository.RoomMakeStreamUrl )
 
-        }catch(e){
-            console.log(e)
-        }
-    }
     
     
     // 세미나 만들기 정보 서버로 보내기
@@ -123,11 +113,12 @@ export default class RoomStore {
             this.roomMake.streamUrl = randomStreamUrl;
 
             const param = this.roomMake
-            yield this.roomRepository.makeRoom(param)
+            const room = yield this.roomRepository.makeRoom(param)
             
             this.roomMake = Object.assign({}, EmptyRoom)
-            if(sessionStorage.getItem(Repository.RoomMakeID) & sessionStorage.getItem(Repository.RoomMakePublisherId) & sessionStorage.getItem(Repository.RoomMakeStreamUrl)){
+            if(sessionStorage.getItem(Repository.RoomMakeID) && sessionStorage.getItem(Repository.RoomMakePublisherId) && sessionStorage.getItem(Repository.RoomMakeStreamUrl)){
                 this.roomMakeState = RoomMakeState.Success;
+                return room;
             }else{
                 throw new Error('sessionStorage RoomData items error')
             }
@@ -135,23 +126,22 @@ export default class RoomStore {
             console.log('RoomStore doMakeRoom error',e.message)
             this.roomMakeState = RoomMakeState.Failed;
             this.roomMake = Object.assign({}, EmptyRoom)
+            this.removeRoomData();
         }
-        
-        // finally {
-            // // 위 try 문에서 yield가 안 끝나도 finally는 탐
-            // const checkRoomStreamUrl = sessionStorage.getItem(RoomMakeStreamUrl);
-            // // console.log('doMakeRoom() finally 진입 checkRoomStreamUrl: ', checkRoomStreamUrl)
-            //
-            // // sessionStorage에 streamUrl 저장 확인 = makeRoom Promise가 then에서 저장함 = 백 성공적으로 다녀왔는지
-            // if ( checkRoomStreamUrl.length > 0 ){
-            //     this.roomMakeState = RoomMakeState.Success;
-            //     // console.log("doMakeRoom() finally 진음입 - 백 진입 후 roomMakeState: ", this.roomMakeState)
-            // } else {
-            //     this.roomMakeState = RoomMakeState.Failed;
-            //     // console.log("doMakeRoom() finally 진입 - 백 진입 전 roomMakeState: ", this.roomMakeState)
-            // }
-        // }
     }
+    
+    // room 만든 후, 바로 안 들어갈 때 sessionStorage의 room data 삭제
+    removeRoomData (){
+        try{
+            sessionStorage.removeItem(Repository.RoomMakeID )
+            sessionStorage.removeItem(Repository.RoomMakePublisherId )
+            sessionStorage.removeItem(Repository.RoomMakeStreamUrl )
+            
+        }catch(e){
+            console.log(e)
+        }
+    }
+    
 //일반 룸 테이블 데이터 조회
     * selectJustRoomList() {
         console.log("selectroom확인")
