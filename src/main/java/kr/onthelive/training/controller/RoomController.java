@@ -43,8 +43,7 @@ public class RoomController {
     public BaseRoom  createRoom(HttpServletRequest httpRequest,
                                                @RequestBody BaseRoom room) {
         log.trace("createRoom start... {}", room);
-        BaseRoom roomData = roomService.write(room);
-
+        BaseRoom roomData = roomService.createRoom(room);
         return roomData;
     }
 
