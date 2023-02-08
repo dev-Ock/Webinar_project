@@ -67,6 +67,23 @@
         WHERE id = #{value}
     </select>
 
+    <select id="selectRoomByStreamUrl" parameterType="String" resultMap="BaseRoomResultMap">
+        SELECT id,
+               title,
+               publisher_id,
+               description,
+               password,
+               maximum,
+               state,
+               stream_url,
+               start_time,
+               link,
+               created_datetime,
+               updated_datetime
+        FROM rooms
+        WHERE stream_url = #{value}
+    </select>
+
     <insert id="insertRoom" parameterType="BaseRoom" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO rooms (
             title,

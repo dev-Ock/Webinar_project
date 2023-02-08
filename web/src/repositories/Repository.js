@@ -32,7 +32,7 @@ export class Repository {
                 });
         });
     }
-
+    
     getAuthTokenFromStorage = () => {
         return sessionStorage.getItem(AuthTokenStorageKey);
     }

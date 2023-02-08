@@ -95,22 +95,11 @@ export default class RoomStore {
     
     // 세미나 만들기 정보 서버로 보내기
     * doMakeRoom (userId) {
-        // streamUrl 생성 함수
-        function random (length){
-            let str = '';
-            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-            for (let i = 0; i < length; i++) {
-                str += chars.charAt(Math.floor(Math.random() * chars.length));
-            }
-            return str;
-        }
-        const randomStreamUrl = random(8)
-        try {
+         try {
             this.roomMakeState = RoomMakeState.Pending; // room을 만들고 있는 상태
 
             this.roomMake.publisherId = userId;
             this.roomMake.state = RoomStateType.Wait; // room의 state
-            this.roomMake.streamUrl = randomStreamUrl;
 
             const param = this.roomMake
             const room = yield this.roomRepository.makeRoom(param)

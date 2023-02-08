@@ -38,10 +38,38 @@ public class RoomService {
         return BaseRoomUserName;
     }
 
+    public String createStreamUrl(){
+        // streamUrl 만들기
+        StringBuilder str = new StringBuilder();
+        String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        for(int i=0; i<8; i++){
+            str.append( chars.charAt((int) Math.floor(Math.random() * chars.length())));
+        }
+        String streamUrl = str.toString();
+        return streamUrl;
+    }
+
+
     // 새로운 룸 추가하고 해당 룸 정보 return
-    public BaseRoom write(BaseRoom baseInfo) {
+    public BaseRoom createRoom(BaseRoom baseInfo) {
         log.debug("BaseRoomService baseRoom : {}", baseInfo);
 
+        // streamUrl 생성
+        String streamUrl = this.createStreamUrl();
+        // streamUrl 중복 검사
+        BaseRoom result = roomRepository.selectRoomByStreamUrl(streamUrl);
+//        BaseRoom result = roomRepository.selectRoomByStreamUrl("nk2l9ZK5");
+
+        log.trace("RoomService write streamUrl duplication test result ...{}, {}", streamUrl, result);
+
+        while(result != null){
+            streamUrl = this.createStreamUrl();
+             result = roomRepository.selectRoomByStreamUrl(streamUrl);
+        }
+        log.trace("RoomService write streamUrl duplication test result3 ...{}, {}", streamUrl, result);
+
+
+        // 새로 추가할 room 데이터 준비
         BaseRoom baseRoom = new BaseRoom();
 
         baseRoom.setTitle(baseInfo.getTitle());
@@ -50,12 +78,14 @@ public class RoomService {
         baseRoom.setPassword(baseInfo.getPassword());
         baseRoom.setMaximum(baseInfo.getMaximum());
         baseRoom.setState(baseInfo.getState());
-        baseRoom.setStreamUrl(baseInfo.getStreamUrl());
+        baseRoom.setStreamUrl(streamUrl);
         baseRoom.setStartTime(baseInfo.getStartTime());
         baseRoom.setLink(baseInfo.getLink());
 
+        // insert
         roomRepository.insertRoom(baseRoom);
 
+        // 새로 추가한 room의 id로 select
         String id = baseRoom.getId();
         BaseRoom roomData =  roomRepository.selectRoomById(id);
         log.trace("RoomService roomData... {}", roomData);
