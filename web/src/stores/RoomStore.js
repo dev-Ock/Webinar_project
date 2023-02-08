@@ -1,7 +1,6 @@
 import {makeAutoObservable, toJS} from "mobx";
 import {createContext, useState} from 'react';
 import * as Repository from "../repositories/Repository";
-import axios from "axios";
 
 export const LocalStorageTokenKey = '_BASKITOP_AUTHENTICATION_TOKEN_';
 
@@ -135,9 +134,9 @@ export default class RoomStore {
     
     
     // SRS server-publisher 연결
-    async serverPublishConnection() {
-        // const streamUrl = streamUrl
-        const streamUrl = "3abd9f34";
+    async serverPublishConnection(url) {
+        const streamUrl = url
+        // const streamUrl = "3abd9f34";
         const constraints = {
             audio: true,
             video: {
@@ -179,6 +178,7 @@ export default class RoomStore {
                 streamurl: `webrtc://haict.onthe.live/live/${streamUrl}`,
                 sdp: offer.sdp,
             };
+            console.log('data.streamurl',data.streamurl)
             
             const onPublish = (data) => {
                 return this.connection(data);
@@ -229,7 +229,7 @@ export default class RoomStore {
             this.roomList = roomList
             this.roomListLength = toJS(roomList).length
             console.log('param확인', toJS(roomList).length)
-            
+            return this.roomList
         } catch (e) {
             console.log('세미나 목록 조회 error', e)
         }

@@ -10,11 +10,9 @@ export const RoomMakeStreamUrl = '__OTL_RoomMake_StreamUrl__';
 // const LogPrefix = '[Repository]';
 export class Repository {
     getRequestPromise = (method, url, data, contentType) => {
-        // const token = sessionStorage.getItem(AuthTokenStorageKey);
-        // const headers = Boolean(token) ? {'X-Auth-Token': token, 'Content-Type': (contentType ? contentType : 'application/json')} : {};
-        //
-        const headers = {"Content-Type": "application/json"}
-        console.log('headers',headers)
+        const token = sessionStorage.getItem(AuthTokenStorageKey);
+        const headers = Boolean(token) ? {'X-Auth-Token': token, 'Content-Type': (contentType ? contentType : 'application/json')} : {};
+
         return new Promise((resolve, reject) => {
             const config = {
                 method: method,
@@ -35,10 +33,9 @@ export class Repository {
         });
     }
     
-    postRequestPromise = (method, url, data, contentType) => {
-        const token = sessionStorage.getItem(AuthTokenStorageKey);
-        const headers = Boolean(token) ? {'X-Auth-Token': token, 'Content-Type': (contentType ? contentType : 'application/json')} : {};
-        
+    postSRSserverRequestPromise = (method, url, data, contentType) => {
+ 
+        const headers = {"Content-Type": "application/json" }
         return new Promise((resolve, reject) => {
             const config = {
                 method: method,

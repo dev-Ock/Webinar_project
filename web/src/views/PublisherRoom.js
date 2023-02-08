@@ -3,7 +3,7 @@ import {withSnackbar} from "notistack";
 import {withRouter} from "react-router-dom";
 import {withStyles} from "@material-ui/core/styles";
 import {inject, observer} from "mobx-react";
-import axios from "axios";
+import * as Repository from "../repositories/Repository";
 
 const styles = {
     // roomMakeImg: {
@@ -24,7 +24,8 @@ class PublisherRoom extends React.Component {
     
     // SRS server 연결
     async onServerPublishConnection(){
-        await this.props.roomStore.serverPublishConnection();
+        const streamUrl = sessionStorage.getItem(Repository.RoomMakeStreamUrl)
+        await this.props.roomStore.serverPublishConnection(streamUrl);
     }
     
     
