@@ -1,6 +1,7 @@
 import {makeAutoObservable, toJS} from "mobx";
 import {createContext, useState} from 'react';
 import * as Repository from "../repositories/Repository";
+import {RoomViewStreamUrl} from "../repositories/Repository";
 
 export const LocalStorageTokenKey = '_BASKITOP_AUTHENTICATION_TOKEN_';
 
@@ -91,8 +92,6 @@ export default class RoomStore {
         return this.onRoom;
     }
     
-    
-    
     // 세미나 만들기 정보 서버로 보내기
     * doMakeRoom(userId) {
         try {
@@ -131,10 +130,8 @@ export default class RoomStore {
         }
     }
     
-    
-    
     // SRS server-publisher 연결
-    async serverPublishConnection(url) {
+    async serverPublisherConnection(url) {
         const streamUrl = url
         // const streamUrl = "3abd9f34";
         const constraints = {
@@ -181,7 +178,8 @@ export default class RoomStore {
             console.log('data.streamurl',data.streamurl)
             
             const onPublish = (data) => {
-                return this.connection(data);
+                console.log("roomRepository onPublish 진입");
+                return this.setSRSserverPublisherConnection(data);
             };
             
             onPublish(data).then(async (session) => {
@@ -203,8 +201,65 @@ export default class RoomStore {
     }
     
     // SRS server-publisher axios
-    * connection(data){
-        const result = yield this.roomRepository.serverPublishConnection(data);
+    * setSRSserverPublisherConnection(data){
+        const result = yield this.roomRepository.onSRSserverPublisherConnection(data);
+        return result;
+    }
+    
+    // SRS server-player 연결
+    async serverPlayerConnection(url){
+        const streamUrl = url
+        // const streamUrl = "3abd9f34";
+    
+        const play = async (streamUrl) => {
+            pc.addTransceiver("audio", { direction: "recvonly" });
+            pc.addTransceiver("video", { direction: "recvonly" });
+        
+            let offer = await pc.createOffer();
+            await pc.setLocalDescription(offer);
+    
+            // SRS server에 POST
+            let data = {
+                api: "http://haict.onthe.live:1985/rtc/v1/play/",
+                // streamurl: "webrtc://haict.onthe.live/live/3abd9f34",
+                streamurl: `webrtc://haict.onthe.live/live/${streamUrl}`,
+                sdp: offer.sdp,
+            };
+            console.log('data.streamurl',data.streamurl)
+        
+            const onPlay = (data) => {
+                console.log("roomRepository onPlay 진입");
+                return this.setSRSserverPlayerConnection(data);
+            };
+            
+            onPlay(data).then(async (session) => {
+                console.log("session", session);
+                console.log("Publisher session.sdp", session.sdp);
+                await pc.setRemoteDescription(
+                    new RTCSessionDescription({ type: "answer", sdp: session.sdp })
+                );
+            });
+        };
+    
+        const ontrack = (event) => {
+            stream.addTrack(event.track);
+            document.getElementById("myVideoTag").srcObject = stream;
+        };
+    
+        const pc = new RTCPeerConnection();
+        const stream = new MediaStream();
+    
+        pc.ontrack = function (event) {
+            if (ontrack) {
+                ontrack(event);
+            }
+        };
+        await play(streamUrl);
+    }
+    
+    // SRS server-player axios
+    * setSRSserverPlayerConnection(data){
+        const result = yield this.roomRepository.onSRSserverPlayerConnection(data);
         return result;
     }
     
@@ -227,6 +282,7 @@ export default class RoomStore {
         try {
             const roomList = yield this.roomRepository.getRoomUserNameList()
             this.roomList = roomList
+            console.log('RoomStore selectRoomList roomList', roomList)
             this.roomListLength = toJS(roomList).length
             console.log('param확인', toJS(roomList).length)
             return this.roomList
@@ -235,6 +291,13 @@ export default class RoomStore {
         }
         
     };
+    
+    // room list에서 방을 선택했을 때
+    beforePlayerRoom(streamUrl){
+        sessionStorage.setItem(Repository.RoomViewStreamUrl, streamUrl)
+    }
+ 
+
     
     
 }
