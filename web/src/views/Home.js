@@ -60,12 +60,12 @@ class Home extends React.Component {
                     <Grid item xs={8}>
                         <div style={{margin : "20px"}}>
                         <Typography variant="h1" component="div">
-                            모든 사용자를 위한 영상 통화 및 화상 회의
+                            모든 사용자를 위한 화상 세미나
                         </Typography>
                         <Typography variant="h5" gutterBottom style={{marginTop : "20px"}}>
-                            Onthelive는 기기 종류와 관계없이 모든 사용자에게 안전하고 품질이 우수한 화상 회의와 영상 통화 기능을 제공하는 서비스입니다
+                            Onthelive는 기기 종류와 관계없이 모든 사용자에게 안전하고 품질이 우수한 화상 세미나 기능을 제공하는 서비스입니다
                         </Typography>
-                        <Button variant="contained" size="large" component={Link} to="/room-make" style={{marginTop : "40px", width:"200px", height:"50px"}} startIcon={<AddIcon />}>방만들기</Button>
+                        <Button variant="contained" size="large" component={Link} to="/room-make" style={{marginTop : "40px", width:"200px", height:"50px"}} startIcon={<AddIcon />}>세미나 만들기</Button>
                         </div>
                         </Grid>
                     <Grid item xs={8}>

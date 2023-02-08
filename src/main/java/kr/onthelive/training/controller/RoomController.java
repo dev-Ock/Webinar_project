@@ -38,14 +38,14 @@ public class RoomController {
         return result;
     }
 
-    // 새로운 룸 추가
+    // 새로운 룸 추가하고 해당 룸 정보 return
     @PostMapping("/insert")
-    public ResponseEntity<BaseRoom> createRoom(HttpServletRequest httpRequest,
+    public BaseRoom  createRoom(HttpServletRequest httpRequest,
                                                @RequestBody BaseRoom room) {
         log.trace("createRoom start... {}", room);
-        roomService.write(room);
+        BaseRoom roomData = roomService.write(room);
 
-        return new ResponseEntity<>(room, HttpStatus.OK);
+        return roomData;
     }
 
 

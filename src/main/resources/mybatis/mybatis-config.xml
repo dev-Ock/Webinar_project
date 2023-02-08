@@ -15,12 +15,11 @@
         <typeAlias type="kr.onthelive.training.model.BaseSimpleRoom" alias="BaseSimpleRoom" />
         <typeAlias type="kr.onthelive.training.model.BaseRoomUser" alias="BaseRoomUser" />
         <typeAlias type="kr.onthelive.training.model.BaseRoomUserHistory" alias="BaseRoomUserHistory" />
+        <typeAlias type="kr.onthelive.training.model.BaseRoomHistory" alias="BaseRoomHistory" />
+        <typeAlias type="kr.onthelive.training.model.BaseRoomUserName" alias="BaseRoomUserName" />
         <typeAlias type="kr.onthelive.training.model.support.BaseUserType" alias="BaseUserType" />
         <typeAlias type="kr.onthelive.training.model.support.BaseRoomState" alias="BaseRoomState" />
         <typeAlias type="kr.onthelive.training.model.support.BaseRoomUserState" alias="BaseRoomUserState" />
-        <typeAlias type="kr.onthelive.training.model.BaseRoomHistory" alias="BaseRoomHistory" />
-        <typeAlias type="kr.onthelive.training.model.support.BaseRoomState" alias="BaseRoomState" />
-        <typeAlias type="kr.onthelive.training.model.BaseRoomUserName" alias="BaseRoomUserName" />
     </typeAliases>
 
     <typeHandlers>

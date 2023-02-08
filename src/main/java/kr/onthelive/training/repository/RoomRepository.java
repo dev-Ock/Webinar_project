@@ -24,9 +24,14 @@ public class RoomRepository {
     }
 
 
-    // 새로운 룸 추가
-    public int insertRoom(BaseRoom room) {
-        return mapper.insertRoom(room);
+    // 새로운 룸 추가하고 해당 룸 정보 return
+    public void insertRoom(BaseRoom room) {
+        mapper.insertRoom(room);
+    }
+
+    public BaseRoom selectRoomById(String id){
+        BaseRoom roomData = mapper.selectRoomById(id);
+        return roomData;
     }
 }
 

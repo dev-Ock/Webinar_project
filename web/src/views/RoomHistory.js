@@ -61,7 +61,7 @@ class RoomMake extends React.Component {
 
 
 
-    // 방 만들기 폼 입력값 받는 함수
+    // 세미나 만들기 폼 입력값 받는 함수
 
 
     render() {
@@ -73,15 +73,15 @@ class RoomMake extends React.Component {
                     <img src={RoomHistory}  className={classes.roomMakeImg} />
                 </div>
 
-                <div> 현재 내가 만든 방 목록 </div>
+                <div> 현재 내가 만든 세미나 목록 </div>
                 <div> ====================================== </div>
-                <div> 내가 만들었거나 참여했던 방 목록 </div>
+                <div> 내가 만들었거나 참여했던 세미나 목록 </div>
 
                 <TextField
                     id="title"
                     name="title"
                     type="text"
-                    label="방제목"
+                    label="세미나 제목"
                     margin="normal"
                     onChange={this.handleChangeTitle}
                     inputProps={{

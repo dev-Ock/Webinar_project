@@ -1,7 +1,11 @@
 import axios from "axios";
 
 export const AuthTokenStorageKey = '__OTL_Authentication_Token__';
+
+export const RoomMakeID= '__OTL_RoomMake_Id__';
+export const RoomMakePublisherId = '__OTL_RoomMake_PublisherId__';
 export const RoomMakeStreamUrl = '__OTL_RoomMake_StreamUrl__';
+
 
 // const LogPrefix = '[Repository]';
 export class Repository {
@@ -45,9 +49,19 @@ export class Repository {
     // getRoomStreamURlToStorage = () => {
     //     sessionStorage.getItem(RoomMakeStreamUrl);
     // }
-    setRoomStreamURlToStorage = (streamUrl) => {
-        sessionStorage.setItem(RoomMakeStreamUrl, streamUrl);
+    
+    // setRoomStreamURlToStorage = (streamUrl) => {
+    //     sessionStorage.setItem(RoomMakeStreamUrl, streamUrl);
+    // }
+    
+    setRoomdataToStorage = (key, value) => {
+        sessionStorage.setItem(key, value);
     }
+    
+    removeRoomdataFromStorage = (key) => {
+        sessionStorage.removeItem(key);
+    }
+    
     removeRoomStreamURlToStorage = () => {
         sessionStorage.removeItem(RoomMakeStreamUrl);
     }

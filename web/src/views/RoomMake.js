@@ -17,6 +17,7 @@ import {withRouter} from "react-router-dom";
 import ConferenceRoom from '../assets/images/conferenceRoom.png'
 import {RoomMakeStreamUrl} from "../repositories/Repository";
 import {RoomMakeState} from "../stores/RoomStore";
+import PublisherRoom from "./PublisherRoom";
 
 const styles = {
     roomMakeImg: {
@@ -63,7 +64,7 @@ class RoomMake extends React.Component {
 
 
 
-    // 방 만들기 폼 입력값 받는 함수
+    // 세미나 만들기 폼 입력값 받는 함수
     handleChangeTitle = (e) => {
 
         const inputTitle = e.target.value.trim().length;
@@ -75,7 +76,7 @@ class RoomMake extends React.Component {
             })
         } else {
             this.setState({
-                titleMessage : "방 제목은 3자이상 120자 이하로 작성해주세요."
+                titleMessage : "세미나 제목은 3자이상 120자 이하로 작성해주세요."
             })
         }
     };
@@ -119,15 +120,14 @@ class RoomMake extends React.Component {
         }
     };
 
-    // '방만들기' 클릭 시 폼 내용 검사 후 등록
+    // '세미나 만들기' 클릭 시 폼 내용 검사 후 등록
     handleSubmitRoomForm = (e) => {
         e.preventDefault()
         const nowPublisherId = this.props.authStore.loginUser.id
         const inputCheck = ((id) => { return document.getElementById(id).value.trim().length});
-
-        // 필수항목 체크 (방제목, 최대인원수, 방설정)
+        // 필수항목 체크 (세미나 제목, 최대인원수, 세미나 설정)
         if(inputCheck("title")<3){
-            return alert("방 제목은 3자이상 120자 이하로 작성해주세요!")
+            return alert("세미나 제목은 3자이상 120자 이하로 작성해주세요!")
         }else if(!inputCheck("maximum")){
             return alert("최대 참여인원 수를 입력해 주세요! (숫자만 입력)")
         }else if(this.state.private){
@@ -141,32 +141,73 @@ class RoomMake extends React.Component {
         if(nowPublisherId <= 0){
             return alert('잘못된 접근입니다. 새로고침 후 다시시도 해 주세요.')
         }
+    
         // room 정보 백으로 보냄
-        this.props.roomStore.doMakeRoom(this.props.authStore.loginUser.id);
+        const room = this.props.roomStore.doMakeRoom(this.props.authStore.loginUser.id);
+        room
+            .then((room) => {
+                console.log("result", room)
+                let enterRoomMessage = window.confirm("바로 입장하시겠습니까? 취소를 누르면 세미나 목록으로 이동합니다.")
+                if(enterRoomMessage){
+                    return window.location.replace('/publisher-room')
+                
+                }else{
+                    this.props.roomStore.removeRoomData();
+                    return window.location.replace('/room-history')
+                }
+            })
+            .catch((e) => {
+                console.log("error", e);
+                alert( "세미나 만들기에 실패하였습니다. 잠시후 다시 시도 해주세요! " )
+                return window.location.replace('/home')
+            })
+        
+        // // room 정보 백으로 보냄
+        // const result = this.props.roomStore.doMakeRoom(this.props.authStore.loginUser.id);
+        // console.log("result", result)
+        // // 이 if 문은 doMakeRoom 함수의 yield에서 지연 되는 시간동안 두번 돌게 됨. else if문은 그사이에 시간 버는 용
+        // if( this.props.roomStore.roomMakeState == "Success" ){
+        //     // 이 내부는 동작 안함,,,
+        //     console.log("roomMakeState... Success")
+        //     const streamUrl = sessionStorage.getItem(RoomMakeStreamUrl)
+        //     return window.location.replace('/'+ {streamUrl} )
+        //
+        // } else if (this.props.roomStore.roomMakeState == "Pending") {
+        //     console.log("roomMakeState... Pending")
+        //     let enterRoomMessage = window.confirm("바로 입장하시겠습니까? 취소를 누르면 세미나 목록으로 이동합니다.")
+        //     const streamUrl = sessionStorage.getItem(RoomMakeStreamUrl)
+        //
+        //     // confirm에서 취소버튼을 누른 경우 세미나 목록으로 이동
+        //     if(streamUrl.length > 0){
+        //         enterRoomMessage ?  window.location.replace('/'+ streamUrl ) : window.location.replace('/room-history')
+        //     }
+        // } else {
+        //     alert( "세미나 만들기에 실패하였습니다. 잠시후 다시 시도 해주세요! " )
+        //     return window.location.replace('/home')
+        // }
 
         // 이 if 문은 doMakeRoom 함수의 yield에서 지연 되는 시간동안 두번 돌게 됨. else if문은 그사이에 시간 버는 용
-        if( this.props.roomStore.roomMakeState == "Success" ){
-            // 이 내부는 동작 안함,,,
-            console.log("RoomMake-Success 진입")
-            const streamUrl = sessionStorage.getItem(RoomMakeStreamUrl)
-            return window.location.replace('/'+ {streamUrl} )
-
-        } else if (this.props.roomStore.roomMakeState == "Pending") {
-
-            let enterRoomMessage = window.confirm("바로 입장하시겠습니까? 취소를 누르면 반든 방 목록으로 이동합니다.")
-            const streamUrl = sessionStorage.getItem(RoomMakeStreamUrl)
-
-            // confirm에서 취소버튼을 누른 경우 방목록으로 이동
-            if(streamUrl.length > 0){
-                enterRoomMessage ?  window.location.replace('/'+ streamUrl ) : window.location.replace('/room-history')
-            }
-        } else {
-            alert( "방 만들기에 실패하였습니다. 잠시후 다시 시도 해주세요! " )
-            return window.location.replace('/home')
-        }
+        // if( this.props.roomStore.roomMakeState == "Success" ){
+        //     // 이 내부는 동작 안함,,,
+        //     console.log("roomMakeState... Success")
+        //     const streamUrl = sessionStorage.getItem(RoomMakeStreamUrl)
+        //     return window.location.replace('/'+ {streamUrl} )
+        //
+        // } else if (this.props.roomStore.roomMakeState == "Pending") {
+        //     console.log("roomMakeState... Pending")
+        //     let enterRoomMessage = window.confirm("바로 입장하시겠습니까? 취소를 누르면 세미나 목록으로 이동합니다.")
+        //     const streamUrl = sessionStorage.getItem(RoomMakeStreamUrl)
+        //
+        //     // confirm에서 취소버튼을 누른 경우 세미나 목록으로 이동
+        //     if(streamUrl.length > 0){
+        //         enterRoomMessage ?  window.location.replace('/'+ streamUrl ) : window.location.replace('/room-history')
+        //     }
+        // } else {
+        //     alert( "세미나 만들기에 실패하였습니다. 잠시후 다시 시도 해주세요! " )
+        //     return window.location.replace('/home')
+        // }
+        
     };
-
-
 
     render() {
         const { classes } = this.props;
@@ -181,7 +222,7 @@ class RoomMake extends React.Component {
                     id="title"
                     name="title"
                     type="text"
-                    label="방제목"
+                    label="세미나 제목"
                     margin="normal"
                     onChange={this.handleChangeTitle}
                     inputProps={{
@@ -196,7 +237,7 @@ class RoomMake extends React.Component {
                     id="description"
                     name="description"
                     type="text"
-                    label="방설명(최대250자)"
+                    label="세미나 설명(최대250자)"
                     multiline
                     margin="normal"
                     onChange={this.handleChangeDescription}
@@ -231,7 +272,7 @@ class RoomMake extends React.Component {
                 <div>
                     <TextField
                         id="time"
-                        label="(선택) 회의 시작 시간"
+                        label="(선택) 세미나 시작 시간"
                         margin="normal"
                         type="time"
                         className={classes.textField}
@@ -258,15 +299,15 @@ class RoomMake extends React.Component {
                 </div>
 
                 <FormControl>
-                    <FormLabel id="passwordOption">방설정</FormLabel>
+                    <FormLabel id="passwordOption">세미나 설정</FormLabel>
                     <RadioGroup
                         row
                         aria-labelledby="demo-row-radio-buttons-group-label"
                         name="row-radio-buttons-group"
                         defaultValue="public"
                     >
-                        <FormControlLabel id="public" value="public" control={<Radio />} label="공개방"onClick={this.openInput.bind(this)}/>
-                        <FormControlLabel id="private" value="private" control={<Radio />} label="비공개방" onClick={this.privateInput.bind(this)}/>
+                        <FormControlLabel id="public" value="public" control={<Radio />} label="공개"onClick={this.openInput.bind(this)}/>
+                        <FormControlLabel id="private" value="private" control={<Radio />} label="비공개" onClick={this.privateInput.bind(this)}/>
                     </RadioGroup>
                 </FormControl>
 
@@ -294,7 +335,7 @@ class RoomMake extends React.Component {
                 <Stack direction="row" spacing={2} justifyContent="flex-start"
                        alignItems="flex-start" direction="row-reverse">
                     <Button variant="contained" color="primary" onClick={(e) => this.handleSubmitRoomForm(e)}>
-                        방만들기
+                        세미나 만들기
                     </Button>
                     <Button variant="contained" color="success" onClick={this.reload.bind(this)}>
                         초기화
