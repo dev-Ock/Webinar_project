@@ -93,5 +93,12 @@ public class RoomService {
 
     }
 
+    // room list에서 들어간 room 조회
+    public BaseRoom getRoomById(String roomId) {
+        BaseRoom room = roomRepository.selectRoomById(roomId);
+        return room;
+    }
+
+
 
 }
