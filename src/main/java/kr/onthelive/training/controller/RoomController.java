@@ -26,9 +26,10 @@ public class RoomController {
 
     // 룸 목록 전체 조회 (password 제외)
     @GetMapping("/read/list")
-    public List<BaseSimpleRoom> getRoomList(HttpServletRequest httpRequest){
+    public List<BaseRoom> getRoomList(HttpServletRequest httpRequest){
         log.trace("controller getRoomList start...");
-        List<BaseSimpleRoom> result = roomService.getRoomList();
+        List<BaseRoom> result = roomService.getRoomList();
+//        log.trace("controller getRoomList finished... {}", result);
         return result;
     }
     @GetMapping("/read/withnamelist")

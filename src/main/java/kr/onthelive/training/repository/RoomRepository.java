@@ -3,13 +3,17 @@ package kr.onthelive.training.repository;
 import kr.onthelive.training.model.BaseRoom;
 import kr.onthelive.training.model.BaseSimpleRoom;
 import kr.onthelive.training.repository.mapper.RoomMapper;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 
+
 @Repository
+@Slf4j
 public class RoomRepository {
     private RoomMapper mapper;
 
@@ -19,7 +23,7 @@ public class RoomRepository {
     }
 
     // 룸 목록 전체 조회
-    public List<BaseSimpleRoom> selectRoomList() {
+    public List<BaseRoom> selectRoomList() {
         return mapper.selectRoomList();
     }
 

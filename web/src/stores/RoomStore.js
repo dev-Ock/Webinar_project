@@ -1,8 +1,15 @@
 import {makeAutoObservable, toJS} from "mobx";
 import {createContext, useState} from 'react';
 import * as Repository from "../repositories/Repository";
-import {RoomViewStreamUrl} from "../repositories/Repository";
+import {
+    RoomMakePublisherId,
+    RoomMakeRoomID,
+    RoomMakeStreamUrl,
+    RoomViewStreamUrl,
+    UserId
+} from "../repositories/Repository";
 import picture from '../assets/images/moon.jpg'
+import RoomUserStore from './RoomUserStore'
 
 export const LocalStorageTokenKey = '_BASKITOP_AUTHENTICATION_TOKEN_';
 
@@ -15,6 +22,13 @@ export const RoomMakeState = { // 세미나 만들기 성공 여부
 }
 
 export const RoomStateType = { // 만든 세미나의 스트리밍 상태
+    Wait    : "Wait",
+    Progress: "Progress",
+    Complete: "Complete",
+    Fail    : "Fail"
+}
+
+export const RoomUserStateType = { // 만든 세미나의 스트리밍 상태
     Wait    : "Wait",
     Progress: "Progress",
     Complete: "Complete",
@@ -59,6 +73,7 @@ let option = '';
 
 export default class RoomStore {
     
+    
     roomList = Object.assign([], EmptyRoomList)
     roomMakeState = RoomMakeState.Empty;
     roomMake = Object.assign({}, EmptyRoom);
@@ -66,24 +81,25 @@ export default class RoomStore {
     roomListLength = toJS(this.roomList.length);
     
     
-    
     constructor(props) {
         this.roomRepository = props.roomRepository;
+        this.roomUserRepository = props.roomUserRepository
+        this.roomUserStore = new RoomUserStore(this)
         makeAutoObservable(this);
     }
     
     changeTitle = (title) => {
         this.roomMake.title = title;
     };
-
+    
     changeDescription = (description) => {
         this.roomMake.description = description;
     };
-
+    
     changeMaximum = (maximum) => {
         this.roomMake.maximum = maximum;
     };
-
+    
     changeStartTime = (startTime) => {
         this.roomMake.startTime = startTime;
     };
@@ -115,12 +131,8 @@ export default class RoomStore {
             const room = yield this.roomRepository.makeRoom(param)
             
             this.roomMake = Object.assign({}, EmptyRoom)
-            if (sessionStorage.getItem(Repository.RoomMakeRoomID) && sessionStorage.getItem(Repository.RoomMakePublisherId) && sessionStorage.getItem(Repository.RoomMakeStreamUrl)) {
-                this.roomMakeState = RoomMakeState.Success;
-                return room;
-            } else {
-                throw new Error('sessionStorage RoomData items error')
-            }
+            this.roomMakeState = RoomMakeState.Success;
+            return room;
         } catch (e) {
             console.log('RoomStore doMakeRoom error', e.message)
             this.roomMakeState = RoomMakeState.Failed;
@@ -128,7 +140,20 @@ export default class RoomStore {
             this.removeRoomData();
         }
     }
-
+    
+    // publisher-room 입장시, sessionStorage의 room data 세팅
+    setRoomData(room) {
+        try {
+            console.log('room',room);
+            sessionStorage.setItem(RoomMakeRoomID, room.id)
+            sessionStorage.setItem(RoomMakePublisherId, room.publisherId)
+            sessionStorage.setItem(RoomMakeStreamUrl, room.streamUrl)
+        } catch (e) {
+            console.log(e)
+        }
+    }
+    
+    
     // room 만든 후, 바로 안 들어갈 때 sessionStorage의 room data 삭제
     removeRoomData() {
         try {
@@ -148,14 +173,14 @@ export default class RoomStore {
         const constraints = {
             audio: true,
             video: {
-                width: { ideal: 320, max: 576 },
+                width: {ideal: 320, max: 576},
             },
             // video: { facingMode: "user" },
         };
         
         const publish = async (streamUrl) => {
-            pc.addTransceiver("audio", { direction: "sendonly" });
-            pc.addTransceiver("video", { direction: "sendonly" });
+            pc.addTransceiver("audio", {direction: "sendonly"});
+            pc.addTransceiver("video", {direction: "sendonly"});
             
             if (
                 !navigator.mediaDevices &&
@@ -172,7 +197,7 @@ export default class RoomStore {
             myVideo = document.getElementById("myVideoTag");
             // myVideo.srcObject= picture;
             myVideo.srcObject = stream;
-    
+            
             // 비디오 장치들이 cameras 옵션에 달리도록 세팅
             const devices = await navigator.mediaDevices.enumerateDevices();
             const cameras = devices.filter((device) => device.kind === "videoinput");
@@ -206,9 +231,9 @@ export default class RoomStore {
                 api: "http://haict.onthe.live:1985/rtc/v1/publish/",
                 // streamurl: "webrtc://haict.onthe.live/live/3abd9f34",
                 streamurl: `webrtc://haict.onthe.live/live/${streamUrl}`,
-                sdp: offer.sdp,
+                sdp      : offer.sdp,
             };
-            console.log('data.streamurl',data.streamurl)
+            console.log('data.streamurl', data.streamurl)
             
             const onPublish = (data) => {
                 console.log("roomRepository onPublish 진입");
@@ -219,7 +244,7 @@ export default class RoomStore {
                 console.log("session", session);
                 console.log("Publisher session.sdp", session.sdp);
                 await pc.setRemoteDescription(
-                    new RTCSessionDescription({ type: "answer", sdp: session.sdp })
+                    new RTCSessionDescription({type: "answer", sdp: session.sdp})
                 );
             });
         };
@@ -239,68 +264,68 @@ export default class RoomStore {
     }
     
     // SRS server-publisher axios
-    * setSRSserverPublisherConnection(data){
+    * setSRSserverPublisherConnection(data) {
         const result = yield this.roomRepository.onSRSserverPublisherConnection(data);
         return result;
     }
     
     // Video turn on/off
-    setVideoOnOff(){
+    setVideoOnOff() {
         console.log('RoomStore setVideoOnOff 진입')
         let videoBtn = document.getElementById("videoBtnTag");
         stream.getVideoTracks()
             .forEach((track) => (track.enabled = !track.enabled));
-        if(videoOn){
+        if (videoOn) {
             videoOn = false;
             videoBtn.innerText = '카메라 켜기';
             
-        }else{
+        } else {
             videoOn = true;
             videoBtn.innerText = '카메라 끄기'
         }
     }
     
     // Audio turn on/off
-    setAudioOnOff(){
+    setAudioOnOff() {
         console.log('RoomStore setAudioOnOff 진입')
         let muteBtn = document.getElementById("muteBtnTag");
         stream.getAudioTracks()
             .forEach((track) => (track.enabled = !track.enabled));
-        if(!muteOn){
+        if (!muteOn) {
             muteOn = true;
             muteBtn.innerText = '음소거 해제';
             
-        }else{
+        } else {
             muteOn = false;
             muteBtn.innerText = '음소거'
         }
     }
     
     // Change Video option
-    async setChangeVideoOption(){
+    async setChangeVideoOption() {
         console.log('RoomStore setChangeVideoOption 진입')
         console.log(camerasSelect.value)
         let deviceId = camerasSelect.value
         const initialConstrains = {
             audio: true,
             video: {
-                width: { ideal: 320, max: 576 },
+                width: {ideal: 320, max: 576},
             },
             // video: { facingMode: "user" },
         };
-    
+        
         const cameraConstraints = {
             audio: true,
-            video: { deviceId: { exact: deviceId } },
+            video: {deviceId: {exact: deviceId}},
         };
-    
+        
         stream = await navigator.mediaDevices.getUserMedia(
             deviceId ? cameraConstraints : initialConstrains
         );
         
         myVideo = document.getElementById("myVideoTag");
         myVideo.srcObject = stream;
-    
+        
         if (pc) {
             const videoTrack = stream.getVideoTracks()[0];
             const videoSender = pc
@@ -312,26 +337,26 @@ export default class RoomStore {
     
     
     // SRS server-player 연결
-    async serverPlayerConnection(url){
+    async serverPlayerConnection(url) {
         const streamUrl = url
         // const streamUrl = "3abd9f34";
-    
-        const play = async (streamUrl) => {
-            pc.addTransceiver("audio", { direction: "recvonly" });
-            pc.addTransceiver("video", { direction: "recvonly" });
         
+        const play = async (streamUrl) => {
+            pc.addTransceiver("audio", {direction: "recvonly"});
+            pc.addTransceiver("video", {direction: "recvonly"});
+            
             let offer = await pc.createOffer();
             await pc.setLocalDescription(offer);
-    
+            
             // SRS server에 POST
             let data = {
                 api: "http://haict.onthe.live:1985/rtc/v1/play/",
                 // streamurl: "webrtc://haict.onthe.live/live/3abd9f34",
                 streamurl: `webrtc://haict.onthe.live/live/${streamUrl}`,
-                sdp: offer.sdp,
+                sdp      : offer.sdp,
             };
-            console.log('data.streamurl',data.streamurl)
-        
+            console.log('data.streamurl', data.streamurl)
+            
             const onPlay = (data) => {
                 console.log("roomRepository onPlay 진입");
                 return this.setSRSserverPlayerConnection(data);
@@ -341,20 +366,20 @@ export default class RoomStore {
                 console.log("session", session);
                 console.log("Publisher session.sdp", session.sdp);
                 await pc.setRemoteDescription(
-                    new RTCSessionDescription({ type: "answer", sdp: session.sdp })
+                    new RTCSessionDescription({type: "answer", sdp: session.sdp})
                 );
             });
         };
-    
+        
         const ontrack = (event) => {
             stream.addTrack(event.track);
             myVideo = document.getElementById("myVideoTag")
             myVideo.srcObject = stream;
         };
-    
+        
         const pc = new RTCPeerConnection();
         const stream = new MediaStream();
-    
+        
         pc.ontrack = function (event) {
             if (ontrack) {
                 ontrack(event);
@@ -364,32 +389,31 @@ export default class RoomStore {
     }
     
     // SRS server-player axios
-    * setSRSserverPlayerConnection(data){
+    * setSRSserverPlayerConnection(data) {
         const result = yield this.roomRepository.onSRSserverPlayerConnection(data);
         return result;
     }
     
-
     
     //일반 룸 테이블 데이터 조회
-    * selectJustRoomList() {
-        console.log("selectroom확인")
-        try {
-            const roomList = yield this.roomRepository.getRoomList()
-            this.roomList = roomList
-            console.log('param확인', roomList)
-            
-        } catch (e) {
-            console.log('세미나 목록 조회 error', e)
-        }
-        
-    };
+    // * selectJustRoomList() {
+    //     console.log("selectroom확인")
+    //     try {
+    //         const roomList = yield this.roomRepository.getRoomList()
+    //         this.roomList = roomList
+    //         console.log('param확인', roomList)
+    //
+    //     } catch (e) {
+    //         console.log('세미나 목록 조회 error', e)
+    //     }
+    //
+    // };
     
     // 룸 전체 리스트 조회
     * selectRoomList() {
         console.log("selectroomusername확인")
         try {
-            const roomList = yield this.roomRepository.getRoomUserNameList()
+            const roomList = yield this.roomRepository.getRoomList()
             this.roomList = roomList
             // console.log('RoomStore selectRoomList roomList', roomList)
             this.roomListLength = toJS(roomList).length
@@ -401,17 +425,51 @@ export default class RoomStore {
         
     };
     
+    // room list에서 room 들어갈 때 player인지 publisher인지 체크하고 이동
+    async playerOrPublisherChoice(room) {
+        const userId = sessionStorage.getItem(UserId);
+        try{
+    
+            if (room.publisherId === userId) {
+                console.log('publisher')
+                await this.setRoomData(room); // sessionStorage에 publisher 정보 세팅
+                await window.location.replace('/publisher-room');
+            } else {
+                console.log('player')
+                await this.beforePlayerRoom(room.streamUrl); // sessionStorage에 player 정보 세팅
+        
+                const param = {
+                    roomId : room.id,
+                    publisherId : room.publisherId,
+                    playerId : userId,
+                    state : RoomUserStateType.Wait
+                }
+                const result = await this.roomUserRepository.onCreateRoomUser(param);
+                if(result !== 1){
+                    Error('room user DB 저장 실패');
+                }else{
+                    console.log('room user DB 저장 성공')
+                    await window.location.replace('/player-room')
+                    
+                }
+            }
+        }catch(e){
+            console.log(e)
+        }
+    }
+    
+    
     // room list에서 방을 선택했을 때 streamUrl이 sessionStorage에 저장
-    beforePlayerRoom(streamUrl){
+    beforePlayerRoom(streamUrl) {
         sessionStorage.setItem(Repository.RoomViewStreamUrl, streamUrl)
         
     }
- 
-    async getSelectedRoomData(roomId){
+    
+    // room list에서 선택한 room 정보 얻기
+    async getSelectedRoomData(roomId) {
         const room = this.roomRepository.onSelectedRoomData(roomId);
         return room;
     }
-
     
     
 }
