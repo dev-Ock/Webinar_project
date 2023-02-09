@@ -36,6 +36,7 @@ class PublisherRoom extends React.Component {
         console.log('roomId : ', roomId)
         this.state.room = this.props.roomStore.getSelectedRoomData(roomId);
         console.log('this.state.room : ',this.state.room)
+        // console.log('주소 : ', window.location.pathname === '/publisher-room')
     }
     
     // SRS server-Publisher 연결

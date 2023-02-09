@@ -33,7 +33,7 @@
 
     <!-- select -->
     <!--    <select id="selectRoom" parameterType="String" resultMap="BaseRoomResultMap">-->
-    <select id="selectRoomList" parameterType="String" resultMap="BaseSimpleRoomResultMap">
+    <select id="selectRoomList" parameterType="String" resultMap="BaseRoomResultMap">
         SELECT id,
                title,
                publisher_id,
@@ -47,7 +47,7 @@
                created_datetime,
                updated_datetime
         FROM rooms
-
+        ORDER BY id DESC
     </select>
 
     <select id="selectRoomById" parameterType="String" resultMap="BaseRoomResultMap">

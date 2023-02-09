@@ -35,10 +35,10 @@ public class RoomUserController {
 
     // 새로운 룸 유저 추가
     @PostMapping("/insert")
-    public ResponseEntity RoomUserUp(HttpServletRequest httpRequest, @RequestBody BaseRoomUser roomUser) {
-        log.trace("컨트롤러 RoomUserUp printMessage start... {}", roomUser);
-        roomUserService.RoomUserUp(roomUser);
-        return new ResponseEntity<>(roomUser, HttpStatus.OK);
+    public int createRoomUser(HttpServletRequest httpRequest, @RequestBody BaseRoomUser roomUser) {
+        log.trace("RoomUserController RoomUserUp start... {}", roomUser);
+        int result = roomUserService.createRoomUser(roomUser);
+        return result;
     }
 
 }

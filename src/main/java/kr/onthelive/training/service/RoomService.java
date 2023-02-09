@@ -26,9 +26,9 @@ public class RoomService {
     }
 
     // 룸 목록 전체 조회
-    public List<BaseSimpleRoom> getRoomList(){
+    public List<BaseRoom> getRoomList(){
 
-        final List<BaseSimpleRoom> baseRoom =  roomRepository.selectRoomList();
+        final List<BaseRoom> baseRoom =  roomRepository.selectRoomList();
         return baseRoom;
     }
     //

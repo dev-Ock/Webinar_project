@@ -33,8 +33,17 @@ public class RoomUserService {
     }
 
     // 새로운 룸 유저 추가
-    public void RoomUserUp(BaseRoomUser roomUser){
+    public int createRoomUser(BaseRoomUser roomUser){
         log.trace("서비스 RoomUserUp printMessage start... {}", roomUser);
-        roomUserRepository.insertRoomUser(roomUser);
+
+
+        BaseRoomUser user = new BaseRoomUser();
+        user.setRoomId(roomUser.getRoomId());
+        user.setPublisherId(roomUser.getPublisherId());
+        user.setPlayerId(roomUser.getPlayerId());
+        user.setState(roomUser.getState());
+
+        int result = roomUserRepository.insertRoomUser(user);
+        return result;
     }
 }

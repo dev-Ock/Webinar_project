@@ -14,9 +14,6 @@ export default class RoomRepository extends Repository {
             this.getRequestPromise('post', this.requestPrefix + '/insert', param)
                 .then(data => {
                     console.log('RoomRepository makeRoom result',data)
-                    this.setRoomdataToStorage(RoomMakeRoomID,data.id)
-                    this.setRoomdataToStorage(RoomMakePublisherId,data.publisherId)
-                    this.setRoomdataToStorage(RoomMakeStreamUrl,data.streamUrl)
                     resolve(data);
                 })
                 .catch(error => {
@@ -34,7 +31,7 @@ export default class RoomRepository extends Repository {
             this.getRequestPromise('get', this.requestPrefix + '/read/list')
                 .then(data => {
                     resolve(data);
-                    console.log('RoomRepository getRoomList result : ', data)
+                    // console.log('RoomRepository getRoomList result : ', data)
                 })
                 .catch(error => {
                     console.log('RoomRepository getRoomList error : ', error)
@@ -107,4 +104,5 @@ export default class RoomRepository extends Repository {
             
         })
     }
+    
 }
