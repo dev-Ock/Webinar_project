@@ -1,5 +1,7 @@
 package kr.onthelive.training.controller;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import kr.onthelive.training.model.BaseRoom;
 import kr.onthelive.training.model.BaseRoomUserName;
 import kr.onthelive.training.model.BaseSimpleRoom;
@@ -37,6 +39,14 @@ public class RoomController {
         List<BaseRoomUserName> result = roomService.getRoomUserNameList();
         return result;
     }
+    //page test
+//    @GetMapping("/read/withnamelist")
+//    public PageInfo<BaseRoomUserName> getRoomUserNameList(HttpServletRequest httpRequest){
+//        log.trace("controller getRoomUserNameList start...");
+//        PageHelper.startPage(2,10);
+//        List<BaseRoomUserName> result = roomService.getRoomUserNameList();
+//        return PageInfo.of(result);
+//    }
 
     // 새로운 룸 추가하고 해당 룸 정보 return
     @PostMapping("/insert")
@@ -46,6 +56,21 @@ public class RoomController {
         BaseRoom roomData = roomService.createRoom(room);
         return roomData;
     }
+    //페이징'
+//    @GetMapping("/get-page")
+//    public CustomBaseResponse getPaging(BoardListSearchDTO boardListSearchDTO) {
+//
+//        if (boardListSearchDTO.getPageNum() <= 0) {
+//            return CustomBaseResponse.error(400, "Bad Request", "요청 정보 확인이 필요합니다!");
+//        } else if (boardListSearchDTO.getPageSize() <= 0) {
+//            return CustomBaseResponse.error(400, "Bad Request", "요청 정보 확인이 필요합니다!");
+//        }
+//
+//        PageHelper.startPage(boardListSearchDTO);
+//
+//        return CustomBaseResponse.ok(PageInfo.of(mybatisPagingTestService.getPaging(boardListSearchDTO)));
+//
+//    } // getPaging() 끝
 
 
 }

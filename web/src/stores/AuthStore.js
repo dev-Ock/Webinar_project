@@ -49,6 +49,8 @@ const EmptyUpdateUser = {
 
 const EmptyUserList = [];
 
+
+
 export default class AuthStore {
     login = Object.assign({}, EmptyLogin);// login.id 1. error 방지용 / 2. 명시적(무엇이 있는지)
     loginState = State.NotAuthenticated;
@@ -162,6 +164,7 @@ export default class AuthStore {
                 console.log("checkLogin user", user);
                 this.loginState = State.Authenticated;
                 this.loginUser = user;
+                console.log('llll',this.loginUser)
             } catch (e) {
                 console.log("checkoLogin 실패")
                 this.loginState = State.NotAuthenticated;

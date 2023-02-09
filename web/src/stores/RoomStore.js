@@ -48,18 +48,28 @@ const EmptyOnRoom = {
 
 const EmptyRoomList = [];
 
+const EmptyPage = {
+    curPage: '', //현제페이지 이건 입력받을거
+    pages: '', //총페이지
+    pageSize: '', //몇개씩 보일것인가
+    setCurPage: '', //변할때마다 값 확인하는거
+    total: '', //데이터 갯수
+    pageNum:'' //현재페이지
+
+}
+
 export default class RoomStore {
     
     roomList = Object.assign([], EmptyRoomList)
-    roomMakeState = RoomMakeState.Empty;
-    roomMake = Object.assign({}, EmptyRoom);
-    onRoom = Object.assign({}, EmptyOnRoom);
-    roomListLength = toJS(this.roomList.length);
-    
     constructor(props) {
         this.roomRepository = props.roomRepository;
         makeAutoObservable(this);
     }
+
+    roomMakeState = RoomMakeState.Empty;
+    
+    roomMake = Object.assign({}, EmptyRoom);
+    onRoom = Object.assign({},EmptyOnRoom);
     
     changeTitle = (title) => {
         this.roomMake.title = title;
@@ -276,20 +286,21 @@ export default class RoomStore {
         }
         
     };
-    
+
+    roomListLength = toJS(this.roomList.length);
+
     * selectRoomList() {
         console.log("selectroomusername확인")
-        try {
-            const roomList = yield this.roomRepository.getRoomUserNameList()
-            this.roomList = roomList
-            console.log('RoomStore selectRoomList roomList', roomList)
-            this.roomListLength = toJS(roomList).length
-            console.log('param확인', toJS(roomList).length)
-            return this.roomList
-        } catch (e) {
-            console.log('세미나 목록 조회 error', e)
-        }
-        
+            try {
+                const roomList = yield this.roomRepository.getRoomUserNameList()
+                this.roomList = roomList
+                this.roomListLength = toJS(roomList).length
+                console.log('param확인', toJS(roomList).length)
+
+            } catch (e) {
+                console.log('세미나 목록 조회 error', e)
+            }
+
     };
     
     // room list에서 방을 선택했을 때
