@@ -2,7 +2,7 @@ import axios from "axios";
 
 export const AuthTokenStorageKey = '__OTL_Authentication_Token__';
 
-export const RoomMakeID= '__OTL_RoomMake_Id__';
+export const RoomMakeRoomID= '__OTL_RoomMake_RoomId__';
 export const RoomMakePublisherId = '__OTL_RoomMake_PublisherId__';
 export const RoomMakeStreamUrl = '__OTL_RoomMake_StreamUrl__';
 export const RoomViewStreamUrl = '__OTL_RoomView_StreamUrl__';

@@ -112,10 +112,10 @@ export default class AuthRepository extends Repository {
         return new Promise((resolve, reject) => {
             this.getRequestPromise('post', this.requestPrefix + '/signin', param)
                 .then(data => {
-                    console.log("token",data)
+                    // console.log("token",data)
                     const token = data.token;
                     this.setAuthTokenToStorage(token);
-                    console.log("yoon", data.user)
+                    console.log("data.user", data.user)
                     resolve(data.user);
                 })
                 .catch(error => {

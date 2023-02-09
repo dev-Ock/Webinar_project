@@ -47,5 +47,14 @@ public class RoomController {
         return roomData;
     }
 
+    //
+    @GetMapping("/read/{roomId}")
+    public BaseRoom getRoomById(HttpServletRequest httpRequest, @PathVariable("roomId") String roomId){
+        log.trace("12345678");
+        log.trace("RoomController getSelectedRoom start... {}", roomId);
+        BaseRoom room = roomService.getRoomById(roomId);
+        log.trace("RoomController getSelectedRoom finished... {}", room);
+        return room;
+    }
 
 }
