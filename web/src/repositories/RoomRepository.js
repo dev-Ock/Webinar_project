@@ -1,4 +1,4 @@
-import {Repository, RoomMakeID, RoomMakePublisherId, RoomMakeStreamUrl} from "./Repository";
+import {Repository, RoomMakeRoomID, RoomMakePublisherId, RoomMakeStreamUrl} from "./Repository";
 import axios from "axios";
 
 export default class RoomRepository extends Repository {
@@ -13,15 +13,12 @@ export default class RoomRepository extends Repository {
         return new Promise((resolve, reject) => {
             this.getRequestPromise('post', this.requestPrefix + '/insert', param)
                 .then(data => {
-                    console.log('DB에 넣고 다시 받은 room data : ',data)
-                    this.setRoomdataToStorage(RoomMakeID,data.id)
-                    this.setRoomdataToStorage(RoomMakePublisherId,data.publisherId)
-                    this.setRoomdataToStorage(RoomMakeStreamUrl,data.streamUrl)
+                    console.log('RoomRepository makeRoom result',data)
                     resolve(data);
                 })
                 .catch(error => {
                     console.log('RoomRepository makeRoom error',error)
-                    this.removeRoomdataFromStorage(RoomMakeID)
+                    this.removeRoomdataFromStorage(RoomMakeRoomID)
                     this.removeRoomdataFromStorage(RoomMakePublisherId)
                     this.removeRoomdataFromStorage(RoomMakeStreamUrl)
                     reject(error);
@@ -34,12 +31,10 @@ export default class RoomRepository extends Repository {
             this.getRequestPromise('get', this.requestPrefix + '/read/list')
                 .then(data => {
                     resolve(data);
-                    console.log("여기오륜가")
+                    // console.log('RoomRepository getRoomList result : ', data)
                 })
                 .catch(error => {
-                    console.log('roomlistㄱㅎ',error)
-                    // this.removeAuthTokenFromStorage()
-
+                    console.log('RoomRepository getRoomList error : ', error)
                     reject(error);
                 });
         });
@@ -49,12 +44,10 @@ export default class RoomRepository extends Repository {
             this.getRequestPromise('get', this.requestPrefix + '/read/withnamelist')
                 .then(data => {
                     resolve(data);
-                    console.log("룸과유저네임")
+                    // console.log('RoomRepository getRoomUserNameList result : ', data)
                 })
                 .catch(error => {
-                    console.log('roomusernamelistㄱㅎ',error)
-                    // this.removeAuthTokenFromStorage()
-
+                    console.log('RoomRepository getRoomUserNameList error : ',error)
                     reject(error);
                 });
         });
@@ -67,12 +60,12 @@ export default class RoomRepository extends Repository {
                     "http://haict.onthe.live:1985/rtc/v1/publish/",
                     data
                 )
-                    .then((result) => {
-                        console.log("roomRepository onSRSserverPublisherConnection 결과 : ", result);
-                        resolve(result);
+                    .then((data) => {
+                        // console.log("roomRepository onSRSserverPublisherConnection result : ", data);
+                        resolve(data);
                     })
                     .catch((error) => {
-                        console.log("error", error);
+                        console.log("roomRepository onSRSserverPublisherConnection error", error);
                         reject(error);
                     });
             });
@@ -86,16 +79,30 @@ export default class RoomRepository extends Repository {
                     "http://haict.onthe.live:1985/rtc/v1/play/",
                     data
                 )
-                .then((result) => {
-                    console.log("roomRepository onSRSserverPlayerConnection 결과 : ", result);
-                    resolve(result);
+                .then((data) => {
+                    console.log("roomRepository onSRSserverPlayerConnection result : ", data);
+                    resolve(data);
                 })
                 .catch((error) => {
-                    console.log("error", error);
+                    console.log("roomRepository onSRSserverPlayerConnection error", error);
                     reject(error);
                 });
         });
-    
-    
     }
+    
+    onSelectedRoomData = (roomId) => {
+        return new Promise((resolve, reject)=>{
+            this.getRequestPromise('get', this.requestPrefix + '/read' + `/${roomId}`)
+                .then(data => {
+                    console.log('RoomRepository onSelectedRooomData result : ',data)
+                    resolve(data);
+                })
+                .catch(error => {
+                    console.log('RoomRepository onSelectedRooomData error : ',error)
+                    reject(error);
+                });
+            
+        })
+    }
+    
 }

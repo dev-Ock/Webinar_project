@@ -10,7 +10,7 @@ import java.util.List;
 public interface RoomMapper {
 
     // 룸 목록 전체 조회
-    List<BaseSimpleRoom> selectRoomList();
+    List<BaseRoom> selectRoomList();
 
     // 새로운 룸 추가하고 해당 룸 정보 return
         // streamUrl 중복검사

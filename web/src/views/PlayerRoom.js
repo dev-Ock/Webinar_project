@@ -22,12 +22,13 @@ class PlayerRoom extends React.Component {
     
     
     componentDidMount() {
-    
+        this.props.handleDrawerToggle(); // SideMenu 최소화
     }
     
     // SRS server-Player 연결
     async onServerPlayerConnection(){
         const streamUrl = sessionStorage.getItem(Repository.RoomViewStreamUrl)
+        
         await this.props.roomStore.serverPlayerConnection(streamUrl);
     }
 
@@ -44,11 +45,11 @@ class PlayerRoom extends React.Component {
                             id="myVideoTag"
                             autoPlay
                             playsInline
-                            width={400}
-                            height={400}
-                            style={{ marginLeft: "20px" }}></video>
+                            width={600}
+                            height={500}
+                            style={{ marginLeft: "20px" }}
+                        ></video>
                         <br />
-                    
                         <div style={{ textAlign: "center" }}>
                             <button
                                 style={{ fontSize: "25px" }}

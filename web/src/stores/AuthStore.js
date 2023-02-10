@@ -1,5 +1,5 @@
 import {makeAutoObservable, toJS} from "mobx";
-import {AuthTokenStorageKey} from "../repositories/Repository";
+import {AuthTokenStorageKey, UserId} from "../repositories/Repository";
 
 export const State = {
     Authenticated   : 'Authenticated',
@@ -145,10 +145,15 @@ export default class AuthStore {
 
             this.loginState = State.Authenticated;
             this.loginUser = user;
+            console.log('id: ', this.loginUser.id)
+            sessionStorage.setItem(UserId, this.loginUser.id)
+
+
         } catch (e) {
             this.loginState = State.Failed;
             this.loginToken = '';
             this.loginUser = Object.assign({}, EmptyUser);
+            sessionStorage.removeItem(UserId)
         }
     }
     
@@ -164,11 +169,11 @@ export default class AuthStore {
                 console.log("checkLogin user", user);
                 this.loginState = State.Authenticated;
                 this.loginUser = user;
-                console.log('llll',this.loginUser)
             } catch (e) {
                 console.log("checkoLogin 실패")
                 this.loginState = State.NotAuthenticated;
                 this.loginUser = Object.assign({}, EmptyUser);
+                sessionStorage.removeItem(UserId)
                 console.log("error : ", e);
             }
         } else {
@@ -184,6 +189,7 @@ export default class AuthStore {
         this.login = Object.assign({}, EmptyLogin);
         this.loginState = State.NotAuthenticated;
         this.loginUser = Object.assign({}, EmptyUser);
+        sessionStorage.removeItem(UserId)
     };
     
     // 회원 정보 update 하기 전, 기존 정보 setting
@@ -223,18 +229,20 @@ export default class AuthStore {
 
         try {
             sessionStorage.removeItem(AuthTokenStorageKey);
-            // console.log("this.authRepository44",this.authRepository) // 콘솔에 제대로 뜸
             console.log("doLogout try 진입")
             yield this.authRepository.signOut();
 
             this.login = Object.assign({}, EmptyLogin);
             this.loginState = State.NotAuthenticated;
             this.loginUser = Object.assign({}, EmptyUser);
+            sessionStorage.removeItem(UserId)
         } catch (e) {
+            sessionStorage.removeItem(AuthTokenStorageKey);
             console.log("doLogout error")
             this.login = Object.assign({}, EmptyLogin);
             this.loginState = State.NotAuthenticated;
             this.loginUser = Object.assign({}, EmptyUser);
+            sessionStorage.removeItem(UserId)
         }
     }
     

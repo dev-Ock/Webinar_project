@@ -74,14 +74,13 @@ class RoomList extends React.Component {
         //     this.setState({interval: false})
         // }, 50)
         const roomList = this.props.roomStore.selectRoomList();
-        console.log("test222", this.props.roomStore.roomListLength)
+        // roomList.then(list => console.log('roomList2',list[0].streamUrl))
     }
-
-    enterRoom = async (e,streamUrl) => {
+// 방 입장
+    enterRoom = async (e,room) => {
         e.preventDefault();
-        console.log(streamUrl)
-        await this.props.roomStore.beforePlayerRoom(streamUrl)
-        await window.location.replace('/player-room')
+        console.log('streamUrl, publisherId : ', room.streamUrl, room.publisherId )
+        await this.props.roomStore.playerOrPublisherChoice(room)
     }
 
 
@@ -129,7 +128,7 @@ class RoomList extends React.Component {
                                             </CardContent>
                                         </CardActionArea>
                                         <CardActions>
-                                            <Button size="small" color="primary" onClick={(e)=>{this.enterRoom(e,room.streamUrl)}}>
+                                            <Button size="small" color="primary" onClick={(e)=>{this.enterRoom(e, room)}}>
                                                 입장하기
                                             </Button>
                                         </CardActions>
