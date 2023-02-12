@@ -1,9 +1,6 @@
 package kr.onthelive.training.controller;
 
-import kr.onthelive.training.model.BaseRoomUser;
-import kr.onthelive.training.model.BaseSimpleRoom;
-import kr.onthelive.training.model.BaseSimpleUser;
-import kr.onthelive.training.model.BaseUser;
+import kr.onthelive.training.model.*;
 import kr.onthelive.training.repository.RoomUserRepository;
 import kr.onthelive.training.service.RoomUserService;
 import lombok.extern.slf4j.Slf4j;
@@ -26,11 +23,19 @@ public class RoomUserController {
     }
 
     // 룸 유저 한 명 조회
-    @GetMapping("/read/{id}")
-    public BaseRoomUser getRoomUser(HttpServletRequest httpRequest, @PathVariable("id") String id){
-        log.trace("controller getUser start...{}", id);
-        final BaseRoomUser result = roomUserService.getRoomUser(id);
-        return result;
+//    @GetMapping("/read/{id}")
+//    public BaseRoomUser getRoomUser(HttpServletRequest httpRequest, @PathVariable("id") String id){
+//        log.trace("controller getUser start...{}", id);
+//        final BaseRoomUser result = roomUserService.getRoomUser(id);
+//        return result;
+//    }
+
+    // roomId로 룸 유저 리스트 조회
+    @GetMapping("/read/{roomId}")
+    public List<BaseRoomUserWithUserName> getRoomUserListByRoomId(HttpServletRequest httpRequest, @PathVariable("roomId") String roomId){
+        List<BaseRoomUserWithUserName> roomUserList = roomUserService.getRoomUserListByRoomId(roomId);
+        log.trace("RoomUserController getRoomUserListByRoomId roomUserList... {}", roomUserList);
+        return roomUserList;
     }
 
     // 새로운 룸 유저 추가
@@ -38,7 +43,9 @@ public class RoomUserController {
     public int createRoomUser(HttpServletRequest httpRequest, @RequestBody BaseRoomUser roomUser) {
         log.trace("RoomUserController RoomUserUp start... {}", roomUser);
         int result = roomUserService.createRoomUser(roomUser);
-        return result;
+        return result;  // result가 1이면 insert 성공, -1이면 중복으로 실패, 0이면 에러로 실패
     }
+
+
 
 }

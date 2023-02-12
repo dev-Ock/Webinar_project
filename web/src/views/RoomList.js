@@ -59,9 +59,6 @@ class RoomList extends React.Component {
 
     componentDidMount() {
         console.log("Room list mount")
-        // setInterval(() => {
-        //     this.setState({interval: false})
-        // }, 50)
         const roomList = this.props.roomStore.selectRoomList();
         // roomList.then(data => console.log('list',data))
         // console.log("roomList" , roomList)
@@ -71,22 +68,14 @@ class RoomList extends React.Component {
     // 방 입장
     enterRoom = async (e,room) => {
         e.preventDefault();
-        console.log('streamUrl, publisherId : ', room.streamUrl, room.publisherId )
-        await this.props.roomStore.playerOrPublisherChoice(room)
+        const {roomStore, authStore, roomUserStore} = this.props;
+        roomStore.playerOrPublisherChoice(room, authStore.loginUser.id, ()=>authStore.checkLogin(), (param) => roomUserStore.onCreateRoomUser(param));
     }
-    
-    
-    // handleSubmitRoomList() {
-    //     this.props.roomStore.selectRoomList();
-    // }
 
     render() {
 
         const {classes} = this.props
         const {roomList,roomListLength} = this.props.roomStore;
-        // console.log('roomList', roomList)
-// console.log('룸리스트확인', roomList)s
-
 
         return (
                         <Container component="main" className={classes.mainContainer}>
@@ -128,12 +117,7 @@ class RoomList extends React.Component {
                         </Grid>
     }
                     </Container>
-
-
-
-
-
-
+            
         )
 
     }
@@ -142,7 +126,7 @@ class RoomList extends React.Component {
 };
 export default withSnackbar(withRouter(
         withStyles(styles)(
-            inject('roomStore', 'authStore')(
+            inject('roomStore', 'authStore', 'roomUserStore')(
                 observer(RoomList)
             )
         )

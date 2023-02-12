@@ -10,7 +10,6 @@
         <result property="updatedDatetime"      column="updated_datetime" />
     </resultMap>
 
-    <!-- select -->
     <select id="selectRoomUser" parameterType="String" resultMap="BaseRoomUserResultMap">
         SELECT id,
                room_id,
@@ -23,7 +22,29 @@
         WHERE id = #{value}
     </select>
 
-    <!-- insert -->
+    <select id="selectRoomUserListByRoomId" parameterType="String" resultType="BaseRoomUserWithUserName">
+        SELECT room_users.id,
+               room_users.room_id as roomId,
+               room_users.publisher_id as publisherId,
+               room_users.player_id as playerId,
+               room_users.state,
+               room_users.created_datetime as createdDatetime,
+               room_users.updated_datetime as updatedDatetime,
+               users.name
+        FROM room_users
+            JOIN users
+                ON room_users.player_id = users.id
+        WHERE room_id = #{value}
+        ORDER BY room_users.player_id
+    </select>
+
+    <select id="countRoomUserByRoomIdAndPlayerId" parameterType="map" resultType="int">
+        SELECT count(*)
+        FROM room_users
+        WHERE room_id = #{roomId}
+        AND player_id = #{playerId}
+    </select>
+
     <insert id="insertRoomUser" parameterType="BaseRoomUser" >
         INSERT INTO room_users (
             id,

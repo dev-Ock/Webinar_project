@@ -53,7 +53,6 @@
         <result property="createdDatetime"      column="created_datetime" />
         <result property="updatedDatetime"      column="updated_datetime" />
         <result property="userName"             column="user_name" />
-
     </resultMap>
 
 

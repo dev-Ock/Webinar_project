@@ -83,8 +83,7 @@ export default class RoomStore {
     
     constructor(props) {
         this.roomRepository = props.roomRepository;
-        this.roomUserRepository = props.roomUserRepository
-        this.roomUserStore = new RoomUserStore(this)
+        // this.roomUserRepository = props.roomUserRepository;
         makeAutoObservable(this);
     }
     
@@ -144,7 +143,7 @@ export default class RoomStore {
     // publisher-room 입장시, sessionStorage의 room data 세팅
     setRoomData(room) {
         try {
-            console.log('room',room);
+            console.log('room', room);
             sessionStorage.setItem(RoomMakeRoomID, room.id)
             sessionStorage.setItem(RoomMakePublisherId, room.publisherId)
             sessionStorage.setItem(RoomMakeStreamUrl, room.streamUrl)
@@ -426,10 +425,12 @@ export default class RoomStore {
     };
     
     // room list에서 room 들어갈 때 player인지 publisher인지 체크하고 이동
-    async playerOrPublisherChoice(room) {
-        const userId = sessionStorage.getItem(UserId);
-        try{
-    
+    async playerOrPublisherChoice(room, userId, checkLogin,onCreateRoomUser) {
+        console.log('room',room)
+        if(userId === undefined){
+            checkLogin();
+        }
+        try {
             if (room.publisherId === userId) {
                 console.log('publisher')
                 await this.setRoomData(room); // sessionStorage에 publisher 정보 세팅
@@ -437,23 +438,28 @@ export default class RoomStore {
             } else {
                 console.log('player')
                 await this.beforePlayerRoom(room.streamUrl); // sessionStorage에 player 정보 세팅
-        
+
                 const param = {
-                    roomId : room.id,
-                    publisherId : room.publisherId,
-                    playerId : userId,
-                    state : RoomUserStateType.Wait
+                    roomId     : room.id,
+                    publisherId: room.publisherId,
+                    playerId   : userId,
+                    state      : RoomUserStateType.Wait
                 }
-                const result = await this.roomUserRepository.onCreateRoomUser(param);
-                if(result !== 1){
-                    Error('room user DB 저장 실패');
-                }else{
+                console.log('param',param)
+                const result = await onCreateRoomUser(param);
+                console.log('RoomStore onCreateRoomUser result', result)
+                if (result === 0) {
+                    throw Error('room user DB 저장 실패');
+                } else if (result === -1) {
+                    alert('해당 세미나에 이미 참여 중입니다!')
+                    throw Error('해당 세미나에 이미 참여 중입니다.')
+                } else {
                     console.log('room user DB 저장 성공')
                     await window.location.replace('/player-room')
-                    
                 }
             }
-        }catch(e){
+    
+        } catch (e) {
             console.log(e)
         }
     }
@@ -465,11 +471,15 @@ export default class RoomStore {
         
     }
     
-    // room list에서 선택한 room 정보 얻기
-    async getSelectedRoomData(roomId) {
-        const room = this.roomRepository.onSelectedRoomData(roomId);
-        return room;
+    // 선택한 room 정보 조회
+    async getSelectedRoom(roomId) {
+        const room = this.roomRepository.onSelectRoom(roomId);
+        room.then(room => {
+                console.log('room', room)
+                return room;
+            }
+        )
     }
     
-    
+
 }
