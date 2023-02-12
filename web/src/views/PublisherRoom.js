@@ -9,20 +9,26 @@ import {RoomMakeRoomID} from "../repositories/Repository";
 import {Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from "@mui/material";
 import {Button, Paper} from "@material-ui/core";
 import { typography } from '@mui/system';
+import { Grid, Box, Typography, Button, Paper } from "@mui/material";
 
-const styles = {
-    
-    // roomMakeImg: {
-    //     width: "100%",
-    //     alignItems   : 'center'
-    // },
-    // roomMakeImgOutDiv:{
-    //     paddingTop: 70,
-    //     paddingLeft: 110,
-    //     paddingRight: 110,
-    // }
-    //
-}
+const styles = theme => ({
+    mainContainer: {
+        flexGrow: 1,
+        padding : theme.spacing(3),
+
+    },
+    appBarSpacer : theme.mixins.toolbar,
+    mainContent  : {
+        marginTop    : theme.spacing(2),
+        display      : 'flex',
+        flexDirection: 'column',
+        alignItems   : 'center',
+    },
+    toolbar      : {
+        width: '100%',
+
+    },
+});
 
 class PublisherRoom extends React.Component {
     constructor(props) {
@@ -31,7 +37,8 @@ class PublisherRoom extends React.Component {
             // cameraOn: true,
             room : {},
             roomUser : {},
-            playerList : false
+            playerList : false,
+            view : true
         }
     }
     
@@ -48,6 +55,7 @@ class PublisherRoom extends React.Component {
     async onServerPublisherConnection() {
         const streamUrl = sessionStorage.getItem(Repository.RoomMakeStreamUrl)
         await this.props.roomStore.serverPublisherConnection(streamUrl);
+        this.setState({view: false})
     }
     
     // Camera on/off
@@ -80,94 +88,110 @@ class PublisherRoom extends React.Component {
     
     render() {
         return (
-            <div>
-                <div style={{textAlign: 'center', marginTop: '100px'}}>
-                    <h1 style={{color: "red"}}>여기는 publisher</h1>
-                </div>
-                <div className="call">
-                    <div className="myStream" style={{textAlign: 'center'}}>
-                        <div>
-                            <video
-                                id="myVideoTag"
-                                // poster={moonPicture}
-                                autoPlay
-                                playsInline
-                                width={600}
-                                height={500}
-                            ></video>
-                        </div>
-                        <br/>
-                        <div
-                            id="BtnOptionBox"
-                            style={{borderStyle: 'solid', padding: '25px', borderColor: 'red'}}
-                            hidden={true}
-                        >
-                            <button
-                                id="videoBtnTag"
-                                style={{fontSize: "25px"}}
-                                onClick={this.onVideoOnOff.bind(this)}
-                            >
-                                카메라 끄기
-                            </button>
-                            
-                            <button
-                                id="muteBtnTag"
-                                style={{fontSize: "25px", marginLeft:'15px'}}
-                                onClick={this.onAudioOnOff.bind(this)}
-                            >
-                                음소거
-                            </button>
-                            <br/>
-                            <br/>
-                            <select
-                                id="cameras"
-                                style={{fontSize: "25px"}}
-                                onInput={this.onChangeVideoOption.bind(this)}
-                            ></select>
-                            <br/>
-                            <br/>
-                            <Button
-                                variant="contained" color="primary"
-                                onClick={this.onPlayerList.bind(this)}
-                            >
-                                player 명단
-                            </Button>
-    
-                            {
-                                this.state.playerList ?
-                                    <PlayerList onRefreshPlayerList={this.onRefreshPlayerList.bind(this)} roomUserList={this.state.roomUser}  /> :
-                                    ""
-                            }
-                            
-                        </div>
-                        <br/>
-                        <br/>
-                        <div style={{textAlign: "center"}}>
-                            <button
-                                style={{fontSize: "25px"}}
-                                onClick={this.onServerPublisherConnection.bind(this)}>
-                                방송 시작
-                            </button>
-                            
-                            <br/>
-                            <br/>
-                            
-                            
-                            {/* <video
+            <div style={{marginTop:"64px", width: '100%'}}>
+                <Grid container direction='row'>
+                    <Grid item sm>
+                        <Grid item sm>
+                            <Box bgcolor='secondary.main' color="info.contrastText" style={{height: '71vh', textAlign: 'center'}}>
+                                <div>
+                                    {/*<div style={{textAlign: 'center', padding:'0px'}}>*/}
+                                    {/*    <h1 style={{color: "red"}}>여기는 publisher</h1>*/}
+                                    {/*</div>*/}
+                                    <div className="call">
+                                        <div className="myStream" style={{textAlign: 'center'}}>
+                                            <div>
+                                                <video
+                                                    id="myVideoTag"
+                                                    // poster={moonPicture}
+                                                    autoPlay
+                                                    playsInline
+                                                    width={600}
+                                                    height={500}
+                                                ></video>
+                                            </div>
+                                            {/* <video
                                 id="peerFace"
                                 autoPlay
                                 playsInline
                                 width={400}
                                 height={400}></video> */}
-                        </div>
-                    </div>
-                </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </Box>
+                        </Grid>
+                        <Grid item sm>
+                            <Box bgcolor='text.disabled' color="info.contrastText" style={{height: '22.8vh', textAlign:'center', verticalAlign:'middle'}}>
+                                <div style={{textAlign: "center"}}>
+                                    {this.state.view?
+                                    <button
+                                        style={{fontSize: "25px"}}
+                                        onClick={this.onServerPublisherConnection.bind(this)}>
+                                        방송 시작
+                                    </button>:''}
+                                    <div
+                                        id="BtnOptionBox"
+                                        style={{borderStyle: 'solid', padding: '25px', borderColor: 'red'}}
+                                        hidden={true}
+                                    >
+                                        <button
+                                            id="videoBtnTag"
+                                            style={{fontSize: "25px"}}
+                                            onClick={this.onVideoOnOff.bind(this)}
+                                        >
+                                            카메라 끄기
+                                        </button>
+        
+                                        <button
+                                            id="muteBtnTag"
+                                            style={{fontSize: "25px", marginLeft:'15px'}}
+                                            onClick={this.onAudioOnOff.bind(this)}
+                                        >
+                                            음소거
+                                        </button>
+                                        <br/>
+                                        <br/>
+                                        <select
+                                            id="cameras"
+                                            style={{fontSize: "25px"}}
+                                            onInput={this.onChangeVideoOption.bind(this)}
+                                        ></select>
+                                        <br/>
+                                        <br/>
+                                        <Button
+                                            variant="contained" color="primary"
+                                            onClick={this.onPlayerList.bind(this)}
+                                        >
+                                            player 명단
+                                        </Button>
+        
+                                        {
+                                            this.state.playerList ?
+                                                <PlayerList onRefreshPlayerList={this.onRefreshPlayerList.bind(this)} roomUserList={this.state.roomUser}  /> :
+                                                ""
+                                        }
+    
+                                    </div>
+                                </div>
+                            </Box>
+                        </Grid>
+                    </Grid>
+                    <Grid item xs={12} sm={2}>
+                        <Box bgcolor='error.main' color="info.contrastText" style={{height: '93.8vh', boxSizing: 'border-box'}}>
+                            {/*<div>안녕하세요.</div>*/}
+                            {/*<div>lerumsssssssdfdsfsdflerumslerumsssssssdfdsfsdflerumslerumsssssssdfdsfsdflerumslerumsssssssdfdsfsdflerums</div>*/}
+                        </Box>
+                    </Grid>
+                </Grid>
             </div>
         );
     }
     
     
 }
+
 
 function PlayerList(props){
     // console.log("수 : ",props.roomUserList.length)
@@ -224,7 +248,7 @@ function PlayerList(props){
 
 export default withSnackbar(withRouter(
         withStyles(styles)(
-            inject('roomStore', 'roomUserStore','authStore')(
+            inject('roomStore', 'authStore')(
                 observer(PublisherRoom)
             )
         )
