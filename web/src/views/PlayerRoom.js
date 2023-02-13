@@ -188,6 +188,13 @@ class PlayerRoom extends React.Component {
                                >
                                 음소거
                             </button>
+                                <button
+                                   id="muteBtnTag"
+                                   style={{fontSize: "25px", marginLeft:'15px'}}
+                                   // onClick={this.onAudioOnOff.bind(this)}
+                               >
+                                나가기
+                            </button>
 
                                 {/* <button
 
