@@ -20,23 +20,30 @@ const styles = {
 
 class PlayerRoom extends React.Component {
     
+    constructor(props) {
+        super(props);
+        this.state = {
+            connection: true
+        }
+    }
     
     componentDidMount() {
         this.props.handleDrawerToggle(); // SideMenu 최소화
+        
     }
     
     // SRS server-Player 연결
-    async onServerPlayerConnection(){
-        const streamUrl = sessionStorage.getItem(Repository.RoomViewStreamUrl)
-        
-        await this.props.roomStore.serverPlayerConnection(streamUrl);
+    onServerPlayerConnection() {
+        const streamUrl = sessionStorage.getItem(Repository.RoomViewStreamUrl);
+        this.props.roomStore.serverPlayerConnection(streamUrl);
+        this.setState({connection: false});
     }
-
+    
     render() {
         return (
             <div>
-                <div style={{textAlign:'center', marginTop:'100px' }}>
-                    <h1 style={{ color: "green" }}>여기는 player</h1>
+                <div style={{textAlign: 'center', marginTop: '100px'}}>
+                    <h1 style={{color: "green"}}>여기는 player</h1>
                 </div>
                 <div className="call">
                     <div className="myStream">
@@ -47,50 +54,54 @@ class PlayerRoom extends React.Component {
                             playsInline
                             width={600}
                             height={500}
-                            style={{ marginLeft: "20px" }}
+                            style={{marginLeft: "20px"}}
                         ></video>
-                        <br />
-                        <div style={{ textAlign: "center" }}>
-                            <button
-                                style={{ fontSize: "25px" }}
-                                onClick={this.onServerPlayerConnection.bind(this)}>
-                                방송 시청
-                            </button>
-                            <br />
-                            <br />
-                            {/* <button id="mutedBtnTag" onClick={this.handleMuteClick.bind(this)}>
-              Mute
-            </button> */}
-                            <br />
-                            <br />
-                            {/* <button
-              id="cameraBtnTag"
-              onClick={this.handleCameraClick.bind(this)}>
-              Turn Camera Off
-            </button> */}
-                            <br />
-                            <br />
-                            {/* <select
-              id="cameras"
-              onInput={this.handleCameraChange.bind(this)}></select> */}
-                            {/* <video
-            id="peerFace"
-            autoPlay
-            playsInline
-            width={400}
-            height={400}></video> */}
-                        </div>
+                    </div>
+                    <br/>
+                    
+                    {
+                        this.state.connection
+                            ?
+                            <div style={{textAlign: "center"}}>
+                                <button
+                                    style={{fontSize: "25px"}}
+                                    onClick={this.onServerPlayerConnection.bind(this)}>
+                                    방송 시청
+                                </button>
+                            </div>
+                            :
+                            <div style={{textAlign: "center"}}>
+                                <button
+                                    style={{fontSize: "25px"}}
+                                >
+                                    화면 끄기
+                                </button>
+                                <button
+                                    style={{marginLeft: '15px' ,fontSize: "25px"}}
+                                >
+                                    음소거
+                                </button>
+                            </div>
+                    }
+                    <br/>
+                    <br/>
+                    <div style={{textAlign: "center"}}>
+                        <button
+                            style={{fontSize: "25px"}}
+                        >
+                            세미나 나가기
+                        </button>
                     </div>
                 </div>
             </div>
-        );
+    )
     }
     
     
 }
 
 export default withSnackbar(withRouter(
-        withStyles(styles) (
+        withStyles(styles)(
             inject('roomStore', 'authStore')(
                 observer(PlayerRoom)
             )

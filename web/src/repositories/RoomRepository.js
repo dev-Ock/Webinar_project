@@ -90,7 +90,7 @@ export default class RoomRepository extends Repository {
         });
     }
     
-    onSelectedRoomData = (roomId) => {
+    onSelectRoom = (roomId) => {
         return new Promise((resolve, reject)=>{
             this.getRequestPromise('get', this.requestPrefix + '/read' + `/${roomId}`)
                 .then(data => {
@@ -104,5 +104,6 @@ export default class RoomRepository extends Repository {
             
         })
     }
+    
     
 }

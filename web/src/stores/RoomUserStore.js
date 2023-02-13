@@ -12,14 +12,24 @@ import {
 
 export default class RoomUserStore {
     
-    
-    
     constructor(props) {
         this.roomUserRepository = props.roomUserRepository;
         makeAutoObservable(this);
     }
     
-
+    // create RoomUser
+    * onCreateRoomUser(param){
+        console.log("RoomUserStore onCreateRoomUser param : ",param)
+        // console.log('this',this)
+        const result = yield this.roomUserRepository.onCreateRoomUser(param);
+        return result;
+    }
     
-
+    // 세미나 참석 중인 player list 조회
+    * getRoomUserList(roomId) {
+        const roomUser = yield this.roomUserRepository.onSelectRoomUserList(roomId)
+        console.log('roomUser', roomUser)
+        return roomUser;
+    }
+    
 }
