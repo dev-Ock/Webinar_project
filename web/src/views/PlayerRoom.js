@@ -214,6 +214,7 @@ class PlayerRoom extends React.Component {
                     </Grid>
                     <Grid item  className={classes.rightGrid}>
                         <div>여기가 채팅자리</div>
+                        <div>testestestestestestesets</div>
                     </Grid>
                 </Grid>
             </Grid>
