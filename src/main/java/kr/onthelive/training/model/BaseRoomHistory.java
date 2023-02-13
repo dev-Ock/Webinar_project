@@ -17,6 +17,11 @@ public class BaseRoomHistory {
 
     private String id;
     private String roomId;
+    private String publisherId;
+    private String title;
+    private String description;
+    private int publicOrNot;
+    private String maximum;
     private BaseRoomState state;
     private LocalDateTime createdDatetime;
 

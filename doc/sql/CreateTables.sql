@@ -77,8 +77,15 @@ create table room_histories
     id               bigint auto_increment comment 'room histories ID'
         primary key,
     room_id          bigint                                   not null comment 'room ID',
+    publisher_id     bigint                                   not null comment 'room publisher',
+    title            varchar(128)                             not null comment 'room title',
+    description      varchar(256)                             null comment 'room 상세정보',
+    public_or_not    tinyint(1)                               not null comment 'room 공개여부',
+    maximum          bigint                                   not null comment 'room 최대 인원수',
     state            varchar(128) default 'wait'              not null comment 'room 상태 [wait, progress, complete, failed]',
     created_datetime datetime     default current_timestamp() not null comment 'room 각 state 생성일시',
+    constraint fk_room_histories_publisher_id
+        foreign key (publisher_id) references rooms (publisher_id),
     constraint fk_room_histories_room_id
         foreign key (room_id) references rooms (id)
 )

@@ -141,11 +141,12 @@ export default class RoomStore {
         }
     }
 
-    // roomHistoryInfo={id:roomId, state:roomState}, 세미나 만든 후 roomHistory 정보 서버로 보냄
+    // 세미나 만든 후 roomHistory 정보 서버로 보냄
     *doSetRoomHistory(roomHistoryInfo) {
-        const param = { roomId: roomHistoryInfo.id, state: roomHistoryInfo.state }
+        // const param = { roomId: roomHistoryInfo.id, state: roomHistoryInfo.state }
         // console.log("히스토리 날리기 진입", param)
-        yield this.roomHistoryRepository.setRoomHistory(param)
+        yield this.roomHistoryRepository.setRoomHistory(roomHistoryInfo)
+        // yield this.roomHistoryRepository.setRoomHistory(param)
     } catch (e) {
         console.log('RoomStore doSetRoomHistory error', e.message());
     }

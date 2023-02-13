@@ -1,10 +1,15 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="kr.onthelive.training.repository.mapper.RoomHistoryMapper">
     <resultMap id="BaseRoomHistoryResultMap" type="BaseRoomHistory">
-        <id property="id"                       column="id" />
+        <id property="id"                        column="id" />
         <result property="roomId"                column="room_id" />
         <result property="state"                 column="state" />
-        <result property="createdDatetime"      column="created_datetime" />
+        <result property="publisherId"           column="publisher_id" />
+        <result property="title"                 column="title" />
+        <result property="description"           column="description" />
+        <result property="publicOrNot"              column="public_or_not" />
+        <result property="maximum"               column="maximum" />
+        <result property="createdDatetime"       column="created_datetime" />
     </resultMap>
 
     <!-- select -->
@@ -12,6 +17,11 @@
         SELECT id,
                room_id,
                state,
+               publisher_id,
+               title,
+               description,
+               public_or_not,
+               maximum,
                created_datetime
         FROM room_histories
     </select>
@@ -21,10 +31,20 @@
         INSERT INTO room_histories (
             room_id,
             state,
+            publisher_id,
+            title,
+            description,
+            public_or_not,
+            maximum,
             created_datetime
         ) VALUES (
                      #{roomId},
                      #{state},
+                     #{publisherId},
+                     #{title},
+                     #{description},
+                     #{publicOrNot},
+                     #{maximum},
                      NOW()
                  )
     </insert>
