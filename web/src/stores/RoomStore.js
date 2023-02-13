@@ -84,6 +84,7 @@ export default class RoomStore {
     constructor(props) {
         this.roomRepository = props.roomRepository;
         // this.roomUserRepository = props.roomUserRepository;
+        this.roomHistoryRepository = props.roomHistoryRepository;
         makeAutoObservable(this);
     }
     
@@ -139,6 +140,15 @@ export default class RoomStore {
             this.removeRoomData();
         }
     }
+
+    // roomHistoryInfo={id:roomId, state:roomState}, 세미나 만든 후 roomHistory 정보 서버로 보냄
+    *doSetRoomHistory(roomHistoryInfo) {
+        const param = { roomId: roomHistoryInfo.id, state: roomHistoryInfo.state }
+        // console.log("히스토리 날리기 진입", param)
+        yield this.roomHistoryRepository.setRoomHistory(param)
+    } catch (e) {
+        console.log('RoomStore doSetRoomHistory error', e.message());
+    }
     
     // publisher-room 입장시, sessionStorage의 room data 세팅
     setRoomData(room) {
@@ -162,6 +172,7 @@ export default class RoomStore {
             
         } catch (e) {
             console.log(e);
+
         }
     }
     

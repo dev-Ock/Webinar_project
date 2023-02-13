@@ -2,6 +2,7 @@ import {serverContextPath} from "./AppConstants";
 import AuthRepository from "./repositories/AuthRepository";
 import RoomRepository from "./repositories/RoomRepository";
 import RoomUserRepository from "./repositories/RoomUserRepository";
+import RoomHistoryRepository from "./repositories/RoomHistoryRepository";
 
 
 import AuthStore from "./stores/AuthStore";
@@ -15,12 +16,13 @@ const repositoryProps = {
 const authRepository = new AuthRepository(repositoryProps);
 const roomRepository = new RoomRepository(repositoryProps);
 const roomUserRepository = new RoomUserRepository(repositoryProps);
+const roomHistoryRepository = new RoomHistoryRepository(repositoryProps);
 
 const storeProps = {
 };
 
 export const stores = {
     authStore: new AuthStore({authRepository, ...storeProps}),
-    roomStore: new RoomStore({roomRepository, ...storeProps}),
+    roomStore: new RoomStore({roomRepository, roomHistoryRepository, ...storeProps}),
     roomUserStore: new RoomUserStore({roomUserRepository, ...storeProps}),
 };

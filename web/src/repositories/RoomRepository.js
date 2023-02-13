@@ -4,9 +4,8 @@ import axios from "axios";
 export default class RoomRepository extends Repository {
     constructor(props) {
         super();
-
         this.requestPrefix = props.serverContextPath + "/api/v1/rooms";
-    }
+    };
 
     // 세미나 만들기 Create room
     makeRoom = (param) => {

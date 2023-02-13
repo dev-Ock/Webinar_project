@@ -20,8 +20,8 @@ public class RoomHistoryService {
     }
 
     // 룸 전체 기록 조회
-    public List<BaseRoomHistory> getRoomHistoryList(){
-        final List<BaseRoomHistory> roomHistory = roomHistoryRepository.selectRoomHistoryList();
+    public List<BaseRoomHistory> getRoomHistoryListById(){
+        final List<BaseRoomHistory> roomHistory = roomHistoryRepository.selectRoomHistoryListById();
         return roomHistory;
     }
 
@@ -29,11 +29,13 @@ public class RoomHistoryService {
     // 룸 기록 추가
     public int setRoomHistory(BaseRoomHistory roominfo) {
         log.debug("test : {}", roominfo);
+        log.trace("service setRoomHistory roominfo... {}", roominfo);
 
         BaseRoomHistory roomHistory = new BaseRoomHistory();
 
         roomHistory.setRoomId(roominfo.getRoomId());
         roomHistory.setState(roominfo.getState());
+        log.trace("service setRoomHistory roomHistory... {}", roomHistory);
 
         int result = roomHistoryRepository.insertRoomHistory(roomHistory);
         log.trace("service setRoomHistory result... {}", result);

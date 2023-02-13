@@ -104,7 +104,7 @@ export default function SideMenu(props) {
     useTheme();
     const { menuOpen, isLoggedIn, handleDrawerToggle, user} = props;
     const [settingOpen, setSettingOpen] = React.useState(false);
-    const [selectedIndex, setSelectedIndex] = React.useState(1);
+    const [selectedIndex, setSelectedIndex] = React.useState(0);
 
 
     const handleListItemClick = (index) => {
