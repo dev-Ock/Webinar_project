@@ -148,15 +148,15 @@ class RoomMake extends React.Component {
             .then((room) => {
                 console.log("result", room)
                 this.props.roomStore.doSetRoomHistory(room);
-                let enterRoomMessage = window.confirm("바로 입장하시겠습니까? 취소를 누르면 세미나 목록으로 이동합니다.")
-                if(enterRoomMessage){
-                    this.props.roomStore.setRoomData(room);
-                    return window.location.replace('/publisher-room')
-
-                }else{
-                    this.props.roomStore.removeRoomData();
-                    return window.location.replace('/room-history')
-                }
+                // let enterRoomMessage = window.confirm("바로 입장하시겠습니까? 취소를 누르면 세미나 목록으로 이동합니다.")
+                // if(enterRoomMessage){
+                //     this.props.roomStore.setRoomData(room);
+                //     return window.location.replace('/publisher-room')
+                //
+                // }else{
+                //     this.props.roomStore.removeRoomData();
+                //     return window.location.replace('/room-history')
+                // }
             })
             .catch((e) => {
                 console.log("error", e);

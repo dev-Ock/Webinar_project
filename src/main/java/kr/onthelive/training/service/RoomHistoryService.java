@@ -1,6 +1,7 @@
 package kr.onthelive.training.service;
 
 import kr.onthelive.training.model.BaseRoomHistory;
+import kr.onthelive.training.model.BaseRoom;
 import kr.onthelive.training.repository.RoomHistoryRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,14 +28,26 @@ public class RoomHistoryService {
 
 
     // 룸 기록 추가
-    public int setRoomHistory(BaseRoomHistory roominfo) {
+    public int setRoomHistory(BaseRoom roominfo) {
         log.debug("test : {}", roominfo);
         log.trace("service setRoomHistory roominfo... {}", roominfo);
 
         BaseRoomHistory roomHistory = new BaseRoomHistory();
 
-        roomHistory.setRoomId(roominfo.getRoomId());
+        int publicOrNot;
+        int passwordLength = roominfo.getPassword().length();
+        if(passwordLength > 0){
+            publicOrNot = 0;
+        }else{publicOrNot = 1;}
+
+        roomHistory.setRoomId(roominfo.getId());
         roomHistory.setState(roominfo.getState());
+        roomHistory.setPublisherId(roominfo.getPublisherId());
+        roomHistory.setTitle(roominfo.getTitle());
+        roomHistory.setDescription(roominfo.getDescription());
+        roomHistory.setPublicOrNot(publicOrNot);
+        roomHistory.setMaximum(roominfo.getMaximum());
+
         log.trace("service setRoomHistory roomHistory... {}", roomHistory);
 
         int result = roomHistoryRepository.insertRoomHistory(roomHistory);

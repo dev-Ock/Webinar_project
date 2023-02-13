@@ -73,9 +73,10 @@ class RoomMake extends React.Component {
                     <img src={RoomHistory}  className={classes.roomMakeImg} />
                 </div>
 
-                <div> 현재 내가 만든 세미나 목록 </div>
+                <div> 현재 내가 만든 세미나 목록 : 'room' table select by userId === publisherId</div>
                 <div> ====================================== </div>
-                <div> 내가 만들었거나 참여했던 세미나 목록 </div>
+                <div> 내가 만들었던 세미나 히스토리 : 'roomHistory' table select by Id === publisherId </div>
+                <div> 내가 참여했던 세미나 히스토리 : 'roomUserHistory' table select by Id ===playerId </div>
 
                 <TextField
                     id="title"
