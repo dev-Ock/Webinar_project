@@ -22,4 +22,20 @@ export default class RoomUserRepository extends Repository {
                 });
         })
     }
+    
+    onSelectRoomUserList = (roomId) => {
+        return new Promise((resolve, reject)=>{
+            this.getRequestPromise('get', this.requestPrefix + '/read' + `/${roomId}`)
+                .then(data => {
+                    console.log('RoomRepository onSelectedRoomUserData result : ',data)
+                    resolve(data);
+                })
+                .catch(error => {
+                    console.log('RoomRepository onSelectedRoomUserData error : ',error)
+                    reject(error);
+                });
+            
+        })
+    }
+    
 }

@@ -21,6 +21,6 @@ const storeProps = {
 
 export const stores = {
     authStore: new AuthStore({authRepository, ...storeProps}),
-    roomStore: new RoomStore({roomRepository, roomUserRepository, ...storeProps}),
+    roomStore: new RoomStore({roomRepository, ...storeProps}),
     roomUserStore: new RoomUserStore({roomUserRepository, ...storeProps}),
 };
