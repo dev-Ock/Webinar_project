@@ -28,17 +28,17 @@ public class RoomHistoryController {
         this.roomHistoryService = roomHistoryService;
     }
 
-    // 룸 전체 기록 조회
-    @GetMapping("/read/list")
-    public  List<BaseRoomHistory> getRoomHistoryList(HttpServletRequest httpRequest){
-        log.trace("controller getRoomHistory start...");
-        List<BaseRoomHistory> result = roomHistoryService.getRoomHistoryList();
+    // 세미나실(방) 기록 전체 조회
+    @GetMapping("/read/{publisherId}")
+    public  List<BaseRoomHistory> getRoomHistoryListById(HttpServletRequest httpRequest, @PathVariable("publisherId") String publisherId){
+        log.trace("controller getRoomHistoryListById start...");
+        List<BaseRoomHistory> result = roomHistoryService.getRoomHistoryListById();
         return result;
     }
 
-    // 룸 기록 추가
+    // 세미나실(방) 기록 추가
     @PostMapping("/insert")
-    public ResponseEntity setRoomHistory(HttpServletRequest httpRequest, HttpSession seesion, @RequestBody BaseRoomHistory roominfo) {
+    public ResponseEntity setRoomHistory(HttpServletRequest httpRequest, HttpSession session, @RequestBody BaseRoomHistory roominfo) {
         log.trace("roomHistory insert... {}", roominfo);
         int result = roomHistoryService.setRoomHistory(roominfo);
         return new ResponseEntity<>(result, HttpStatus.OK);

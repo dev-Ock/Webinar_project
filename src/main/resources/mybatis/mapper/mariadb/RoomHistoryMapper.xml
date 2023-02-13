@@ -8,7 +8,7 @@
     </resultMap>
 
     <!-- select -->
-    <select id="selectRoomHistoryList" parameterType="String" resultMap="BaseRoomHistoryResultMap">
+    <select id="selectRoomHistoryListById" parameterType="String" resultMap="BaseRoomHistoryResultMap">
         SELECT id,
                room_id,
                state,

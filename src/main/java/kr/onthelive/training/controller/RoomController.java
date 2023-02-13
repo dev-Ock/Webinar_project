@@ -4,6 +4,7 @@ import kr.onthelive.training.model.BaseRoom;
 import kr.onthelive.training.model.BaseRoomUserName;
 import kr.onthelive.training.model.BaseSimpleRoom;
 import kr.onthelive.training.service.RoomService;
+import kr.onthelive.training.service.RoomHistoryService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,6 +20,8 @@ import java.util.List;
 public class RoomController {
 
     private RoomService roomService;
+    private RoomHistoryService roomHistoryService;
+
     @Autowired
     public RoomController(RoomService roomService) {
         this.roomService = roomService;
@@ -41,8 +44,7 @@ public class RoomController {
 
     // 새로운 룸 추가하고 해당 룸 정보 return
     @PostMapping("/insert")
-    public BaseRoom  createRoom(HttpServletRequest httpRequest,
-                                               @RequestBody BaseRoom room) {
+    public BaseRoom  createRoom(HttpServletRequest httpRequest, @RequestBody BaseRoom room) {
         log.trace("createRoom start... {}", room);
         BaseRoom roomData = roomService.createRoom(room);
         return roomData;
