@@ -18,6 +18,7 @@ export default class RoomHistoryRepository extends Repository {
                 .catch(error => {
                     console.log('RoomHistoryRepository setRoomHistory error', error);
                     reject(error);
+
                 })
         })
     };

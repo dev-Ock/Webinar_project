@@ -172,6 +172,7 @@ export default class RoomStore {
             
         } catch (e) {
             console.log(e);
+
         }
     }
     

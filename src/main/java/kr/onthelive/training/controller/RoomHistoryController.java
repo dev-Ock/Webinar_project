@@ -26,6 +26,7 @@ public class RoomHistoryController {
     @Autowired
     public RoomHistoryController(RoomHistoryService roomHistoryService) {
         this.roomHistoryService = roomHistoryService;
+
     }
 
     // 세미나실(방) 기록 전체 조회
