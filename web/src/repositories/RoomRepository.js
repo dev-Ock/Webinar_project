@@ -53,6 +53,7 @@ export default class RoomRepository extends Repository {
         });
     }
     
+    // publisher SRS connection
     onSRSserverPublisherConnection = (data) => {
             return new Promise((resolve, reject) => {
                 this.postSRSserverRequestPromise(
@@ -72,6 +73,7 @@ export default class RoomRepository extends Repository {
             
     }
     
+    // player SRS connection
     onSRSserverPlayerConnection = (data) => {
         return new Promise((resolve, reject) => {
             this.postSRSserverRequestPromise(
@@ -90,6 +92,7 @@ export default class RoomRepository extends Repository {
         });
     }
     
+    // room 조회
     onSelectRoom = (roomId) => {
         return new Promise((resolve, reject)=>{
             this.getRequestPromise('get', this.requestPrefix + '/read' + `/${roomId}`)
@@ -102,6 +105,22 @@ export default class RoomRepository extends Repository {
                     reject(error);
                 });
             
+        })
+    }
+    
+    // room state update
+    onUpdateRoom = (param) => {
+        console.log('param', param)
+        return new Promise((resolve, reject)=>{
+            this.getRequestPromise('put', this.requestPrefix + '/update', param)
+                .then(data => {
+                    console.log('RoomRepository onUpdateRoom result : ',data)
+                    resolve(data);
+                })
+                .catch(error => {
+                    console.log('RoomRepository onUpdateRoom error : ',error)
+                    reject(error);
+                });
         })
     }
     

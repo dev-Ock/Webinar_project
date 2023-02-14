@@ -1,5 +1,5 @@
 package kr.onthelive.training.model.support;
 
 public enum BaseRoomState {
-    Wait, Progress, Complete, Failed
+    Wait, Progress, Complete, Pending, Failed
 }
