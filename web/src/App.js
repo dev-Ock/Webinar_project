@@ -32,7 +32,7 @@ class App extends React.Component {
             mobileOpen: false,
             menuOpen  : true,
             signupOpen: false,
-            interval : true,
+            interval : true
         };
         
         this.setMobileOpen = this.setMobileOpen.bind(this); // this를 명시적으로
@@ -84,7 +84,8 @@ class App extends React.Component {
                                         setMobileOpen={this.setMobileOpen}
                                         user={loginUser}
                                         isLoggedIn={loginState === store.State.Authenticated}
-                                        doLogout={() => this.props.authStore.doLogout()}/>
+                                        doLogout={() => this.props.authStore.doLogout()}
+                                        roomTitle={this.state.roomTitle}/>
                                 <SideMenu handleDrawerToggle={this.handleDrawerToggle}
                                           menuOpen={this.state.menuOpen}
                                           user={loginUser}
@@ -98,7 +99,7 @@ class App extends React.Component {
                                         <Route path="/room-make" component={RoomMake}/>
                                         <Route path="/room-list" component={RoomList}/>
                                         <Route path="/room-history" component={RoomHistory}/>
-                                        <Route path="/publisher-room" render={()=><PublisherRoom handleDrawerToggle={this.handleDrawerToggle}/>}/>
+                                        <Route path="/publisher-room" render={()=><PublisherRoom handleDrawerToggle={this.handleDrawerToggle}/>} />
                                         <Route path="/player-room" render={()=><PlayerRoom handleDrawerToggle={this.handleDrawerToggle}/>}/>
                                         <Route component={Notfound}/>
                                     </Switch>

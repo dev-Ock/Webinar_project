@@ -62,6 +62,7 @@ const EmptyOnRoom = {
 }
 
 const EmptyRoomList = [];
+let EmptyRoomTitle = "";
 
 let pc = '';
 let myVideo = '';
@@ -78,8 +79,8 @@ export default class RoomStore {
     roomMakeState = RoomMakeState.Empty;
     roomMake = Object.assign({}, EmptyRoom);
     onRoom = Object.assign({}, EmptyOnRoom);
-    roomListLength = toJS(this.roomList.length);
-    
+    // roomListLength = toJS(this.roomList.length);
+    roomTitle = EmptyRoomTitle;
     
     constructor(props) {
         this.roomRepository = props.roomRepository;
@@ -111,6 +112,12 @@ export default class RoomStore {
     changePassword = (password) => {
         this.roomMake.password = password;
     };
+    
+    // TopBar에서 보여줄 room title
+    setRoomTitle = (title) => {
+        this.roomTitle = title;
+    }
+    
     
     setOnRoom = (room) => {
         this.onRoom = room;
@@ -206,6 +213,9 @@ export default class RoomStore {
             }
             camerasSelect.appendChild(option);
         });
+    
+        stream.getAudioTracks()
+            .forEach((track) => (track.enabled = !track.enabled));
         console.log('방송세팅 stream', stream);
         return stream;
     }
@@ -244,6 +254,8 @@ export default class RoomStore {
                 pc.addTrack(track);
                 // ontrack && ontrack({ track: track });
             });
+    
+
             
             // createOffer & setLocalDescription
             let offer = await pc.createOffer();
@@ -292,35 +304,21 @@ export default class RoomStore {
     }
     
     // Video turn on/off
-    setVideoOnOff() {
+    setVideoOnOff(videoOn) {
         console.log('RoomStore setVideoOnOff 진입');
-        let videoBtn = document.getElementById("videoBtnTag");
+        // let videoBtn = document.getElementById("videoBtnTag");
         stream.getVideoTracks()
             .forEach((track) => (track.enabled = !track.enabled));
-        if (videoOn) {
-            videoOn = false;
-            videoBtn.innerText = '카메라 켜기';
-            
-        } else {
-            videoOn = true;
-            videoBtn.innerText = '카메라 끄기';
-        }
+        return !videoOn;
     }
     
     // Audio turn on/off
-    setAudioOnOff() {
+    setAudioOnOff(audioOff) {
         console.log('RoomStore setAudioOnOff 진입');
-        let muteBtn = document.getElementById("muteBtnTag");
+        // let muteBtn = document.getElementById("muteBtnTag");
         stream.getAudioTracks()
             .forEach((track) => (track.enabled = !track.enabled));
-        if (!muteOn) {
-            muteOn = true;
-            muteBtn.innerText = '음소거 해제';
-            
-        } else {
-            muteOn = false;
-            muteBtn.innerText = '음소거';
-        }
+        return !audioOff;
     }
     
     // Change Video option
@@ -415,21 +413,6 @@ export default class RoomStore {
         return result;
     }
     
-    
-    //일반 룸 테이블 데이터 조회
-    // * selectJustRoomList() {
-    //     console.log("selectroom확인")
-    //     try {
-    //         const roomList = yield this.roomRepository.getRoomList()
-    //         this.roomList = roomList
-    //         console.log('param확인', roomList)
-    //
-    //     } catch (e) {
-    //         console.log('세미나 목록 조회 error', e)
-    //     }
-    //
-    // };
-    
     // 룸 전체 리스트 조회
     * selectRoomList() {
         console.log("selectroomusername확인")
@@ -437,8 +420,8 @@ export default class RoomStore {
             const roomList = yield this.roomRepository.getRoomList();
             this.roomList = roomList;
             // console.log('RoomStore selectRoomList roomList', roomList)
-            this.roomListLength = toJS(roomList).length;
-            console.log('param확인', toJS(roomList).length);
+            // this.roomListLength = toJS(roomList).length;
+            // console.log('param확인', toJS(roomList).length);
             return this.roomList;
         } catch (e) {
             console.log('세미나 목록 조회 error', e);
@@ -497,6 +480,7 @@ export default class RoomStore {
     async getSelectedRoom(roomId) {
         const room = this.roomRepository.onSelectRoom(roomId);
         room.then(room => {
+                this.setRoomTitle(room.title)
                 console.log('room', room);
                 return room;
             }

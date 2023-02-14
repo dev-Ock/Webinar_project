@@ -3,7 +3,6 @@ import {
     Paper,
     Table,
     TableBody,
-    TableCell,
     TableContainer,
     TableHead,
     TableRow
@@ -14,30 +13,76 @@ import {withSnackbar} from "notistack";
 import {withRouter} from "react-router-dom";
 import {withStyles} from "@material-ui/core/styles";
 import {inject, observer} from "mobx-react";
+import {styled} from '@mui/material/styles';
+import TableCell, {tableCellClasses} from '@mui/material/TableCell';
+import RefreshIcon from '@mui/icons-material/Refresh';
+import {maxWidth} from "@mui/system";
 
 
-// const styles = theme => ({
-//     mainContainer: {
-//         flexGrow: 1,
-//         padding : theme.spacing(3),
-//
+// const styles = (theme) => ({
+//     root:{
+//         height:'100vh',
+//         display: 'flex',
+//         alignItems: 'center',
+//         '& *':{
+//             fontFamily:'Noto Sans KR',
+//         },
+//         '& .MuiContainer-root':{
+//             padding:'58px 100px',
+//             border:'1px solid #d9d9d9',
+//             borderRadius:12,
+//         },
 //     },
-//     appBarSpacer : theme.mixins.toolbar,
-//     mainContent  : {
-//         marginTop    : theme.spacing(2),
-//         display      : 'flex',
-//         flexDirection: 'column',
-//         alignItems   : 'center',
-//     },
-//     toolbar      : {
-//         width: '100%',
-//
-//     },
+//     btn : {
+//         color: '#fff',
+//         fontSize: '30px',
+//         backgroundColor: 'red'
+//     }
 // });
+
+const StyledTableCell = styled(TableCell)(({theme}) => ({
+    [`&.${tableCellClasses.head}`]: {
+        backgroundColor: '#b0bec5',
+        // color: ,
+    },
+    [`&.${tableCellClasses.body}`]: {
+        fontSize: 14,
+        // color: #b0bec5,
+    },
+}));
+
+const styles = (theme) => ({
+    root : {
+        textAlign: 'center'
+    },
+    countDiv : {
+        margin: '0 auto',
+        width: '150px'
+    },
+    count  : {
+        color: 'black',
+        float: 'left',
+        width: '120px'
+    },
+    table : {
+        minWidth: '420px', maxWidth: '420px', margin:'0 5px 0 5px', textAlign:'center'
+    },
+    refresh: {
+        color    : '#90a4ae',
+        fontWeight : 'bolder',
+        float    : 'left',
+        width    : '32px',
+        '&:hover': {
+            color    : '#ff5252',
+            cursor   : 'pointer',
+            transform: 'translateY(-1px)'
+        }
+    },
+})
 
 function PlayerList(props) {
     
-    // const [posts, setPosts] = useState([]);
+    const {classes} = props
     const [limit, setLimit] = useState(10);
     const [page, setPage] = useState(1);
     const offset = (page - 1) * limit;
@@ -45,46 +90,42 @@ function PlayerList(props) {
     
     return (
         
-        <div
-            style={{
-                textAlign: 'center', borderStyle: 'solid', borderColor: 'black',
-            }}
-        >
+        <div className={classes.root} >
+            <br/>
+            <br/>
+            <div className={classes.countDiv}>
+                <div className={classes.count}> Player 수
+                    : {props.roomUserList.length} 명 &nbsp; &nbsp;</div>
+                <RefreshIcon
+                    className={classes.refresh}
+                    onClick={props.onRefreshPlayerList}
+                />
+            </div>
             
-            <Button
-                variant="outlined"
-                style={{marginTop: '20px'}}
-                onClick={props.onRefreshPlayerList}
-            >
-                refresh
-            </Button>
             <br/>
-            <br/>
-            <div style={{color: 'black'}}> Player 수 : {props.roomUserList.length} 명</div>
-            <br/>
-            
-            <label>
-                한 페이지에 표시할 player 수 :
-                &nbsp;
-                <select
-                    value={limit}
-                    onChange={({target: {value}}) => setLimit(Number(value))}
-                >
-                    <option value={10}>10</option>
-                    <option value={20}>20</option>
-                    <option value={30}>30</option>
-                </select>
-            </label>
-            <br/>
-            <br/>
-            
+            {/*<label>*/}
+            {/*    한 페이지에 표시할 player 수 :*/}
+            {/*    &nbsp;*/}
+            {/*    <select*/}
+            {/*        value={limit}*/}
+            {/*        onChange={({target: {value}}) => setLimit(Number(value))}*/}
+            {/*    >*/}
+            {/*        <option value={10}>10</option>*/}
+            {/*        <option value={20}>20</option>*/}
+            {/*        <option value={30}>30</option>*/}
+            {/*    </select>*/}
+            {/*</label>*/}
+            {/*<br/>*/}
+            {/*<br/>*/}
             
             <TableContainer component={Paper}>
-                <Table sx={{minWidth: 650}} size="small" aria-label="a dense table">
+                <Table className={classes.table} size="small">
                     <TableHead>
                         <TableRow>
-                            <TableCell align={"center"}> Player 이름 </TableCell>
-                            <TableCell align={"center"}> 기능 </TableCell>
+                            <StyledTableCell
+                                // className={props.classes.btn}
+                                align={"center"}> Player 이름 </StyledTableCell>
+                            <StyledTableCell align={"center"}> 기능 </StyledTableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -94,21 +135,31 @@ function PlayerList(props) {
                                 .slice(offset, offset + limit)
                                 .map(roomUser => (
                                     <TableRow key={roomUser.id}>
-                                        <TableCell align={"center"}> {roomUser.name} </TableCell>
-                                        <TableCell align={"center"}>
+                                        <StyledTableCell
+                                            style={{color: '#455a64', fontWeight: 'border'}}
+                                            align={"center"}> {roomUser.name} </StyledTableCell>
+                                        <StyledTableCell align={"center"}>
                                             <Button
-                                                variant="contained"
+                                                style={{color: '#455a64'}}
+                                                variant="outlined"
                                             >
-                                                강퇴 버튼 만들 예정
+                                                패널
                                             </Button>
-                                        </TableCell>
+                                            &nbsp;
+                                            <Button
+                                                style={{color: '#546e7a'}}
+                                                variant="outlined"
+                                            >
+                                                강퇴
+                                            </Button>
+                                        </StyledTableCell>
                                     </TableRow>
                                 ))
                             :
                             <TableRow>
-                                <TableCell align={"center"}> 없습니다 </TableCell>
-                                <TableCell align={"center"}>
-                                </TableCell>
+                                <StyledTableCell align={"center"}> 없습니다 </StyledTableCell>
+                                <StyledTableCell align={"center"}>
+                                </StyledTableCell>
                             </TableRow>
                         }
                     </TableBody>
@@ -128,8 +179,9 @@ function PlayerList(props) {
 }
 
 export default withSnackbar(withRouter(
-        inject('roomStore', 'authStore')(
-            observer(PlayerList)
-        )
+        withStyles(styles)(
+            inject('roomStore', 'authStore')(
+                observer(PlayerList)
+            ))
     )
 );
