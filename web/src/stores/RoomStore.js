@@ -44,7 +44,7 @@ const EmptyRoom = {
     state      : '',
     streamUrl  : '',
     startTime  : '',
-    link       : ''
+    link       : '',
 };
 
 const EmptyOnRoom = {
@@ -73,8 +73,8 @@ let camerasSelect = '';
 let option = '';
 
 export default class RoomStore {
-    
-    
+
+
     roomList = Object.assign([], EmptyRoomList)
     roomMakeState = RoomMakeState.Empty;
     roomMake = Object.assign({}, EmptyRoom);
@@ -117,8 +117,8 @@ export default class RoomStore {
     setRoomTitle = (title) => {
         this.roomTitle = title;
     }
-    
-    
+
+
     setOnRoom = (room) => {
         this.onRoom = room;
         console.log('onRoom', this.onRoom)
@@ -157,7 +157,7 @@ export default class RoomStore {
     } catch (e) {
         console.log('RoomStore doSetRoomHistory error', e.message());
     }
-    
+
     // publisher-room 입장시, sessionStorage의 room data 세팅
     setRoomData(room) {
         try {
@@ -180,7 +180,6 @@ export default class RoomStore {
             
         } catch (e) {
             console.log(e);
-
         }
     }
     
@@ -437,7 +436,7 @@ export default class RoomStore {
     * selectRoomList() {
         console.log("selectroomusername확인")
         try {
-            const roomList = yield this.roomRepository.getRoomList();
+            const roomList = yield this.roomRepository.getRoomUserNameList();
             this.roomList = roomList;
             // console.log('RoomStore selectRoomList roomList', roomList)
             // this.roomListLength = toJS(roomList).length;
@@ -477,7 +476,8 @@ export default class RoomStore {
                     throw Error('room user DB 저장 실패');
                 } else if (result === -1) {
                     alert('해당 세미나에 이미 참여 중입니다!');
-                    throw Error('해당 세미나에 이미 참여 중입니다.');
+                    // throw Error('해당 세미나에 이미 참여 중입니다.');
+                    await window.location.replace('/player-room');
                 } else {
                     console.log('room user DB 저장 성공');
                     await window.location.replace('/player-room');
