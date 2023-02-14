@@ -44,18 +44,17 @@ public class RoomController {
 
     // 새로운 룸 추가하고 해당 룸 정보 return
     @PostMapping("/insert")
-    public BaseRoom  createRoom(HttpServletRequest httpRequest, @RequestBody BaseRoom room) {
+    public BaseRoomUserName  createRoom(HttpServletRequest httpRequest, @RequestBody BaseRoom room) {
         log.trace("createRoom start... {}", room);
-        BaseRoom roomData = roomService.createRoom(room);
+        BaseRoomUserName roomData = roomService.createRoom(room);
         return roomData;
     }
 
     //
     @GetMapping("/read/{roomId}")
-    public BaseRoom getRoomById(HttpServletRequest httpRequest, @PathVariable("roomId") String roomId){
-        log.trace("12345678");
+    public BaseRoomUserName getRoomById(HttpServletRequest httpRequest, @PathVariable("roomId") String roomId){
         log.trace("RoomController getSelectedRoom start... {}", roomId);
-        BaseRoom room = roomService.getRoomById(roomId);
+        BaseRoomUserName room = roomService.getRoomById(roomId);
         log.trace("RoomController getSelectedRoom finished... {}", room);
         return room;
     }

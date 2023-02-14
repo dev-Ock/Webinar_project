@@ -51,7 +51,7 @@ public class RoomService {
 
 
     // 새로운 룸 추가하고 해당 룸 정보 return
-    public BaseRoom createRoom(BaseRoom baseInfo) {
+    public BaseRoomUserName createRoom(BaseRoom baseInfo) {
         log.debug("BaseRoomService baseRoom : {}", baseInfo);
 
         // streamUrl 생성
@@ -87,15 +87,15 @@ public class RoomService {
 
         // 새로 추가한 room의 id로 select
         String id = baseRoom.getId();
-        BaseRoom roomData =  roomRepository.selectRoomById(id);
+        BaseRoomUserName roomData =  roomRepository.selectRoomById(id);
         log.trace("RoomService roomData... {}", roomData);
         return roomData;
 
     }
 
     // room list에서 들어간 room 조회
-    public BaseRoom getRoomById(String roomId) {
-        BaseRoom room = roomRepository.selectRoomById(roomId);
+    public BaseRoomUserName getRoomById(String roomId) {
+        BaseRoomUserName room = roomRepository.selectRoomById(roomId);
         return room;
     }
 
