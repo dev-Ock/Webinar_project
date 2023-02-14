@@ -41,5 +41,6 @@ export default class RoomHistoryRepository extends Repository {
     }
 
     // 세미나 기록 Delete
+    
 
 }

@@ -3,6 +3,7 @@ package kr.onthelive.training.repository;
 import kr.onthelive.training.model.BaseRoom;
 import kr.onthelive.training.model.BaseRoomUserName;
 import kr.onthelive.training.model.BaseSimpleRoom;
+import kr.onthelive.training.model.support.BaseRoomState;
 import kr.onthelive.training.repository.mapper.RoomMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.Logger;
@@ -43,6 +44,13 @@ public class RoomRepository {
     public BaseRoomUserName selectRoomById(String id){
         BaseRoomUserName roomData = mapper.selectRoomById(id);
         return roomData;
+    }
+
+    // room state update
+    public int updateRoomState(BaseRoomUserName roomInfo){
+        String id = roomInfo.getId();
+        BaseRoomState state = roomInfo.getState();
+        return mapper.updateRoomState(id, state);
     }
 
 

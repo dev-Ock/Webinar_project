@@ -4,6 +4,7 @@ import {withRouter} from "react-router-dom";
 import {withStyles} from "@material-ui/core/styles";
 import {inject, observer} from "mobx-react";
 import * as Repository from "../repositories/Repository";
+import * as Roomstore from "../stores/RoomStore"
 import moonPicture from '../assets/images/moon.jpg'
 import {RoomMakeRoomID} from "../repositories/Repository";
 import {Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from "@mui/material";
@@ -45,7 +46,7 @@ class PublisherRoom extends React.Component {
         super(props);
         this.state = {
             room      : {},
-            roomUser  : {},
+            roomPlayerList  : {},
             playerList: false,
             standBy   : true,
             view      : true,
@@ -62,8 +63,9 @@ class PublisherRoom extends React.Component {
         this.props.handleDrawerToggle();
         // room 데이터 조회
         const roomId = sessionStorage.getItem(RoomMakeRoomID);
-        this.state.room = this.props.roomStore.getSelectedRoom(roomId);
-        console.log('this.state.room : ', this.state.room);
+        this.props.roomStore.getSelectedRoom(roomId)
+        // this.setState({room : this.props.roomStore.getSelectedRoom(roomId) })
+        // this.state.room = this.props.roomStore.getSelectedRoom(roomId);
         // 방송 기본 세팅
         const stream = this.props.roomStore.setRoom();
         stream.then(data => this.setState({stream : data}));
@@ -71,7 +73,7 @@ class PublisherRoom extends React.Component {
         const selectPlayerList = this.props.roomUserStore.getRoomUserList(roomId);
         selectPlayerList
             .then((data) => {
-                this.state.roomUser = data;
+                this.state.roomPlayerList = data;
             })
             .then((data) => {
                 this.setState({playerList: !this.state.playerList});
@@ -87,6 +89,7 @@ class PublisherRoom extends React.Component {
     async onServerPublisherConnection() {
         const streamUrl = sessionStorage.getItem(Repository.RoomMakeStreamUrl);
         await this.props.roomStore.serverPublisherConnection(streamUrl);
+        await this.props.roomStore.onProgressRoomState(this.props.roomStore.onRoom);
         this.setState({view: false});
     }
     
@@ -109,7 +112,7 @@ class PublisherRoom extends React.Component {
     async onRefreshPlayerList() {
         console.log('111')
         const roomId = sessionStorage.getItem(RoomMakeRoomID);
-        this.state.roomUser = await this.props.roomUserStore.getRoomUserList(roomId);
+        this.state.roomPlayerList = await this.props.roomUserStore.getRoomUserList(roomId);
     }
     
     // 방송 일시정지
@@ -121,6 +124,12 @@ class PublisherRoom extends React.Component {
         } else {
             pauseBtn.innerText = '방송 다시 시작';
         }
+    }
+    
+    // 방송 종료
+    onComplete() {
+        console.log('onRoom', this.props.roomStore.onRoom)
+        this.props.roomStore.onCompleteRoomState(this.props.roomStore.onRoom);
     }
     
     // 오른쪽 tab change
@@ -272,6 +281,7 @@ class PublisherRoom extends React.Component {
                                                 <Button
                                                     style={{fontSize: "17px", fontWeight:"bolder", borderStyle:'solid',borderWidth : '2px', borderColor:"#90a4ae", color:"white",backgroundColor: "#90a4ae"}}
                                                     variant="contained"
+                                                    onClick={this.onComplete.bind(this)}
                                                 >
                                                     방송 끝내기
                                                 </Button>
@@ -323,7 +333,7 @@ class PublisherRoom extends React.Component {
                                             this.state.playerList
                                                 ?
                                                     <PlayerList onRefreshPlayerList={this.onRefreshPlayerList.bind(this)}
-                                                                roomUserList={this.state.roomUser}/>
+                                                                roomUserList={this.state.roomPlayerList}/>
                                                 :
                                                 ""
                                         }

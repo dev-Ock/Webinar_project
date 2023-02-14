@@ -4,6 +4,7 @@ import kr.onthelive.training.model.BaseRoom;
 import kr.onthelive.training.model.BaseRoomUserName;
 import kr.onthelive.training.model.BaseSimpleRoom;
 import kr.onthelive.training.model.BaseRoomHistory;
+import kr.onthelive.training.repository.RoomHistoryRepository;
 import kr.onthelive.training.repository.RoomRepository;
 import kr.onthelive.training.repository.RoomUserNameRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -16,12 +17,14 @@ import java.util.List;
 @Slf4j
 public class RoomService {
     private RoomRepository roomRepository;
+    private RoomHistoryRepository roomHistoryRepository;
     private RoomUserNameRepository roomUserNameRepository;
 
     @Autowired
     public RoomService(RoomRepository roomRepository, RoomUserNameRepository roomUserNameRepository){
 
         this.roomRepository = roomRepository;
+        this.roomHistoryRepository = roomHistoryRepository;
         this.roomUserNameRepository = roomUserNameRepository;
     }
 
@@ -34,8 +37,8 @@ public class RoomService {
     //
     public List<BaseRoomUserName> getRoomUserNameList(){
 
-        final List<BaseRoomUserName> BaseRoomUserName =  roomUserNameRepository.selectRoomDetailList();
-        return BaseRoomUserName;
+        final List<BaseRoomUserName> baseRoomUserName =  roomUserNameRepository.selectRoomDetailList();
+        return baseRoomUserName;
     }
 
     public String createStreamUrl(){
@@ -99,6 +102,10 @@ public class RoomService {
         return room;
     }
 
+    // room state update & roomHistory state insert
+    public int modifyRoomState(BaseRoomUserName roomInfo) {
+        return roomRepository.updateRoomState(roomInfo);
+    }
 
 
 }

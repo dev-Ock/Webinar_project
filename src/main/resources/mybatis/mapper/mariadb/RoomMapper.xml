@@ -115,5 +115,10 @@
                  )
     </insert>
 
+    <update id="updateRoomState" parameterType="map">
+        UPDATE rooms
+        SET state = #{state}
+        WHERE id = #{id}
+    </update>
 
 </mapper>
