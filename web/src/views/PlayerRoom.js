@@ -9,66 +9,66 @@ import {maxWidth} from "@mui/system";
 
 
 const styles = theme => ({
-    mainContainer: {
+    mainContainer   : {
         // flex: '100%',
-        height: '100vh',
+        height : '100vh',
         display: 'flex',
         // flexDirection: 'row',
-        direction: 'row',
-        padding: theme.spacing(3),
+        direction      : 'row',
+        padding        : theme.spacing(3),
         backgroundColor: 'black',
-        width: 'calc(100%-appBarSpacer)'
+        width          : 'calc(100%-appBarSpacer)'
     },
-    subMainCon: {
-        height: '80vh',
-        maxWidth: '100%',
+    subMainCon      : {
+        height       : '80vh',
+        maxWidth     : '100%',
         display      : 'flex',
         flexDirection: 'row',
         // direction: 'column',
-        backgroundColor: 'blue',
-        padding: theme.spacing(1),
-        flexWrap: 'wrap',
-        '@media (max-width:760px)':{
+        backgroundColor           : 'blue',
+        padding                   : theme.spacing(1),
+        flexWrap                  : 'wrap',
+        '@media (max-width:760px)': {
             flexDirection: 'column',
         }
     },
-    subMainConMobile:{
+    subMainConMobile: {
         flexDirection: 'column',
     },
-
+    
     appBarSpacer: theme.mixins.toolbar,
-    toolbar: {
+    toolbar     : {
         width: '100%',
     },
-    leftGrid: {
+    leftGrid    : {
         backgroundColor: 'white',
         // maxWidth: '100%',
         // minWidth: '70%',
         flexBasis: '70%'
         // padding: theme.spacing(1),
     },
-    rightGrid: {
+    rightGrid   : {
         backgroundColor: 'yellow',
-        display: 'block',
+        display        : 'block',
         // maxWidth: '100%',
         // minWidth: '30%',
-        flexBasis: '30%',
-        overflow:'hidden',
-        textOverflow:'ellipsis',
-        flexWrap: 'wrap'
+        flexBasis   : '30%',
+        overflow    : 'hidden',
+        textOverflow: 'ellipsis',
+        flexWrap    : 'wrap'
         // padding: theme.spacing(1),
     },
-    leftTop: {
-        flexDirection: 'row',
+    leftTop     : {
+        flexDirection  : 'row',
         backgroundColor: 'red',
-        height: '80%'
+        height         : '80%'
     },
-    leftBottom: {
-        flexDirection: 'row',
+    leftBottom  : {
+        flexDirection  : 'row',
         backgroundColor: 'purple',
-        height: '20%'
+        height         : '20%'
     }
-
+    
     // roomMakeImg: {
     //     width: "100%",
     //     alignItems   : 'center'
@@ -81,40 +81,41 @@ const styles = theme => ({
 });
 
 class PlayerRoom extends React.Component {
-
+    
     constructor(props) {
         super(props);
         this.state = {
             connection: true,
-            view: true,
-            pause: false
+            view      : true,
+            pause     : false
         }
     }
-
+    
     componentDidMount() {
         this.props.handleDrawerToggle(); // SideMenu 최소화
-
+        
     }
+    
     // componentDidUpdate(prevProps) {
     //     if (useMediaQuery("(max-width: 600px)") !== prevProps.location.pathname) {
     //         window.scrollTo(0, 0);
     //     }
     // }
-
+    
     // SRS server-Player 연결
     onServerPlayerConnection() {
         const streamUrl = sessionStorage.getItem(Repository.RoomViewStreamUrl);
         this.props.roomStore.serverPlayerConnection(streamUrl);
         this.setState({connection: false});
     }
-
+    
     onVideoOnOff = () => {
-        this.props.roomStore.setVideoOnOff();
+        this.props.roomStore.setVideoOnOff2();
     }
     onAudioOnOff = () => {
-        this.props.roomStore.setAudioOnOff();
+        this.props.roomStore.setAudioOnOff2();
     }
-
+    
     onPause() {
         this.setState({pause: !this.state.pause});
         const pauseBtn = document.getElementById('pause');
@@ -124,7 +125,7 @@ class PlayerRoom extends React.Component {
             pauseBtn.innerText = '방송 다시 시작';
         }
     }
-
+    
     render() {
         const {classes} = this.props
         // const isMobile = useMediaQuery("(max-width:600px)");
@@ -183,35 +184,35 @@ class PlayerRoom extends React.Component {
             //             </div>
             //         </div>
             <Grid container className={classes.mainContainer}>
-
+                
                 <Box>
                     <div className={classes.appBarSpacer}/>
-
+                    
                     <h1 style={{color: "green"}}>여기는 player</h1>
-
+                
                 </Box>
                 <Toolbar className={classes.toolbar}>
-                <Grid container spacing={1} className={classes.subMainCon}>
-                    <Grid item className={classes.leftGrid}>
-                        <div className={classes.leftTop}>
-                            <label>여기가 비디오자리</label>
-                            <video
-                                id="myVideoTag"
-                                autoPlay
-                                playsInline
-                                width={400}
-                                height={400}
-                                style={{ marginLeft: "20px" }}
-                            >
-                            </video>
-                            <br/>
-
-
-                        </div>
-                        <div className={classes.leftBottom}> {/* style={{ textAlign: "center" }} */}
-                            <span>
+                    <Grid container spacing={1} className={classes.subMainCon}>
+                        <Grid item className={classes.leftGrid}>
+                            <div className={classes.leftTop}>
+                                <label>여기가 비디오자리</label>
+                                <video
+                                    id="myVideoTag"
+                                    autoPlay
+                                    playsInline
+                                    width={400}
+                                    height={400}
+                                    style={{marginLeft: "20px"}}
+                                >
+                                </video>
+                                <br/>
+                            
+                            
+                            </div>
+                            <div className={classes.leftBottom}> {/* style={{ textAlign: "center" }} */}
+                                <span>
                                 <button
-                                    style={{ fontSize: "25px" }}
+                                    style={{fontSize: "25px"}}
                                     onClick={this.onServerPlayerConnection.bind(this)}>
                                     방송 시청
                                 </button>
@@ -231,9 +232,9 @@ class PlayerRoom extends React.Component {
                             </button>
                                                                      <button
                                                                          id={'pause'}
-                                                                                     style={{fontSize: "25px"}}
-                                onClick={this.onPause.bind(this)}
-                                >
+                                                                         style={{fontSize: "25px"}}
+                                                                         onClick={this.onPause.bind(this)}
+                                                                     >
                                                     방송 일시정지
                                                 </button>
                             <button
@@ -243,34 +244,34 @@ class PlayerRoom extends React.Component {
                             >
                                 나가기
                             </button>
-
-                            {/* <button
+                                    
+                                    {/* <button
 
                                 <br/>
                                 <br/>
                                 {/* <select
               id="cameras"
               onInput={this.handleCameraChange.bind(this)}></select> */}
-                            {/* <video
+                                    {/* <video
             id="peerFace"
             autoPlay
             playsInline
             width={400}
             height={400}></video> */}
                         </span>
-                    </div>
-                </Grid>
-                <Grid item className={classes.rightGrid}>
-                    <div>여기가 채팅자리</div>
-                    <div>testestestestestestesetestestestestestestesetestestestestestestesetstestestestestestestesetstestestestestestestesets</div>
-                </Grid>
+                            </div>
+                        </Grid>
+                        <Grid item className={classes.rightGrid}>
+                            <div>여기가 채팅자리</div>
+                            <div>testestestestestestesetestestestestestestesetestestestestestestesetstestestestestestestesetstestestestestestestesets</div>
+                        </Grid>
+                    </Grid>
+                </Toolbar>
             </Grid>
-            </Toolbar>
-    </Grid>
-    )
+        )
     }
-
-
+    
+    
 }
 
 export default withSnackbar(withRouter(

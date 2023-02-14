@@ -303,7 +303,7 @@ export default class RoomStore {
         return result;
     }
     
-    // Video turn on/off
+    // publisher용 Video turn on/off
     setVideoOnOff(videoOn) {
         console.log('RoomStore setVideoOnOff 진입');
         // let videoBtn = document.getElementById("videoBtnTag");
@@ -312,7 +312,7 @@ export default class RoomStore {
         return !videoOn;
     }
     
-    // Audio turn on/off
+    // publisher용 Audio turn on/off
     setAudioOnOff(audioOff) {
         console.log('RoomStore setAudioOnOff 진입');
         // let muteBtn = document.getElementById("muteBtnTag");
@@ -396,8 +396,8 @@ export default class RoomStore {
             myVideo.srcObject = stream;
         };
         
-        const pc = new RTCPeerConnection();
-        const stream = new MediaStream();
+        pc = new RTCPeerConnection();
+        stream = new MediaStream();
         
         pc.ontrack = function (event) {
             if (ontrack) {
@@ -411,6 +411,26 @@ export default class RoomStore {
     * setSRSserverPlayerConnection(data) {
         const result = yield this.roomRepository.onSRSserverPlayerConnection(data);
         return result;
+    }
+    
+    // player용 Video turn on/off
+    // setVideoOnOff2(videoOn) {
+    setVideoOnOff2() {
+        console.log('RoomStore setVideoOnOff 진입');
+        // let videoBtn = document.getElementById("videoBtnTag");
+        stream.getVideoTracks()
+            .forEach((track) => (track.enabled = !track.enabled));
+        // return !videoOn;
+    }
+    
+    // player용 Audio turn on/off
+    // setAudioOnOff2(audioOff) {
+    setAudioOnOff2() {
+        console.log('RoomStore setAudioOnOff 진입');
+        // let muteBtn = document.getElementById("muteBtnTag");
+        stream.getAudioTracks()
+            .forEach((track) => (track.enabled = !track.enabled));
+        // return !audioOff;
     }
     
     // 룸 전체 리스트 조회
