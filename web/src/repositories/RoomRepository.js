@@ -24,20 +24,21 @@ export default class RoomRepository extends Repository {
                 });
         });
     }
-
-    getRoomList = () => {
-        return new Promise((resolve, reject) => {
-            this.getRequestPromise('get', this.requestPrefix + '/read/list')
-                .then(data => {
-                    resolve(data);
-                    // console.log('RoomRepository getRoomList result : ', data)
-                })
-                .catch(error => {
-                    console.log('RoomRepository getRoomList error : ', error)
-                    reject(error);
-                });
-        });
-    }
+//이름없는 데이터리스트 반환
+    // getRoomList = () => {
+    //     return new Promise((resolve, reject) => {
+    //         this.getRequestPromise('get', this.requestPrefix + '/read/list')
+    //             .then(data => {
+    //                 resolve(data);
+    //                 // console.log('RoomRepository getRoomList result : ', data)
+    //             })
+    //             .catch(error => {
+    //                 console.log('RoomRepository getRoomList error : ', error)
+    //                 reject(error);
+    //             });
+    //     });
+    // }
+    //이름있는 리스트 반환
     getRoomUserNameList = () => {
         return new Promise((resolve, reject) => {
             this.getRequestPromise('get', this.requestPrefix + '/read/withnamelist')
