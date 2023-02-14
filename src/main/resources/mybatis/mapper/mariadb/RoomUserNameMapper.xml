@@ -59,7 +59,7 @@
 
     <!-- select -->
     <!--rooms 목록과 users 의 name 컬럼 조인문-->
-    <select id="selectRoomDetailList" parameterType="String" resultMap="BaseRoomUserNameResultMap" >
+    <select id="selectRoomDetailList" resultType="BaseRoomUserName" >
         SELECT rooms.id,
                rooms.title,
                rooms.publisher_id as publisherId,
