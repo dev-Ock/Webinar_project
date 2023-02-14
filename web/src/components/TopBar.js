@@ -1,13 +1,15 @@
 import React from "react";
-import {Link} from "react-router-dom";
+import {Link, withRouter} from "react-router-dom";
 
-import {makeStyles} from "@material-ui/core/styles";
+import {makeStyles, withStyles} from "@material-ui/core/styles";
 import {AppBar, Box, IconButton, Toolbar} from "@material-ui/core";
 import MenuIcon from '@material-ui/icons/Menu';
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import OnTheLiveLogo from "../common/images/onthelive_logo.svg";
 import clsx from "clsx";
 import {Typography} from "@mui/material";
+import {withSnackbar} from "notistack";
+import {inject, observer} from "mobx-react";
 
 const logoWidth = 120;
 
@@ -73,10 +75,12 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export default function TopBar(props) {
+function TopBar(props) {
     const classes = useStyles();
     const { mobileOpen, setMobileOpen, isLoggedIn, doLogout, menuOpen, user} = props;
 
+    // console.log('props.roomStore.roomTitle', props.roomStore.roomTitle)
+    
     const handleDrawerToggle = () => {
         setMobileOpen(!mobileOpen);
     };
@@ -110,6 +114,8 @@ export default function TopBar(props) {
                 >
                     <MenuIcon />
                 </IconButton>
+                {props.roomStore.roomTitle !== "" ? <div style={{marginLeft:'auto',marginRight:'auto'}}><h2>Title "{ props.roomStore.roomTitle}"</h2></div> : "" }
+                
                 {isLoggedIn ? <Typography variant="h6" noWrap className={classes.title}>
                     {user.name}님 환영합니다.
                 </Typography>:''}
@@ -130,3 +136,10 @@ export default function TopBar(props) {
         </AppBar>
     );
 }
+
+export default withSnackbar(withRouter(
+            inject('roomStore', 'roomUserStore','authStore')(
+                observer(TopBar)
+            )
+    )
+);

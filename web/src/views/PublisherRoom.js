@@ -8,10 +8,13 @@ import moonPicture from '../assets/images/moon.jpg'
 import {RoomMakeRoomID} from "../repositories/Repository";
 import {Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from "@mui/material";
 import {typography} from '@mui/system';
-import {Grid, Box, Typography, Button, Paper} from "@mui/material";
+import {Grid, Box, Typography, Button, Paper, Switch} from "@mui/material";
 import PlayerList from "./PlayerList";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Tab from '@mui/material/Tab';
+import {TabContext, TabList, TabPanel} from '@mui/lab';
 
-const styles = theme => ({
+const styles = (theme) => ({
     mainContainer: {
         flexGrow: 1,
         padding : theme.spacing(3),
@@ -28,20 +31,29 @@ const styles = theme => ({
         width: '100%',
         
     },
+    leftGrid : {
+        width : '80vw'
+    },
+    rightGrid : {
+        width : '20vw'
+    }
 });
+
 
 class PublisherRoom extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            // cameraOn: true,
             room      : {},
             roomUser  : {},
             playerList: false,
             standBy   : true,
             view      : true,
             stream    : "",
-            pause     : false
+            pause     : false,
+            videoOn   : true,
+            audioOff  : false,
+            tabValue : '1'
         }
     }
     
@@ -51,9 +63,18 @@ class PublisherRoom extends React.Component {
         const roomId = sessionStorage.getItem(RoomMakeRoomID);
         this.state.room = this.props.roomStore.getSelectedRoom(roomId);
         console.log('this.state.room : ', this.state.room);
-        // console.log('주소 : ', window.location.pathname === '/publisher-room')
-        const stream = this.props.roomStore.setRoom(); // 방송 기본 세팅
-        stream.then(data => this.setState({stream, data}));
+        // 방송 기본 세팅
+        const stream = this.props.roomStore.setRoom();
+        stream.then(data => this.setState({stream : data}));
+        // 세미나 참여한 player 조회
+        const selectPlayerList = this.props.roomUserStore.getRoomUserList(roomId);
+        selectPlayerList
+            .then((data) => {
+                this.state.roomUser = data;
+            })
+            .then((data) => {
+                this.setState({playerList: !this.state.playerList});
+            })
     }
     
     // 방송 준비
@@ -70,24 +91,17 @@ class PublisherRoom extends React.Component {
     
     // Camera on/off
     onVideoOnOff = () => {
-        this.props.roomStore.setVideoOnOff();
+        this.state.videoOn = this.props.roomStore.setVideoOnOff(this.state.videoOn);
     }
     
     // Audio on/off
     onAudioOnOff = () => {
-        this.props.roomStore.setAudioOnOff();
+        this.state.audioOff = this.props.roomStore.setAudioOnOff(this.state.audioOff);
     }
     
     // camera change
     async onChangeVideoOption() {
         await this.props.roomStore.setChangeVideoOption();
-    }
-    
-    // player list 조회
-    async onPlayerList() {
-        const roomId = sessionStorage.getItem(RoomMakeRoomID);
-        this.state.roomUser = await this.props.roomUserStore.getRoomUserList(roomId);
-        await this.setState({playerList: !this.state.playerList});
     }
     
     // player List 조회 새로고침
@@ -108,14 +122,21 @@ class PublisherRoom extends React.Component {
         }
     }
     
+    // 오른쪽 tab change
+    handleChange = (e, value) => {
+        this.setState({tabValue : value})
+    };
+    
     render() {
+        const {classes} = this.props;
+        
         return (
             <div style={{marginTop: "64px", width: '100%'}}>
                 <Grid container direction='row'>
-                    <Grid item sm>
+                    <Grid item xs className={classes.leftGrid}>
                         <Grid item sm>
                             <Box bgcolor='lightgray' color="info.contrastText"
-                                 style={{height: '50vh', textAlign: 'center'}}>
+                                 style={{height: '52vh', textAlign: 'center'}}>
                                 <div>
                                     {/*<div style={{textAlign: 'center', padding:'0px'}}>*/}
                                     {/*    <h1 style={{color: "red"}}>여기는 publisher</h1>*/}
@@ -157,64 +178,70 @@ class PublisherRoom extends React.Component {
                                         borderStyle: 'solid',
                                         borderColor: 'red',
                                         float      : 'left',
-                                        width      : '70%',
-                                        height     : '250px'
+                                        width      : '20%',
+                                        height     : '300px',
+                                        // backgroundColor:'black'
                                     }}
-                                    // hidden={true}
                                 >
-                                    <h1 style={{color: 'black'}}> 방송 세팅 </h1>
-                                    <button
-                                        id="videoBtnTag"
-                                        style={{fontSize: "25px"}}
-                                        onClick={this.onVideoOnOff.bind(this)}
-                                    >
-                                        카메라 끄기
-                                    </button>
-                                    
-                                    <button
-                                        id="muteBtnTag"
-                                        style={{fontSize: "25px", marginLeft: '15px'}}
-                                        onClick={this.onAudioOnOff.bind(this)}
-                                    >
-                                        음소거
-                                    </button>
-                                    <br/>
+                                    <h1 style={{color: '#455a64'}}> 방송 세팅 </h1>
+                                    <div>
+                                    <Box style={{textAlign: 'center'}}>
+                                        <FormControlLabel
+                                            sx={{
+                                                display: 'block',
+                                                
+                                            }}
+                                            style={{color: '#37474f'}}
+                                            label="Video"
+                                            control={
+                                                <Switch
+                                                    style={{color: '#455a64'}}
+                                                    checked={this.state.videoOn}
+                                                    onChange={this.onVideoOnOff.bind(this)}
+                                                    name="loading"
+                                                    color="primary"
+                                                />
+                                            }
+                                        />
+                                        
+                                        <FormControlLabel
+                                            sx={{
+                                                display: 'block',
+                                                
+                                            }}
+                                            style={{color: '#37474f'}}
+                                            label="Audio"
+                                            control={
+                                                <Switch
+                                                    style={{color: '#455a64'}}
+                                                    checked={this.state.audioOff}
+                                                    onChange={this.onAudioOnOff.bind(this)}
+                                                    name="loading"
+                                                    color="primary"
+                                                />
+                                            }
+                                        />
+                                    </Box>
+                                    </div>
                                     <br/>
                                     <select
                                         id="cameras"
-                                        style={{fontSize: "25px"}}
+                                        style={{fontSize: "16px", color: '#37474f', width:'200px'}}
                                         onInput={this.onChangeVideoOption.bind(this)}
                                     ></select>
                                     <br/>
                                     <br/>
-                                    <Button
-                                        variant="contained" color="primary"
-                                        onClick={this.onPlayerList.bind(this)}
-                                    >
-                                        player 명단
-                                    </Button>
-                                </div>
-                                
-                                
-                                <div style={{
-                                    borderStyle: 'solid',
-                                    borderColor: 'blue',
-                                    textAlign  : "center",
-                                    float      : 'left',
-                                    width      : '30%',
-                                    height     : '250px',
-                                    display    : 'flex'
-                                }}>
                                     {this.state.standBy
                                         ?
                                         <div
                                             style={{margin: 'auto'}}
                                         >
-                                            <button
-                                                style={{fontSize: "25px"}}
+                                            <Button
+                                                style={{fontSize: "17px", fontWeight:"bolder", borderStyle:'solid',borderWidth : '4px', borderColor:"#90a4ae", color:"#546e7a" }}
+                                                variant="outlined"
                                                 onClick={this.onStandBy.bind(this)}>
                                                 방송 준비 완료
-                                            </button>
+                                            </Button>
                                         </div>
                                         
                                         :
@@ -223,54 +250,86 @@ class PublisherRoom extends React.Component {
                                             <div
                                                 style={{margin: 'auto'}}
                                             >
-                                                <button
-                                                    style={{fontSize: "25px", margin: 'auto'}}
+                                                <Button
+                                                    style={{fontSize: "17px", fontWeight:"bolder", borderStyle:'solid',borderWidth : '2px', borderColor:"#90a4ae", color:"white",backgroundColor: "#90a4ae"}}
+                                                    variant="contained"
                                                     onClick={this.onServerPublisherConnection.bind(this)}>
                                                     방송 시작
-                                                </button>
+                                                </Button>
                                             </div>
                                             :
                                             <div style={{margin: 'auto'}}>
-                                                <button
+                                                <Button
                                                     id={'pause'}
-                                                    style={{fontSize: "25px"}}
+                                                    style={{fontSize: "17px", fontWeight:"bolder", borderStyle:'solid',borderWidth : '2px', borderColor:"#90a4ae", color:"white",backgroundColor: "#90a4ae"}}
+                                                    variant="contained"
                                                     onClick={this.onPause.bind(this)}
                                                 >
                                                     방송 일시정지
-                                                </button>
-                                                <button
-                                                    style={{marginLeft: '15px', fontSize: "25px"}}
+                                                </Button>
+                                                &nbsp;
+                                                <Button
+                                                    style={{fontSize: "17px", fontWeight:"bolder", borderStyle:'solid',borderWidth : '2px', borderColor:"#90a4ae", color:"white",backgroundColor: "#90a4ae"}}
+                                                    variant="contained"
                                                 >
                                                     방송 끝내기
-                                                </button>
+                                                </Button>
                                             </div>
                                     }
+                                    <br/>
+                                    {/*<Button*/}
+                                    {/*    variant="contained" color="primary"*/}
+                                    {/*    onClick={this.onPlayerList.bind(this)}*/}
+                                    {/*>*/}
+                                    {/*    player 명단*/}
+                                    {/*</Button>*/}
+                                </div>
+                                
+                                
+                                <div style={{
+                                    borderStyle: 'solid',
+                                    borderColor: 'blue',
+                                    textAlign  : "center",
+                                    float      : 'left',
+                                    width      : '80%',
+                                    height : '300px',
+                                    display: 'flex'
+                                }}>
+                                    <h1>hello</h1>
                                 
                                 
                                 </div>
                             </Box>
                         </Grid>
-                        
-                        <Grid item sm>
-                            {
-                                this.state.playerList
-                                    ?
-                                    <div>
-                                        <PlayerList onRefreshPlayerList={this.onRefreshPlayerList.bind(this)}
-                                                    roomUserList={this.state.roomUser}/>
-                                    </div>
-                                    :
-                                    ""
-                            }
-                        </Grid>
                     
                     
                     </Grid>
-                    <Grid item xs={12} sm={2}>
-                        <Box bgcolor='lightslategray' color="info.contrastText"
-                             style={{height: '93.8vh', boxSizing: 'border-box'}}>
-                            {/*<div>안녕하세요.</div>*/}
-                            {/*<div>lerumsssssssdfdsfsdflerumslerumsssssssdfdsfsdflerumslerumsssssssdfdsfsdflerumslerumsssssssdfdsfsdflerums</div>*/}
+                    <Grid item xs={12} sm={3}>
+                        <Box bgcolor='white' color="info.contrastText" sx={{ typography: 'body1' }}
+                             style={{height: '93vh', boxSizing: 'border-box', color: 'black'}}>
+    
+                            <TabContext value={this.state.tabValue}>
+                                <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                                    <TabList onChange={(e, value)=>this.handleChange(e, value)} >
+                                        <Tab label="Player List" value="1" />
+                                        <Tab label="Chat" value="2" />
+                                    </TabList>
+                                </Box>
+                               
+                                <TabPanel value= "1" style={{padding: '0px'}}>
+                                    
+                                        {
+                                            this.state.playerList
+                                                ?
+                                                    <PlayerList onRefreshPlayerList={this.onRefreshPlayerList.bind(this)}
+                                                                roomUserList={this.state.roomUser}/>
+                                                :
+                                                ""
+                                        }
+                                  
+                                </TabPanel>
+                                <TabPanel value= "2" > preparing </TabPanel>
+                            </TabContext>
                         </Box>
                     </Grid>
                 </Grid>

@@ -16,6 +16,27 @@ import {withRouter} from "react-router-dom";
 import {withStyles} from "@material-ui/core/styles";
 import {styles} from "./styles/SignInStyles";
 
+// const styles = (theme) => ({
+//     root:{
+//         height:'100vh',
+//         display: 'flex',
+//         alignItems: 'center',
+//         '& *':{
+//             fontFamily:'Noto Sans KR',
+//         },
+//         '& .MuiContainer-root':{
+//             padding:'58px 100px',
+//             border:'1px solid #d9d9d9',
+//             borderRadius:12,
+//         },
+//     },
+//     btn : {
+//         color: '#fff',
+//         fontSize: '30px',
+//         backgroundColor: 'red'
+//     }
+// });
+
 function Copyright(props) {
     return (
         <Typography variant="body2" color="primary" align="center" {...props}>
@@ -231,7 +252,9 @@ function SignUp(props) {
                     <Avatar sx={{m: 1, bgcolor: 'secondary.main'}}>
                         <LockOutlinedIcon/>
                     </Avatar>
-                    <Typography component="h1" variant="h5">
+                    <Typography
+                        // className={props.classes.btn}
+                        component="h1" variant="h5">
                         Sign up
                     </Typography>
                     <Box component="form" noValidate sx={{mt: 3}}>
