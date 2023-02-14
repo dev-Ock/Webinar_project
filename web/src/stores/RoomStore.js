@@ -44,7 +44,7 @@ const EmptyRoom = {
     state      : '',
     streamUrl  : '',
     startTime  : '',
-    link       : '',
+    link       : ''
 };
 
 const EmptyOnRoom = {
@@ -61,6 +61,12 @@ const EmptyOnRoom = {
     updatedDatetime: ''
 }
 
+const EmptyRoomTitleAndPublisherName = {
+    title : "",
+    publisherName : ""
+}
+
+
 const EmptyRoomList = [];
 let EmptyRoomTitle = "";
 
@@ -73,14 +79,14 @@ let camerasSelect = '';
 let option = '';
 
 export default class RoomStore {
-
-
+    
+    
     roomList = Object.assign([], EmptyRoomList)
     roomMakeState = RoomMakeState.Empty;
     roomMake = Object.assign({}, EmptyRoom);
     onRoom = Object.assign({}, EmptyOnRoom);
     // roomListLength = toJS(this.roomList.length);
-    roomTitle = EmptyRoomTitle;
+    roomTitleAndPublisherName = Object.assign({}, EmptyRoomTitleAndPublisherName)    ;
     
     constructor(props) {
         this.roomRepository = props.roomRepository;
@@ -114,11 +120,12 @@ export default class RoomStore {
     };
     
     // TopBar에서 보여줄 room title
-    setRoomTitle = (title) => {
-        this.roomTitle = title;
+    setRoomTitleAndPublisherName = (title, name) => {
+        this.roomTitleAndPublisherName.title = title;
+        this.roomTitleAndPublisherName.publisherName = name;
     }
-
-
+    
+    
     setOnRoom = (room) => {
         this.onRoom = room;
         console.log('onRoom', this.onRoom)
@@ -157,7 +164,7 @@ export default class RoomStore {
     } catch (e) {
         console.log('RoomStore doSetRoomHistory error', e.message());
     }
-
+    
     // publisher-room 입장시, sessionStorage의 room data 세팅
     setRoomData(room) {
         try {
@@ -180,6 +187,7 @@ export default class RoomStore {
             
         } catch (e) {
             console.log(e);
+
         }
     }
     
@@ -476,8 +484,7 @@ export default class RoomStore {
                     throw Error('room user DB 저장 실패');
                 } else if (result === -1) {
                     alert('해당 세미나에 이미 참여 중입니다!');
-                    // throw Error('해당 세미나에 이미 참여 중입니다.');
-                    await window.location.replace('/player-room');
+                    throw Error('해당 세미나에 이미 참여 중입니다.');
                 } else {
                     console.log('room user DB 저장 성공');
                     await window.location.replace('/player-room');
@@ -496,12 +503,13 @@ export default class RoomStore {
         
     }
     
-    // 선택한 room 정보 조회
+    // 선택한 room 정보 조회 + TopBar에 보여줄 room name과 publisher name 세팅
     async getSelectedRoom(roomId) {
         const room = this.roomRepository.onSelectRoom(roomId);
         room.then(room => {
-                this.setRoomTitle(room.title)
-                console.log('room', room);
+                // TopBar에 보여줄 room name과 publisher name 세팅
+                this.setRoomTitleAndPublisherName(room.title, room.name)
+                console.log('room', this.roomTitleAndPublisherName);
                 return room;
             }
         )

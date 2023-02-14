@@ -58,7 +58,8 @@ class PublisherRoom extends React.Component {
     }
     
     componentDidMount() {
-        this.props.handleDrawerToggle(); // SideMenu 최소화
+        // SideMenu 최소화
+        this.props.handleDrawerToggle();
         // room 데이터 조회
         const roomId = sessionStorage.getItem(RoomMakeRoomID);
         this.state.room = this.props.roomStore.getSelectedRoom(roomId);
@@ -135,7 +136,7 @@ class PublisherRoom extends React.Component {
                 <Grid container direction='row'>
                     <Grid item xs className={classes.leftGrid}>
                         <Grid item sm>
-                            <Box bgcolor='lightgray' color="info.contrastText"
+                            <Box bgcolor='black' color="info.contrastText"
                                  style={{height: '52vh', textAlign: 'center'}}>
                                 <div>
                                     {/*<div style={{textAlign: 'center', padding:'0px'}}>*/}
@@ -149,8 +150,8 @@ class PublisherRoom extends React.Component {
                                                     // poster={moonPicture}
                                                     autoPlay
                                                     playsInline
-                                                    width={600}
-                                                    height={500}
+                                                    width={700}
+                                                    // height='100%'
                                                 ></video>
                                             </div>
                                             {/* <video
