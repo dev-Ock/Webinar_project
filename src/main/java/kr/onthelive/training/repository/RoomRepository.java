@@ -1,6 +1,7 @@
 package kr.onthelive.training.repository;
 
 import kr.onthelive.training.model.BaseRoom;
+import kr.onthelive.training.model.BaseRoomUserName;
 import kr.onthelive.training.model.BaseSimpleRoom;
 import kr.onthelive.training.repository.mapper.RoomMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -39,8 +40,8 @@ public class RoomRepository {
         mapper.insertRoom(room);
     }
         // 해당 룸 정보 조회
-    public BaseRoom selectRoomById(String id){
-        BaseRoom roomData = mapper.selectRoomById(id);
+    public BaseRoomUserName selectRoomById(String id){
+        BaseRoomUserName roomData = mapper.selectRoomById(id);
         return roomData;
     }
 

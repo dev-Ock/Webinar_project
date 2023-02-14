@@ -35,8 +35,7 @@ public class RoomHistoryService {
         BaseRoomHistory roomHistory = new BaseRoomHistory();
 
         int publicOrNot;
-        int passwordLength = roominfo.getPassword().length();
-        if(passwordLength > 0){
+        if(roominfo.getPassword().equals("")){
             publicOrNot = 0;
         }else{publicOrNot = 1;}
 
