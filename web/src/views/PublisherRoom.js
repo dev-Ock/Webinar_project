@@ -25,7 +25,7 @@ const styles = (theme) => ({
     mainContainer: {
         flexGrow: 1,
         padding : theme.spacing(3),
-
+        
     },
     appBarSpacer : theme.mixins.toolbar,
     mainContent  : {
@@ -36,19 +36,19 @@ const styles = (theme) => ({
     },
     toolbar      : {
         width: '100%',
-
+        
     },
-    leftGrid : {
-        width : '80vw'
+    leftGrid     : {
+        width: '80vw'
     },
-    rightGrid : {
-        width : '20vw'
+    rightGrid    : {
+        width: '20vw'
     },
-    gridContainer : {
-        display: 'grid',
-        gridTemplateColumns: '4fr 1fr',
-        gridTemplateRows: '3fr 1fr 1fr 1fr',
-        gridTemplateAreas: `
+    gridContainer: {
+        display                     : 'grid',
+        gridTemplateColumns         : '4fr 1fr',
+        gridTemplateRows            : '3fr 1fr 1fr 1fr',
+        gridTemplateAreas           : `
                                 'view1 view2'
                                 'view3 view2'
                                 'view4 view2'
@@ -56,8 +56,8 @@ const styles = (theme) => ({
             `,
         [theme.breakpoints.up('xs')]: {
             gridTemplateColumns: '1fr',
-            gridTemplateRows: '600px 200px 200px 200px 1fr',
-            gridTemplateAreas: `
+            gridTemplateRows   : '600px 200px 200px 200px 1fr',
+            gridTemplateAreas  : `
                                 'view1'
                                 'view3'
                                 'view4'
@@ -67,8 +67,8 @@ const styles = (theme) => ({
         },
         [theme.breakpoints.up('lg')]: {
             gridTemplateColumns: '4fr 1fr',
-            gridTemplateRows: '3fr 0.5fr 1fr 0.5fr',
-            gridTemplateAreas: `
+            gridTemplateRows   : '3fr 0.5fr 1fr 0.5fr',
+            gridTemplateAreas  : `
                                 'view1 view2'
                                 'view3 view2'
                                 'view4 view2'
@@ -76,31 +76,31 @@ const styles = (theme) => ({
             `,
         },
     },
-    gridView1 : {
-        gridArea: 'view1',
-        background: 'red',
-        padding: '50px'
+    gridView1    : {
+        gridArea  : 'view1',
+        background: 'white',
+        padding   : '50px'
     },
-    gridView2 : {
-        gridArea: 'view2',
+    gridView2    : {
+        gridArea  : 'view2',
         background: 'pink',
-        padding: '55px',
-        textAlign: 'center'
+        padding   : '55px',
+        textAlign : 'center'
     },
-    gridView3 : {
-        gridArea: 'view3',
+    gridView3    : {
+        gridArea  : 'view3',
         background: 'orange',
-        padding: '50px'
+        padding   : '50px'
     },
-    gridView4 : {
-        gridArea: 'view4',
+    gridView4    : {
+        gridArea  : 'view4',
         background: 'blue',
-        padding: '50px'
+        padding   : '50px'
     },
-    gridView5 : {
-        gridArea: 'view5',
+    gridView5    : {
+        gridArea  : 'view5',
         background: 'grey',
-        padding: '50px'
+        padding   : '50px'
     }
 });
 
@@ -109,28 +109,32 @@ class PublisherRoom extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            room      : {},
-            roomPlayerList  : {},
-            playerList: false,
-            standBy   : true,
-            view      : true,
-            stream    : "",
-            pause     : false,
-            videoOn   : true,
-            audioOff  : false,
-            tabValue : '1'
+            room          : {},
+            roomPlayerList: {},
+            playerList    : false,
+            standBy       : true,
+            view          : true,
+            stream        : "",
+            pause         : false,
+            videoOn       : true,
+            audioOff      : false,
+            tabValue      : '1'
         }
+        
     }
-
+    
+    
+    
     componentDidMount() {
         // SideMenu 최소화
         this.props.handleDrawerToggle();
+    
         // room 데이터 조회
         const roomId = sessionStorage.getItem(RoomMakeRoomID);
         this.props.roomStore.getSelectedRoom(roomId)
         // 방송 기본 세팅
         const stream = this.props.roomStore.setRoom();
-        stream.then(data => this.setState({stream : data}));
+        stream.then(data => this.setState({stream: data}));
         // 세미나 참여한 player 조회
         const selectPlayerList = this.props.roomUserStore.getRoomUserList(roomId);
         selectPlayerList
@@ -141,46 +145,46 @@ class PublisherRoom extends React.Component {
                 this.setState({playerList: !this.state.playerList});
             })
     }
-
+    
     // 방송 준비
     onStandBy() {
         this.setState({standBy: false});
     }
-
+    
     // SRS server-Publisher 연결
     async onServerPublisherConnection() {
         // room state : pending
         await this.props.roomStore.onPendingRoomState(this.props.roomStore.onRoom);
-        const streamUrl = sessionStorage.getItem(Repository.RoomMakeStreamUrl);
         // SRS server-Publisher 연결
+        const streamUrl = sessionStorage.getItem(Repository.RoomMakeStreamUrl);
         await this.props.roomStore.serverPublisherConnection(streamUrl);
         // room state : progress
         await this.props.roomStore.onProgressRoomState(this.props.roomStore.onRoom);
         this.setState({view: false});
     }
-
+    
     // Camera on/off
     onVideoOnOff = () => {
         this.state.videoOn = this.props.roomStore.setVideoOnOff(this.state.videoOn);
     }
-
+    
     // Audio on/off
     onAudioOnOff = () => {
         this.state.audioOff = this.props.roomStore.setAudioOnOff(this.state.audioOff);
     }
-
+    
     // camera change
     async onChangeVideoOption() {
         await this.props.roomStore.setChangeVideoOption();
     }
-
+    
     // player List 조회 새로고침
     async onRefreshPlayerList() {
         console.log('111')
         const roomId = sessionStorage.getItem(RoomMakeRoomID);
         this.state.roomPlayerList = await this.props.roomUserStore.getRoomUserList(roomId);
     }
-
+    
     // 방송 일시정지
     onPause() {
         this.setState({pause: !this.state.pause});
@@ -191,28 +195,55 @@ class PublisherRoom extends React.Component {
             pauseBtn.innerText = '방송 다시 시작';
         }
     }
-
+    
     // 방송 종료
     onComplete() {
         console.log('onRoom', this.props.roomStore.onRoom)
         this.props.roomStore.onCompleteRoomState(this.props.roomStore.onRoom);
     }
-
+    
     // 오른쪽 tab change
     handleChange = (e, value) => {
-        this.setState({tabValue : value})
+        this.setState({tabValue: value})
     };
+    
+    // display test
+    // errorMsg(msg, error) {
+    //     const errorElement = document.querySelector('#errorMsg');
+    //     errorElement.innerHTML += `<p>${msg}</p>`;
+    //     if (typeof error !== 'undefined') {
+    //         console.error(error);
+    //     }
+    // }
+    
+    // 송출할 display 선택
+    selectDisplayOption = async (e) => {
+        e.preventDefault();
+        await this.props.roomStore.onSelectDisplayOption();
+    }
+    
+    endDisplaySharing = async(e) => {
+        e.preventDefault()
+        await this.props.roomStore.onEndDisplaySharing();
+    }
 
+
+// if ((navigator.mediaDevices && 'getDisplayMedia' in navigator.mediaDevices)) {
+//     startButton.disabled = false;
+// } else {
+//     errorMsg('getDisplayMedia is not supported');
+// }
+    
     render() {
         const {classes} = this.props;
-
+        
         return (
             <div style={{marginTop: "64px", width: '100%', height: '100%', margin: '0px'}}>
                 <div className={classes.gridContainer}>
                     <div className={classes.gridView1}>
                         <Box>
                             <div style={{textAlign: 'center', paddingTop: '20px'}}>
-                                <h2>세미나 제목 : { this.props.roomStore.roomTitle}</h2>
+                                <h2>세미나 제목 : {this.props.roomStore.roomTitle}</h2>
                                 <div className="call">
                                     <div style={{textAlign: 'center'}}>
                                         <div>
@@ -224,6 +255,21 @@ class PublisherRoom extends React.Component {
                                                 width={600}
                                                 height={500}
                                             ></video>
+                                            
+                                            {/*<button id="startButton" disabled>Start*/}
+                                            {/*</button>*/}
+                                            <fieldset id="options" style={{display: 'block'}}>
+                                                <legend>송출할 화면 선택</legend>
+                                                <select id="displaySurface" defaultValue={"camera"}
+                                                        onChange={this.selectDisplayOption}>
+                                                    <option value="camera">카메라</option>
+                                                    <option value="browser">화면 공유</option>
+                                                    {/*<option value="window">윈도우</option>*/}
+                                                    {/*<option value="monitor">전체화면</option>*/}
+                                                </select>
+                                                <button id="endSharing" hidden={true} onClick={this.endDisplaySharing}>공유 중지</button>
+                                            </fieldset>
+                                            {/*<div id="errorMsg"></div>*/}
                                         </div>
                                         {/* <video
                                 id="peerFace"
@@ -233,33 +279,46 @@ class PublisherRoom extends React.Component {
                                 height={400}></video> */}
                                     </div>
                                 </div>
-
+                            
                             </div>
-
+                        
                         </Box>
                     </div>
-
+                    
                     <div className={classes.gridView3}>
                         <div>화면 구성</div>
                     </div>
                     <div className={classes.gridView4}>
                         참여자
                     </div>
-
+                    
                     <div className={classes.gridView5}>
                         {/*<Box bgcolor='text.disabled' color="info.contrastText" style={{height: '43.8vh', textAlign:'center', verticalAlign:'middle'}}>*/}
                         <div style={{textAlign: 'center'}}>
-
+                            
                             <div
                                 id="BtnOptionBox"
                             >
-                                <ButtonGroup variant="outlined" aria-label="outlined primary button group" size="large" color="inherit">
-                                    {this.state.audioOff ? <Button onClick={this.onAudioOnOff.bind(this)} style={{display: 'block'}}><div><MicIcon></MicIcon></div><span>Mute</span></Button>:<Button style={{display: 'block'}} onClick={this.onAudioOnOff.bind(this)}><div><MicOffIcon></MicOffIcon></div><span>Unmute</span></Button>}
-                                    {this.state.videoOn ? <Button onClick={this.onVideoOnOff.bind(this)} style={{display: 'block'}}><div><VideocamIcon></VideocamIcon></div><span>Start cam</span></Button>:<Button style={{display: 'block'}} onClick={this.onVideoOnOff.bind(this)}><div><VideocamOffIcon></VideocamOffIcon></div><span>Stop cam</span></Button>}
-                                    <Button startIcon={<SettingsIcon />} style={{display: 'block'}}>
+                                <ButtonGroup variant="outlined" aria-label="outlined primary button group" size="large"
+                                             color="inherit">
+                                    {this.state.audioOff ?
+                                        <Button onClick={this.onAudioOnOff.bind(this)} style={{display: 'block'}}>
+                                            <div><MicIcon></MicIcon></div>
+                                            <span></span></Button> :
+                                        <Button style={{display: 'block'}} onClick={this.onAudioOnOff.bind(this)}>
+                                            <div><MicOffIcon></MicOffIcon></div>
+                                            <span></span></Button>}
+                                    {this.state.videoOn ?
+                                        <Button onClick={this.onVideoOnOff.bind(this)} style={{display: 'block'}}>
+                                            <div><VideocamIcon></VideocamIcon></div>
+                                            <span></span></Button> :
+                                        <Button style={{display: 'block'}} onClick={this.onVideoOnOff.bind(this)}>
+                                            <div><VideocamOffIcon></VideocamOffIcon></div>
+                                            <span></span></Button>}
+                                    <Button startIcon={<SettingsIcon/>} style={{display: 'block'}}>
                                         <select
                                             id="cameras"
-                                            style={{fontSize: "16px", color: '#37474f', width:'200px'}}
+                                            style={{fontSize: "16px", color: '#37474f', width: '200px'}}
                                             onInput={this.onChangeVideoOption.bind(this)}
                                         ></select></Button>
                                     {this.state.standBy
@@ -268,7 +327,7 @@ class PublisherRoom extends React.Component {
                                             onClick={this.onStandBy.bind(this)}>
                                             방송 준비 완료
                                         </Button>
-
+                                        
                                         :
                                         this.state.view
                                             ?
@@ -283,7 +342,7 @@ class PublisherRoom extends React.Component {
                                             >
                                                 방송 일시정지
                                             </Button>
-
+                                        
                                     }
                                 </ButtonGroup>
                                 {/*<div style={{display: "inline-block"}}>*/}
@@ -300,7 +359,7 @@ class PublisherRoom extends React.Component {
                                 {/*            />*/}
                                 {/*        }*/}
                                 {/*    />*/}
-
+                                
                                 {/*    <FormControlLabel*/}
                                 {/*        style={{color: '#37474f'}}*/}
                                 {/*        label="Audio"*/}
@@ -315,8 +374,8 @@ class PublisherRoom extends React.Component {
                                 {/*        }*/}
                                 {/*    />*/}
                                 {/*</div>*/}
-
-
+                                
+                                
                                 {/*{this.state.standBy*/}
                                 {/*    ?*/}
                                 {/*    <div*/}
@@ -329,7 +388,7 @@ class PublisherRoom extends React.Component {
                                 {/*            방송 준비 완료*/}
                                 {/*        </Button>*/}
                                 {/*    </div>*/}
-
+                                
                                 {/*    :*/}
                                 {/*    this.state.view*/}
                                 {/*        ?*/}
@@ -365,21 +424,20 @@ class PublisherRoom extends React.Component {
                             </div>
                         </div>
                     </div>
-
-
-
+                    
+                    
                     <div className={classes.gridView2}>
                         <div style={{textAlign: 'center'}}>
                             <TabContext value={this.state.tabValue}>
                                 <Box>
-                                    <TabList onChange={(e, value)=>this.handleChange(e, value)} >
-                                        <Tab label="Player List" value="1" />
-                                        <Tab label="Chat" value="2" />
+                                    <TabList onChange={(e, value) => this.handleChange(e, value)}>
+                                        <Tab label="Player List" value="1"/>
+                                        <Tab label="Chat" value="2"/>
                                     </TabList>
                                 </Box>
                                 <div style={{width: '430px', textAlign: 'center'}}>
-                                    <TabPanel value= "1" style={{padding: '0px'}}>
-
+                                    <TabPanel value="1" style={{padding: '0px'}}>
+                                        
                                         {
                                             this.state.playerList
                                                 ?
@@ -388,13 +446,18 @@ class PublisherRoom extends React.Component {
                                                 :
                                                 ""
                                         }
-
+                                    
                                     </TabPanel>
-                                    <TabPanel value= "2" >
-                                        <div style={{width: '380px', backgroundColor: 'white', height: '80vh'}}>채팅창</div>
+                                    <TabPanel value="2">
+                                        <div style={{width: '380px', backgroundColor: 'white', height: '80vh'}}>채팅창
+                                        </div>
                                         <div style={{textAlign: 'center'}}>
-                                            <div style={{marginTop: '3px'}}><input placeholder="내용을 입력해주세요." style={{width: '300px', margin: '5px'}}></input><Button variant="contained">전송</Button></div>
-                                        </div></TabPanel>
+                                            <div style={{marginTop: '3px'}}><input placeholder="내용을 입력해주세요." style={{
+                                                width : '300px',
+                                                margin: '5px'
+                                            }}></input><Button variant="contained">전송</Button></div>
+                                        </div>
+                                    </TabPanel>
                                 </div>
                             </TabContext>
                         </div>
@@ -403,8 +466,8 @@ class PublisherRoom extends React.Component {
             </div>
         );
     }
-
-
+    
+    
 }
 
 
