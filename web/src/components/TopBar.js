@@ -112,13 +112,13 @@ function TopBar(props) {
                 >
                     <MenuIcon />
                 </IconButton>
-                { props.roomStore.roomTitleAndPublisherName.title !== "" ?
-                    <div style={{alignItems:'left'}}>
-                        <h2> Title : { props.roomStore.roomTitleAndPublisherName.title} / Publisher : { props.roomStore.roomTitleAndPublisherName.publisherName }
-                        </h2>
-                    </div> :
-                    ""
-                }
+                {/*{ props.roomStore.roomTitleAndPublisherName.title !== "" ?*/}
+                {/*    <div style={{alignItems:'left'}}>*/}
+                {/*        <h2> Title : { props.roomStore.roomTitleAndPublisherName.title} / Publisher : { props.roomStore.roomTitleAndPublisherName.publisherName }*/}
+                {/*        </h2>*/}
+                {/*    </div> :*/}
+                {/*    ""*/}
+                {/*}*/}
                 
                 {isLoggedIn ? <Typography variant="h6" noWrap className={classes.title}>
                     {user.name}님 환영합니다.

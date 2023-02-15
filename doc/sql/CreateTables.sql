@@ -97,7 +97,7 @@ create table room_user_histories
         primary key,
     room_id          bigint                                   not null comment 'room ID',
     player_id        bigint                                   not null comment '사용자 ID',
-    state            varchar(128) default 'wait'              not null comment 'room 상태 [Wait, Progress, Complete, Uncomplete, Failed]',
+    state            varchar(128) default 'wait'              not null comment 'room 상태 [Wait, Progress, Complete, Uncomplete, Pending, Failed]',
     created_datetime datetime     default current_timestamp() not null comment 'room 참여자 각 state 생성일시',
     constraint fk_room_user_histories_player_id
         foreign key (player_id) references users (id),
@@ -113,7 +113,7 @@ create table room_users
     room_id          bigint                                   not null comment 'room ID',
     publisher_id     bigint                                   not null comment 'room 생성자 ID',
     player_id        bigint                                   not null comment 'room 참여자 ID',
-    state            varchar(128) default 'wait'              not null comment 'user 상태 [Wait, Progress, Complete, Uncomplete, Failed]',
+    state            varchar(128) default 'wait'              not null comment 'user 상태 [Wait, Progress, Complete, Uncomplete, Pending, Failed]',
     created_datetime datetime     default current_timestamp() not null comment 'room 참여자 생성일시',
     updated_datetime datetime     default current_timestamp() not null comment 'room 참여자 변경일시',
     constraint fk_room_users_player_id

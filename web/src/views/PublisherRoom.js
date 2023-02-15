@@ -64,8 +64,6 @@ class PublisherRoom extends React.Component {
         // room 데이터 조회
         const roomId = sessionStorage.getItem(RoomMakeRoomID);
         this.props.roomStore.getSelectedRoom(roomId)
-        // this.setState({room : this.props.roomStore.getSelectedRoom(roomId) })
-        // this.state.room = this.props.roomStore.getSelectedRoom(roomId);
         // 방송 기본 세팅
         const stream = this.props.roomStore.setRoom();
         stream.then(data => this.setState({stream : data}));
@@ -75,7 +73,7 @@ class PublisherRoom extends React.Component {
             .then((data) => {
                 this.state.roomPlayerList = data;
             })
-            .then((data) => {
+            .then((_) => {
                 this.setState({playerList: !this.state.playerList});
             })
     }
@@ -87,8 +85,12 @@ class PublisherRoom extends React.Component {
     
     // SRS server-Publisher 연결
     async onServerPublisherConnection() {
+        // room state : pending
+        await this.props.roomStore.onPendingRoomState(this.props.roomStore.onRoom);
         const streamUrl = sessionStorage.getItem(Repository.RoomMakeStreamUrl);
+        // SRS server-Publisher 연결
         await this.props.roomStore.serverPublisherConnection(streamUrl);
+        // room state : progress
         await this.props.roomStore.onProgressRoomState(this.props.roomStore.onRoom);
         this.setState({view: false});
     }

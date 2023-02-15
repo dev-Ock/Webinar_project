@@ -30,9 +30,6 @@
     </resultMap>
 
 
-
-    <!-- select -->
-    <!--    <select id="selectRoom" parameterType="String" resultMap="BaseRoomResultMap">-->
     <select id="selectRoomList" parameterType="String" resultMap="BaseRoomResultMap">
         SELECT id,
                title,
