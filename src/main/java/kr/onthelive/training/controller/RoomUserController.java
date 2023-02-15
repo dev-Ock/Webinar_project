@@ -59,14 +59,5 @@ public class RoomUserController {
         return roomUserStreamUrl;
     }
 
-//    // 룸 유저 StreamUrl update
-//    @PutMapping("/streamUrl/{roomId}/{userId}")
-//    public int updateRoomUserStreamUrl(HttpServletRequest httpRequest, @PathVariable("roomId") String roomId, @PathVariable("userId") String userId){
-//        int roomUserStreamUrl = roomUserService.updateRoomUserStreamUrl(roomId, userId);
-//        return roomUserStreamUrl;
-//        // 일단 update 되는지 숫자로만 보고 다음단계에서 streamUrl 리턴하는 걸로 바꾸기
-//    }
-
-
 
 }

@@ -1,4 +1,6 @@
 import React, {Component} from 'react';
+import {makeAutoObservable, toJS} from "mobx";
+
 import {withStyles} from "@material-ui/core/styles";
 import {
     Grid,
@@ -60,7 +62,8 @@ class RoomList extends React.Component {
             pending : true,
             limit   : 12,
             page    : 1,
-            length  : 0
+            length  : 0,
+            publishedRoomLength : 0
         };
         this.offset = (this.state.page - 1) * this.state.limit
     }
@@ -93,23 +96,74 @@ class RoomList extends React.Component {
         const {roomStore, authStore, roomUserStore} = this.props;
         await roomStore.playerOrPublisherChoice(room, authStore.loginUser.id, () => authStore.checkLogin(), (param) => roomUserStore.onCreateRoomUser(param));
     }
-    
+
+
     render() {
-        
         const {classes} = this.props
         const {roomList} = this.props.roomStore;
-        
+
+        const userId = this.props.authStore.loginUser.id;
+        const publisherRoomList = toJS(roomList).filter(room => room.publisherId === userId);
+        const playerRoomList = toJS(roomList).filter(room => room.publisherId !== userId);
+        // console.log("publisherRoomList : ", publisherRoomList)
+        // console.log("playerRoomList : ", playerRoomList)
+
         return (
             <Container component="main" className={classes.mainContainer}>
                 <div className={classes.appBarSpacer}/>
                 <Toolbar>
                     <div className={classes.toolbar}>
                         <Typography variant="h2" component="h2">
-                            Webinar
+                            Webinar 내가 생성한 세미나
                         </Typography>
                     </div>
                 </Toolbar>
                 <br/><br/>
+                {
+                    publisherRoomList.length === 0 ?
+                        <div> 생성한 방이 없습니다. </div>
+                        :
+                        <Grid container spacing={3}>
+
+                            {publisherRoomList
+                                .slice(this.offset, this.offset + this.state.limit)
+                                .map(room =>
+                                    <Grid item key={room.id} className={classes.card}>
+                                        <Card>
+                                            <CardActionArea variant='body1'>
+                                                <CardHeader className={cardHeaderClasses.title} title={room.title}
+                                                            subheader={room.name}/>
+                                                <CardContent>
+                                                    <Typography variant='body1' component='div'>
+                                                        {room.description ? room.description : '입력한 내용이 없습니다.'}
+                                                    </Typography>
+                                                    <Typography variant='body2' color='textSecondary'>
+                                                        {room.state}
+                                                    </Typography>
+                                                </CardContent>
+                                            </CardActionArea>
+                                            <CardActions style={{textAlign:'right'}}>
+                                                <Button size="small" color="primary" onClick={(e) => {
+                                                    this.enterRoom(e, room)
+                                                }}>
+                                                    입장하기
+                                                </Button>
+                                            </CardActions>
+                                        </Card>
+                                    </Grid>
+                                )}
+                        </Grid>
+                }
+                <br/><br/>
+                <Toolbar>
+                    <div className={classes.toolbar}>
+                        <Typography variant="h2" component="h2">
+                            Webinar 참여할 세미나
+                        </Typography>
+                    </div>
+                </Toolbar>
+                <br/><br/>
+                <br></br>
                 <div style={{fontSize: '20px', textAlign: 'right', marginRight:'100px'}}>
                     <label>
                         한 페이지에 표시할 player 수 :
@@ -128,13 +182,13 @@ class RoomList extends React.Component {
                 <br/>
                 <br/>
                 {
-                    this.state.length === 0
+                    playerRoomList.length === 0
                         ?
                         <div className={classes.mainContainer}><h1>시청할 수 있는 웨비나가 없습니다.</h1></div>
                         :
                         <Grid container spacing={3}>
                             
-                            {roomList
+                            {playerRoomList
                                 .slice(this.offset, this.offset + this.state.limit)
                                 .map(room =>
                                     <Grid item key={room.id} className={classes.card}>
