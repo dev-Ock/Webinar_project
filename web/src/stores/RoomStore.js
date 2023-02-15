@@ -98,56 +98,56 @@ export default class RoomStore {
         this.roomHistoryRepository = props.roomHistoryRepository;
         makeAutoObservable(this);
     }
-
+    
     changeTitle = (title) => {
         this.roomMake.title = title;
     };
-
+    
     changeDescription = (description) => {
         this.roomMake.description = description;
     };
-
+    
     changeMaximum = (maximum) => {
         this.roomMake.maximum = maximum;
     };
-
+    
     changeStartTime = (startTime) => {
         this.roomMake.startTime = startTime;
     };
-
+    
     changeLink = (link) => {
         this.roomMake.link = link;
     };
-
+    
     changePassword = (password) => {
         this.roomMake.password = password;
     };
-
+    
     // TopBar에서 보여줄 room title
     setRoomTitleAndPublisherName = (title, name) => {
         this.roomTitleAndPublisherName.title = title;
         this.roomTitleAndPublisherName.publisherName = name;
     }
-
-
+    
+    
     setOnRoom = (room) => {
         console.log('setOnRoom', room)
         this.onRoom = room;
         console.log('onRoom', this.onRoom)
         return this.onRoom;
     }
-
+    
     // 세미나 만들기 정보 서버로 보내기
     * doMakeRoom(userId) {
         try {
             this.roomMakeState = RoomMakeState.Pending; // room을 만들고 있는 상태
-
+            
             this.roomMake.publisherId = userId;
             this.roomMake.state = RoomStateType.Wait; // room의 state
-
+            
             const param = this.roomMake;
             const room = yield this.roomRepository.makeRoom(param);
-
+            
             this.roomMake = Object.assign({}, EmptyRoom);
             this.roomMakeState = RoomMakeState.Success;
             return room;
@@ -158,17 +158,17 @@ export default class RoomStore {
             this.removeRoomData();
         }
     }
-
+    
     // 세미나 만든 후 roomHistory 정보 서버로 보냄
     * doSetRoomHistory(roomHistoryInfo) {
         try {
             // console.log("RoomStore *doSetRoomHistory", roomHistoryInfo)
             yield this.roomHistoryRepository.setRoomHistory(roomHistoryInfo)
-        } catch(e) {
+        } catch (e) {
             console.log('RoomStore *doSetRoomHistory error', e.message());
         }
     }
-
+    
     // // 유저가 자신이 만들었던 세미나(room) 조회
     // * getPublishedRoom(userId){
     //     try {
@@ -180,9 +180,7 @@ export default class RoomStore {
     //     }
     //
     // }
-
-
-
+    
     
     // publisher-room 입장시, sessionStorage의 room data 세팅
     setRoomData(room) {
@@ -206,7 +204,7 @@ export default class RoomStore {
             
         } catch (e) {
             console.log(e);
-
+            
         }
     }
     
@@ -222,7 +220,7 @@ export default class RoomStore {
         stream = await navigator.mediaDevices.getUserMedia(constraints);
         myVideo = document.getElementById("myVideoTag");
         myVideo.srcObject = stream;
-
+        
         // 비디오 장치들이 cameras 옵션에 달리도록 세팅
         const devices = await navigator.mediaDevices.enumerateDevices();
         const cameras = devices.filter((device) => device.kind === "videoinput");
@@ -239,7 +237,7 @@ export default class RoomStore {
             }
             camerasSelect.appendChild(option);
         });
-
+        
         stream.getAudioTracks()
             .forEach((track) => (track.enabled = !track.enabled));
         console.log('방송세팅 stream', stream);
@@ -250,7 +248,7 @@ export default class RoomStore {
     async serverPublisherConnection(url) {
         const streamUrl = url
         // const streamUrl = "3abd9f34";
-
+        
         
         const publish = async (streamUrl) => {
             pc.addTransceiver("audio", {direction: "sendonly"});
@@ -273,13 +271,13 @@ export default class RoomStore {
             // myVideo.srcObject = stream;
             // console.log('stream2 : ', stream)
             
-
+            
             // addTrack
             stream.getTracks().forEach((track) => {
                 pc.addTrack(track);
                 // ontrack && ontrack({ track: track });
             });
-
+            
             
             // createOffer & setLocalDescription
             let offer = await pc.createOffer();
@@ -446,7 +444,7 @@ export default class RoomStore {
             .forEach((track) => (track.enabled = !track.enabled));
         // return !videoOn;
     }
-
+    
     // player용 Audio turn on/off
     // setAudioOnOff2(audioOff) {
     setAudioOnOff2() {
@@ -456,7 +454,7 @@ export default class RoomStore {
             .forEach((track) => (track.enabled = !track.enabled));
         // return !audioOff;
     }
-
+    
     // 룸 전체 리스트 조회
     * selectRoomList() {
         console.log("selectroomusername확인")
@@ -471,66 +469,79 @@ export default class RoomStore {
             console.log('세미나 목록 조회 error', e);
         }
     };
-
-    // room password double-check(front)
+    
+    // room password double-check<1>(front)
     passwordCheckFront(room) {
-        const passwordCheck = prompt("password를 입력해 주세요")
+        const passwordCheck = prompt("password를 정확하게 입력해 주세요")
         if (passwordCheck == null) {
             return null;
         } else {
-            return passwordCheck == room.password ? this.passwordCheckDB(room) : this.passwordCheckFront(room);
+            const result = (passwordCheck == room.password ? this.passwordCheckDB(room) : this.passwordCheckFront(room));
+            return result;
         }
     }
     
-    // room password double-check(Server)
+    // room password double-check<2>(Server)
     passwordCheckDB(room) {
         this.roomRepository.onCheckRoomPw(room.id, room.password)
-            .then(result => {
-                return result === 1 ? null : this.passwordCheckFront(room);
+            .then(data => {
+                const result = (data === 1 ? 1 : this.passwordCheckFront(room));
+                return result;
             })
             .catch(error => {
                 console.log("RoomStore passwordCheckDB error", error)
             })
     }
-
+    
+    // publisher or player check
+    async checkPublisherOrPlayer(room, userId, onCreateRoomUser) {
+        if (room.publisherId === userId) {
+            console.log('publisher');
+            await this.setRoomData(room); // sessionStorage에 publisher 정보 세팅
+            await window.location.replace('/publisher-room');
+        } else {
+            console.log('player')
+            await this.beforePlayerRoom(room.id, room.streamUrl); // sessionStorage에 player 정보 세팅
+            
+            const param = {
+                roomId     : room.id,
+                publisherId: room.publisherId,
+                playerId   : userId,
+                state      : RoomUserStateType.Wait
+            };
+            console.log('param', param);
+            const result = await onCreateRoomUser(param);
+            console.log('RoomStore onCreateRoomUser result', result);
+            if (result === 0) {
+                throw Error('room user DB 저장 실패');
+            } else if (result === -1) {
+                alert('해당 세미나에 이미 참여 중입니다!');
+                throw Error('해당 세미나에 이미 참여 중입니다.');
+            } else {
+                console.log('room user DB 저장 성공');
+                await window.location.replace('/player-room');
+            }
+        }
+    }
+    
     // room list에서 room 들어갈 때 player인지 publisher인지 체크하고 이동
     async playerOrPublisherChoice(room, userId, checkLogin, onCreateRoomUser) {
         console.log('room', room);
-        if (userId === undefined) {
-            checkLogin();
-        }
-        if (room.password) {
-            // password Front & Server double-check
-            this.passwordCheckFront(room)
-        }
-
         try {
-            if (room.publisherId === userId) {
-                console.log('publisher');
-                await this.setRoomData(room); // sessionStorage에 publisher 정보 세팅
-                await window.location.replace('/publisher-room');
-            } else {
-                console.log('player')
-                await this.beforePlayerRoom(room.id, room.streamUrl); // sessionStorage에 player 정보 세팅
-
-                const param = {
-                    roomId     : room.id,
-                    publisherId: room.publisherId,
-                    playerId   : userId,
-                    state      : RoomUserStateType.Wait
-                };
-                console.log('param', param);
-                const result = await onCreateRoomUser(param);
-                console.log('RoomStore onCreateRoomUser result', result);
-                if (result === 0) {
-                    throw Error('room user DB 저장 실패');
-                } else if (result === -1) {
-                    alert('해당 세미나에 이미 참여 중입니다!');
-                    throw Error('해당 세미나에 이미 참여 중입니다.');
-                } else {
-                    console.log('room user DB 저장 성공');
-                    await window.location.replace('/player-room');
+            // userId가 없는 경우
+            if (userId === undefined) {
+                checkLogin();
+                const userId = sessionStorage.getItem(UserId);
+                if (userId === undefined) {
+                    throw new Error("No user");
                 }
+            }
+            // 비번방인 경우
+            if (room.password) {
+                // password Front & Server double-check
+                await this.passwordCheckFront(room) === null ? console.log('true') : await this.checkPublisherOrPlayer(room, userId, onCreateRoomUser);
+            }else{
+                await this.checkPublisherOrPlayer(room, userId, onCreateRoomUser);
             }
         } catch (e) {
             console.log(e);
@@ -556,12 +567,12 @@ export default class RoomStore {
             }
         )
     }
-
+    
     // room state change DB Update
     * onUpdateRoomState(data) {
         return yield this.roomRepository.onUpdateRoom(data);
     }
-
+    
     // room state : Pending
     onPendingRoomState(data) {
         console.log('onProgressRoom data : ', data);
@@ -574,7 +585,7 @@ export default class RoomStore {
                 }
             })
     }
-
+    
     // room state : Progress
     onProgressRoomState(data) {
         console.log('onProgressRoom data : ', data);
@@ -587,7 +598,7 @@ export default class RoomStore {
                 }
             })
     }
-
+    
     // room state : Complete
     onCompleteRoomState(data) {
         console.log('onCompleteRoom data : ', data);
@@ -606,7 +617,7 @@ export default class RoomStore {
                 window.location.replace("/room-list");
             })
     }
-
+    
     // room state : Failed
     onFailedRoomState(data) {
         console.log('onFailedRoom data : ', data);
