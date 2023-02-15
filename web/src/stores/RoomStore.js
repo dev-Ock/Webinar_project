@@ -98,56 +98,56 @@ export default class RoomStore {
         this.roomHistoryRepository = props.roomHistoryRepository;
         makeAutoObservable(this);
     }
-    
+
     changeTitle = (title) => {
         this.roomMake.title = title;
     };
-    
+
     changeDescription = (description) => {
         this.roomMake.description = description;
     };
-    
+
     changeMaximum = (maximum) => {
         this.roomMake.maximum = maximum;
     };
-    
+
     changeStartTime = (startTime) => {
         this.roomMake.startTime = startTime;
     };
-    
+
     changeLink = (link) => {
         this.roomMake.link = link;
     };
-    
+
     changePassword = (password) => {
         this.roomMake.password = password;
     };
-    
+
     // TopBar에서 보여줄 room title
     setRoomTitleAndPublisherName = (title, name) => {
         this.roomTitleAndPublisherName.title = title;
         this.roomTitleAndPublisherName.publisherName = name;
     }
-    
-    
+
+
     setOnRoom = (room) => {
         console.log('setOnRoom', room)
         this.onRoom = room;
         console.log('onRoom', this.onRoom)
         return this.onRoom;
     }
-    
+
     // 세미나 만들기 정보 서버로 보내기
     * doMakeRoom(userId) {
         try {
             this.roomMakeState = RoomMakeState.Pending; // room을 만들고 있는 상태
-            
+
             this.roomMake.publisherId = userId;
             this.roomMake.state = RoomStateType.Wait; // room의 state
-            
+
             const param = this.roomMake;
             const room = yield this.roomRepository.makeRoom(param);
-            
+
             this.roomMake = Object.assign({}, EmptyRoom);
             this.roomMakeState = RoomMakeState.Success;
             return room;
@@ -158,29 +158,30 @@ export default class RoomStore {
             this.removeRoomData();
         }
     }
-    
+
     // 세미나 만든 후 roomHistory 정보 서버로 보냄
     * doSetRoomHistory(roomHistoryInfo) {
         try {
             // console.log("RoomStore *doSetRoomHistory", roomHistoryInfo)
             yield this.roomHistoryRepository.setRoomHistory(roomHistoryInfo)
-        } catch (e) {
+        } catch(e) {
             console.log('RoomStore *doSetRoomHistory error', e.message());
         }
     }
-    
-    // // 유저가 자신이 만들었던 세미나(room) 조회
-    // * getPublishedRoom(userId){
-    //     try {
-    //         // console.log("RoomStore *getPublishedRoom", roomHistoryInfo)
-    //         const roomData = yield this.roomHistoryRepository.getRoomHistory(userId)
-    //         return roomData
-    //     } catch(e) {
-    //         console.log('RoomStore *getPublishedRoom error', e.message)
-    //     }
-    //
-    // }
-    
+
+    // 유저가 자신이 만들었던 세미나(room) 조회 : 룸히스토리에서 사용
+    * getPublishedRoom(userId) {
+        try {
+            // console.log("RoomStore getPublishedRoom",  roomHistoryInfo)
+            const roomData = yield this.roomHistoryRepository.getRoomHistory( userId )
+            return roomData;
+        } catch(e){
+            console.log('RoomStore getPublishedRoom error', e.message )
+        }
+    }
+
+
+
     
     // publisher-room 입장시, sessionStorage의 room data 세팅
     setRoomData(room) {
@@ -204,7 +205,7 @@ export default class RoomStore {
             
         } catch (e) {
             console.log(e);
-            
+
         }
     }
     
@@ -220,7 +221,7 @@ export default class RoomStore {
         stream = await navigator.mediaDevices.getUserMedia(constraints);
         myVideo = document.getElementById("myVideoTag");
         myVideo.srcObject = stream;
-        
+
         // 비디오 장치들이 cameras 옵션에 달리도록 세팅
         const devices = await navigator.mediaDevices.enumerateDevices();
         const cameras = devices.filter((device) => device.kind === "videoinput");
@@ -237,7 +238,7 @@ export default class RoomStore {
             }
             camerasSelect.appendChild(option);
         });
-        
+
         stream.getAudioTracks()
             .forEach((track) => (track.enabled = !track.enabled));
         console.log('방송세팅 stream', stream);
@@ -248,7 +249,7 @@ export default class RoomStore {
     async serverPublisherConnection(url) {
         const streamUrl = url
         // const streamUrl = "3abd9f34";
-        
+
         
         const publish = async (streamUrl) => {
             pc.addTransceiver("audio", {direction: "sendonly"});
@@ -271,13 +272,13 @@ export default class RoomStore {
             // myVideo.srcObject = stream;
             // console.log('stream2 : ', stream)
             
-            
+
             // addTrack
             stream.getTracks().forEach((track) => {
                 pc.addTrack(track);
                 // ontrack && ontrack({ track: track });
             });
-            
+
             
             // createOffer & setLocalDescription
             let offer = await pc.createOffer();
@@ -444,7 +445,7 @@ export default class RoomStore {
             .forEach((track) => (track.enabled = !track.enabled));
         // return !videoOn;
     }
-    
+
     // player용 Audio turn on/off
     // setAudioOnOff2(audioOff) {
     setAudioOnOff2() {
@@ -454,7 +455,7 @@ export default class RoomStore {
             .forEach((track) => (track.enabled = !track.enabled));
         // return !audioOff;
     }
-    
+
     // 룸 전체 리스트 조회
     * selectRoomList() {
         console.log("selectroomusername확인")
@@ -567,12 +568,12 @@ export default class RoomStore {
             }
         )
     }
-    
+
     // room state change DB Update
     * onUpdateRoomState(data) {
         return yield this.roomRepository.onUpdateRoom(data);
     }
-    
+
     // room state : Pending
     onPendingRoomState(data) {
         console.log('onProgressRoom data : ', data);
@@ -585,7 +586,7 @@ export default class RoomStore {
                 }
             })
     }
-    
+
     // room state : Progress
     onProgressRoomState(data) {
         console.log('onProgressRoom data : ', data);
@@ -598,7 +599,7 @@ export default class RoomStore {
                 }
             })
     }
-    
+
     // room state : Complete
     onCompleteRoomState(data) {
         console.log('onCompleteRoom data : ', data);
@@ -617,7 +618,7 @@ export default class RoomStore {
                 window.location.replace("/room-list");
             })
     }
-    
+
     // room state : Failed
     onFailedRoomState(data) {
         console.log('onFailedRoom data : ', data);
