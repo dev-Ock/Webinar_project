@@ -4,7 +4,7 @@ import * as Repository from "../repositories/Repository";
 import {
     RoomMakePublisherId,
     RoomMakeRoomID,
-    RoomMakeStreamUrl,
+    RoomMakeStreamUrl, RoomViewRoomID,
     RoomViewStreamUrl,
     UserId
 } from "../repositories/Repository";
@@ -511,7 +511,7 @@ export default class RoomStore {
                 await window.location.replace('/publisher-room');
             } else {
                 console.log('player')
-                await this.beforePlayerRoom(room.streamUrl); // sessionStorage에 player 정보 세팅
+                await this.beforePlayerRoom(room.id, room.streamUrl); // sessionStorage에 player 정보 세팅
 
                 const param = {
                     roomId     : room.id,
@@ -539,7 +539,8 @@ export default class RoomStore {
     
     
     // room list에서 방을 선택했을 때 streamUrl이 sessionStorage에 저장
-    beforePlayerRoom(streamUrl) {
+    beforePlayerRoom(roomId, streamUrl) {
+        sessionStorage.setItem(Repository.RoomViewRoomID, roomId);
         sessionStorage.setItem(Repository.RoomViewStreamUrl, streamUrl);
         
     }

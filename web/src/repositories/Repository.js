@@ -5,6 +5,8 @@ export const UserId = '__OTL_User_Id__';
 export const RoomMakeRoomID= '__OTL_RoomMake_RoomId__';
 export const RoomMakePublisherId = '__OTL_RoomMake_PublisherId__';
 export const RoomMakeStreamUrl = '__OTL_RoomMake_StreamUrl__';
+export const RoomViewRoomID = '__OTL_RoomView_RoomID__';
+
 export const RoomViewStreamUrl = '__OTL_RoomView_StreamUrl__';
 
 
