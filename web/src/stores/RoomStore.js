@@ -169,17 +169,17 @@ export default class RoomStore {
         }
     }
 
-    // // 유저가 자신이 만들었던 세미나(room) 조회
-    // * getPublishedRoom(userId){
-    //     try {
-    //         // console.log("RoomStore *getPublishedRoom", roomHistoryInfo)
-    //         const roomData = yield this.roomHistoryRepository.getRoomHistory(userId)
-    //         return roomData
-    //     } catch(e) {
-    //         console.log('RoomStore *getPublishedRoom error', e.message)
-    //     }
-    //
-    // }
+    // 유저가 자신이 만들었던 세미나(room) 조회
+    * getPublishedRoom(userId){
+        try {
+            // console.log("RoomStore *getPublishedRoom", roomHistoryInfo)
+            const roomData = yield this.roomHistoryRepository.getRoomHistory(userId)
+            return roomData
+        } catch(e) {
+            console.log('RoomStore *getPublishedRoom error', e.message)
+        }
+
+    }
 
 
 
