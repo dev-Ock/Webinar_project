@@ -34,6 +34,7 @@ export const RoomUserStateType = { // player의 스트리밍 상태
     Progress  : "Progress",
     Complete  : "Complete",
     Uncomplete: "Uncomplete",
+    Pending   : "Pending",
     Failed    : "Failed"
 }
 
@@ -61,7 +62,7 @@ const EmptyOnRoom = {
     link           : '',
     createdDatetime: '',
     updatedDatetime: '',
-    name: ''
+    name           : ''
 }
 
 const EmptyRoomTitleAndPublisherName = {
@@ -160,10 +161,7 @@ export default class RoomStore {
     
     // 세미나 만든 후 roomHistory 정보 서버로 보냄
     * doSetRoomHistory(roomHistoryInfo) {
-        // const param = { roomId: roomHistoryInfo.id, state: roomHistoryInfo.state }
-        // console.log("히스토리 날리기 진입", param)
         yield this.roomHistoryRepository.setRoomHistory(roomHistoryInfo)
-        // yield this.roomHistoryRepository.setRoomHistory(param)
     }
     
     catch(e) {
@@ -452,8 +450,28 @@ export default class RoomStore {
         } catch (e) {
             console.log('세미나 목록 조회 error', e);
         }
-        
     };
+    
+    // room password double-check(front)
+    passwordCheckFront(room) {
+        const passwordCheck = prompt("password를 입력해 주세요")
+        if (passwordCheck == null) {
+            return null;
+        } else {
+            return passwordCheck == room.password ? this.passwordCheckDB(room) : this.passwordCheckFront(room);
+        }
+    }
+    
+    // room password double-check(Server)
+    passwordCheckDB(room) {
+        this.roomRepository.onCheckRoomPw(room.id, room.password)
+            .then(result => {
+                return result === 1 ? null : this.passwordCheckFront(room);
+            })
+            .catch(error => {
+                console.log("RoomStore passwordCheckDB error", error)
+            })
+    }
     
     // room list에서 room 들어갈 때 player인지 publisher인지 체크하고 이동
     async playerOrPublisherChoice(room, userId, checkLogin, onCreateRoomUser) {
@@ -461,6 +479,11 @@ export default class RoomStore {
         if (userId === undefined) {
             checkLogin();
         }
+        if (room.password) {
+            // password Front & Server double-check
+            this.passwordCheckFront(room)
+        }
+        
         try {
             if (room.publisherId === userId) {
                 console.log('publisher');
@@ -469,7 +492,7 @@ export default class RoomStore {
             } else {
                 console.log('player')
                 await this.beforePlayerRoom(room.streamUrl); // sessionStorage에 player 정보 세팅
-                
+
                 const param = {
                     roomId     : room.id,
                     publisherId: room.publisherId,
@@ -489,7 +512,6 @@ export default class RoomStore {
                     await window.location.replace('/player-room');
                 }
             }
-            
         } catch (e) {
             console.log(e);
         }
@@ -507,7 +529,7 @@ export default class RoomStore {
         const room = this.roomRepository.onSelectRoom(roomId);
         room.then(room => {
                 // TopBar에 보여줄 room name과 publisher name 세팅
-                this.setRoomTitleAndPublisherName(room.title, room.name);
+                // this.setRoomTitleAndPublisherName(room.title, room.name);
                 console.log('getSelectedRoom room', room);
                 this.setOnRoom(room);
             }
@@ -519,6 +541,19 @@ export default class RoomStore {
         return yield this.roomRepository.onUpdateRoom(data);
     }
     
+    // room state : Pending
+    onPendingRoomState(data) {
+        console.log('onProgressRoom data : ', data);
+        data.state = RoomStateType.Pending;
+        this.onUpdateRoomState(data)
+            .then(result => {
+                console.log("onProgressRoom", result);
+                if (result !== 1) {
+                    this.onFailedRoomState(data);
+                }
+            })
+    }
+    
     // room state : Progress
     onProgressRoomState(data) {
         console.log('onProgressRoom data : ', data);
@@ -526,15 +561,15 @@ export default class RoomStore {
         this.onUpdateRoomState(data)
             .then(result => {
                 console.log("onProgressRoom", result);
-                if(result !==1) {
-                    this.onFailedRoom(data);
+                if (result !== 1) {
+                    this.onFailedRoomState(data);
                 }
             })
     }
     
     // room state : Complete
     onCompleteRoomState(data) {
-        console.log('onCompleteRoom data : ',data);
+        console.log('onCompleteRoom data : ', data);
         data.state = RoomStateType.Complete;
         this.onUpdateRoomState(data)
             .then(result => {
@@ -552,7 +587,7 @@ export default class RoomStore {
     }
     
     // room state : Failed
-    onFailedRoomState(data){
+    onFailedRoomState(data) {
         console.log('onFailedRoom data : ', data);
         data.state = RoomStateType.Failed;
         this.onUpdateRoomState(data)

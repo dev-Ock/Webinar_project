@@ -54,6 +54,15 @@ public class RoomController {
         return roomData;
     }
 
+    // room 비번방 password check
+    @PostMapping("/check/room-pw/{roomId}")
+    public int checkRoomPw(HttpServletRequest httpRequest, @PathVariable("roomId") String roomId, @RequestBody String password ){
+        log.trace("RoomController checkRoomPw start... {},{}", roomId, password);
+        int result = roomService.checkRoomPw(roomId, password);
+        log.trace("RoomController checkRoomPw finished... {}", result);
+        return result;
+    }
+
     // room id로 room 조회
     @GetMapping("/read/{roomId}")
     public BaseRoomUserName getRoomById(HttpServletRequest httpRequest, @PathVariable("roomId") String roomId){
