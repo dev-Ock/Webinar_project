@@ -474,66 +474,79 @@ export default class RoomStore {
             console.log('세미나 목록 조회 error', e);
         }
     };
-
-    // room password double-check(front)
+    
+    // room password double-check<1>(front)
     passwordCheckFront(room) {
-        const passwordCheck = prompt("password를 입력해 주세요")
+        const passwordCheck = prompt("password를 정확하게 입력해 주세요")
         if (passwordCheck == null) {
             return null;
         } else {
-            return passwordCheck == room.password ? this.passwordCheckDB(room) : this.passwordCheckFront(room);
+            const result = (passwordCheck == room.password ? this.passwordCheckDB(room) : this.passwordCheckFront(room));
+            return result;
         }
     }
     
-    // room password double-check(Server)
+    // room password double-check<2>(Server)
     passwordCheckDB(room) {
         this.roomRepository.onCheckRoomPw(room.id, room.password)
-            .then(result => {
-                return result === 1 ? null : this.passwordCheckFront(room);
+            .then(data => {
+                const result = (data === 1 ? 1 : this.passwordCheckFront(room));
+                return result;
             })
             .catch(error => {
                 console.log("RoomStore passwordCheckDB error", error)
             })
     }
-
+    
+    // publisher or player check
+    async checkPublisherOrPlayer(room, userId, onCreateRoomUser) {
+        if (room.publisherId === userId) {
+            console.log('publisher');
+            await this.setRoomData(room); // sessionStorage에 publisher 정보 세팅
+            await window.location.replace('/publisher-room');
+        } else {
+            console.log('player')
+            await this.beforePlayerRoom(room.id, room.streamUrl); // sessionStorage에 player 정보 세팅
+            
+            const param = {
+                roomId     : room.id,
+                publisherId: room.publisherId,
+                playerId   : userId,
+                state      : RoomUserStateType.Wait
+            };
+            console.log('param', param);
+            const result = await onCreateRoomUser(param);
+            console.log('RoomStore onCreateRoomUser result', result);
+            if (result === 0) {
+                throw Error('room user DB 저장 실패');
+            } else if (result === -1) {
+                alert('해당 세미나에 이미 참여 중입니다!');
+                throw Error('해당 세미나에 이미 참여 중입니다.');
+            } else {
+                console.log('room user DB 저장 성공');
+                await window.location.replace('/player-room');
+            }
+        }
+    }
+    
     // room list에서 room 들어갈 때 player인지 publisher인지 체크하고 이동
     async playerOrPublisherChoice(room, userId, checkLogin, onCreateRoomUser) {
         console.log('room', room);
-        if (userId === undefined) {
-            checkLogin();
-        }
-        if (room.password) {
-            // password Front & Server double-check
-            this.passwordCheckFront(room)
-        }
-
         try {
-            if (room.publisherId === userId) {
-                console.log('publisher');
-                await this.setRoomData(room); // sessionStorage에 publisher 정보 세팅
-                await window.location.replace('/publisher-room');
-            } else {
-                console.log('player')
-                await this.beforePlayerRoom(room.id, room.streamUrl); // sessionStorage에 player 정보 세팅
-
-                const param = {
-                    roomId     : room.id,
-                    publisherId: room.publisherId,
-                    playerId   : userId,
-                    state      : RoomUserStateType.Wait
-                };
-                console.log('param', param);
-                const result = await onCreateRoomUser(param);
-                console.log('RoomStore onCreateRoomUser result', result);
-                if (result === 0) {
-                    throw Error('room user DB 저장 실패');
-                } else if (result === -1) {
-                    alert('해당 세미나에 이미 참여 중입니다!');
-                    throw Error('해당 세미나에 이미 참여 중입니다.');
-                } else {
-                    console.log('room user DB 저장 성공');
-                    await window.location.replace('/player-room');
+            // userId가 없는 경우
+            if (userId === undefined) {
+                checkLogin();
+                const userId = sessionStorage.getItem(UserId);
+                if (userId === undefined) {
+                    throw new Error("No user");
                 }
+            }
+            // 비번방인 경우
+            if (room.password) {
+                // password Front & Server double-check
+                await this.passwordCheckFront(room) === null ? console.log('true') : await this.checkPublisherOrPlayer(room, userId, onCreateRoomUser);
+            }else{
+                await this.checkPublisherOrPlayer(room, userId, onCreateRoomUser);
             }
         } catch (e) {
             console.log(e);

@@ -19,6 +19,10 @@ import {withRouter} from "react-router-dom";
 import {inject, observer} from "mobx-react";
 import {CardActionArea, CardActions, cardHeaderClasses, gridClasses} from "@mui/material";
 import Pagination from "../components/Pagination";
+import LockIcon from '@mui/icons-material/Lock';
+import {UserId} from "../repositories/Repository";
+import * as Roomstore from "../stores/RoomStore"
+
 
 const styles = theme => ({
     
@@ -63,7 +67,7 @@ class RoomList extends React.Component {
             limit   : 12,
             page    : 1,
             length  : 0,
-            publishedRoomLength : 0
+            //publishedRoomLength : 0
         };
         this.offset = (this.state.page - 1) * this.state.limit
     }
@@ -90,7 +94,7 @@ class RoomList extends React.Component {
     }
     
     
-    // 방 입장
+    // 방 입장, Passwor check
     enterRoom = async (e, room) => {
         e.preventDefault();
         const {roomStore, authStore, roomUserStore} = this.props;
@@ -99,6 +103,7 @@ class RoomList extends React.Component {
 
 
     render() {
+        
         const {classes} = this.props
         const {roomList} = this.props.roomStore;
 
@@ -113,63 +118,18 @@ class RoomList extends React.Component {
                 <div className={classes.appBarSpacer}/>
                 <Toolbar>
                     <div className={classes.toolbar}>
-                        <Typography variant="h2" component="h2">
-                            Webinar 내가 생성한 세미나
+                        <Typography variant="h2" component="h2" style={{color:'#37474f'}}>
+                            Webinar
                         </Typography>
                     </div>
                 </Toolbar>
                 <br/><br/>
-                {
-                    publisherRoomList.length === 0 ?
-                        <div> 생성한 방이 없습니다. </div>
-                        :
-                        <Grid container spacing={3}>
-
-                            {publisherRoomList
-                                .slice(this.offset, this.offset + this.state.limit)
-                                .map(room =>
-                                    <Grid item key={room.id} className={classes.card}>
-                                        <Card>
-                                            <CardActionArea variant='body1'>
-                                                <CardHeader className={cardHeaderClasses.title} title={room.title}
-                                                            subheader={room.name}/>
-                                                <CardContent>
-                                                    <Typography variant='body1' component='div'>
-                                                        {room.description ? room.description : '입력한 내용이 없습니다.'}
-                                                    </Typography>
-                                                    <Typography variant='body2' color='textSecondary'>
-                                                        {room.state}
-                                                    </Typography>
-                                                </CardContent>
-                                            </CardActionArea>
-                                            <CardActions style={{textAlign:'right'}}>
-                                                <Button size="small" color="primary" onClick={(e) => {
-                                                    this.enterRoom(e, room)
-                                                }}>
-                                                    입장하기
-                                                </Button>
-                                            </CardActions>
-                                        </Card>
-                                    </Grid>
-                                )}
-                        </Grid>
-                }
-                <br/><br/>
-                <Toolbar>
-                    <div className={classes.toolbar}>
-                        <Typography variant="h2" component="h2">
-                            Webinar 참여할 세미나
-                        </Typography>
-                    </div>
-                </Toolbar>
-                <br/><br/>
-                <br></br>
-                <div style={{fontSize: '20px', textAlign: 'right', marginRight:'100px'}}>
+                <div style={{fontSize: '20px', textAlign: 'right', marginRight: '100px', color:'#546e7a'}}>
                     <label>
                         한 페이지에 표시할 player 수 :
                         &nbsp;
                         <select
-                            style={{fontSize: '20px'}}
+                            style={{fontSize: '20px', color:'#546e7a'}}
                             value={this.state.limit}
                             onChange={({target: {value}}) => this.setState({limit: Number(value)})}
                         >
@@ -193,24 +153,43 @@ class RoomList extends React.Component {
                                 .map(room =>
                                     <Grid item key={room.id} className={classes.card}>
                                         <Card>
-                                            <CardActionArea variant='body1'>
-                                                <CardHeader className={cardHeaderClasses.title} title={room.title}
+                                            <CardActionArea variant='body1' onClick={(e) => {
+                                                this.enterRoom(e, room)
+                                            }}>
+                                                <CardHeader className={cardHeaderClasses.title} style={{color:'#455a64'}} title={room.title}
                                                             subheader={room.name}/>
                                                 <CardContent>
-                                                    <Typography variant='body1' component='div'>
+                                                    <Typography variant='body1' component='div' style={{color:'#78909c'}}>
                                                         {room.description ? room.description : '입력한 내용이 없습니다.'}
                                                     </Typography>
-                                                    <Typography variant='body2' color='textSecondary'>
-                                                        {room.state}
-                                                    </Typography>
+                                                        {
+                                                            room.state === Roomstore.RoomStateType.Progress ?
+                                                                <Typography variant='body2' style={{color:'#ef5350', fontWeight:'bolder'}}> {room.state}</Typography> :
+                                                                <Typography variant='body2'style={{color:'#546e7a'}}>{room.state}</Typography>
+                                                        }
                                                 </CardContent>
                                             </CardActionArea>
-                                            <CardActions style={{textAlign:'right'}}>
-                                                <Button size="small" color="primary" onClick={(e) => {
-                                                    this.enterRoom(e, room)
-                                                }}>
-                                                    입장하기
-                                                </Button>
+                                            <CardActions style={{justifyContent: 'space-between', marginTop:'-8px'}}>
+
+                                                {room.publisherId === sessionStorage.getItem(UserId) ?
+                                                    <div style={{color: '#607d8b', marginLeft:'7px'}}><h3> 내가 만든 세미나 </h3></div>
+                                                    :
+                                                    <div></div>
+                                                }
+
+
+                                                {room.password
+                                                    ?
+                                                    <div style={{marginRight:'7px', color: '#607d8b'}}>
+                                                        <div>
+                                                            <LockIcon/>
+                                                        </div>
+                                                    </div>
+                                                    :
+                                                    ""
+                                                }
+
+
                                             </CardActions>
                                         </Card>
                                     </Grid>
