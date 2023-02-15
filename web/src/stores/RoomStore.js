@@ -83,8 +83,8 @@ let camerasSelect = '';
 let option = '';
 
 export default class RoomStore {
-    
-    
+
+    publishedRoomList = Object.assign([],EmptyRoomList);
     roomList = Object.assign([], EmptyRoomList)
     roomMakeState = RoomMakeState.Empty;
     roomMake = Object.assign({}, EmptyRoom);
@@ -159,22 +159,25 @@ export default class RoomStore {
         }
     }
 
-    // 세미나 만든 후 roomHistory 정보 서버로 보냄
-    * doSetRoomHistory(roomHistoryInfo) {
-        try {
-            // console.log("RoomStore *doSetRoomHistory", roomHistoryInfo)
-            yield this.roomHistoryRepository.setRoomHistory(roomHistoryInfo)
-        } catch(e) {
-            console.log('RoomStore *doSetRoomHistory error', e.message());
-        }
-    }
+    // // 세미나 만든 후 roomHistory 정보 서버로 보냄
+    // * doSetRoomHistory(roomHistoryInfo) {
+    //     try {
+    //         // console.log("RoomStore *doSetRoomHistory", roomHistoryInfo)
+    //         yield this.roomHistoryRepository.setRoomHistory(roomHistoryInfo)
+    //     } catch(e) {
+    //         console.log('RoomStore *doSetRoomHistory error', e.message());
+    //     }
+    // }
 
-    // 유저가 자신이 만들었던 세미나(room) 조회 : 룸히스토리에서 사용
+    // 유저가 자신이 만든 세미나(room) 조회 : 2/15 삭제예정
     * getPublishedRoom(userId) {
         try {
-            // console.log("RoomStore getPublishedRoom",  roomHistoryInfo)
-            const roomData = yield this.roomHistoryRepository.getRoomHistory( userId )
-            return roomData;
+            const publishedRoomData = yield this.roomRepository.getPublishedRoom( userId );
+            this.publishedRoomList = publishedRoomData;
+            console.log("RoomStore getPublishedRoom publishedRoomData", publishedRoomData);
+            console.log("RoomStore getPublishedRoom this.publishedRoomList", this.publishedRoomList);
+            // return toJS(publishedRoomData);
+            return this.publishedRoomList;
         } catch(e){
             console.log('RoomStore getPublishedRoom error', e.message )
         }
@@ -458,13 +461,14 @@ export default class RoomStore {
 
     // 룸 전체 리스트 조회
     * selectRoomList() {
-        console.log("selectroomusername확인")
+        // console.log("selectroomusername확인")
         try {
             const roomList = yield this.roomRepository.getRoomUserNameList();
             this.roomList = roomList;
-            console.log('RoomStore selectRoomList roomList', roomList)
+            console.log('스토어에서 RoomStore selectRoomList roomList', roomList)
             // this.roomListLength = toJS(roomList).length;
             // console.log('param확인', toJS(roomList).length);
+            // return roomList;
             return this.roomList;
         } catch (e) {
             console.log('세미나 목록 조회 error', e);

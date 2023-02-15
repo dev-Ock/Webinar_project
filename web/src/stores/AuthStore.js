@@ -159,8 +159,8 @@ export default class AuthStore {
     * checkLogin() {
         // const token = localStorage.getItem(LocalStorageTokenKey);
         const token = sessionStorage.getItem(AuthTokenStorageKey);
-        console.log('token', token)
-        console.log("checkLogin token 유무 확인 전")
+        // console.log('token', token)
+        // console.log("checkLogin token 유무 확인 전")
         if (token) {
             try {
                 const user = yield  this.authRepository.signCheck(); // 이로 인해 새로고침할 때마다 로그인 페이지가 0.5초정도 보였다가 넘어감

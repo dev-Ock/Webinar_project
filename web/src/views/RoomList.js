@@ -1,4 +1,6 @@
 import React, {Component} from 'react';
+import {makeAutoObservable, toJS} from "mobx";
+
 import {withStyles} from "@material-ui/core/styles";
 import {
     Grid,
@@ -64,7 +66,8 @@ class RoomList extends React.Component {
             pending : true,
             limit   : 12,
             page    : 1,
-            length  : 0
+            length  : 0,
+            //publishedRoomLength : 0
         };
         this.offset = (this.state.page - 1) * this.state.limit
     }
@@ -97,12 +100,22 @@ class RoomList extends React.Component {
         const {roomStore, authStore, roomUserStore} = this.props;
         await roomStore.playerOrPublisherChoice(room, authStore.loginUser.id, () => authStore.checkLogin(), (param) => roomUserStore.onCreateRoomUser(param));
     }
-    
+
+
     render() {
         
         const {classes} = this.props
         const {roomList} = this.props.roomStore;
-        
+
+        const userId = this.props.authStore.loginUser.id;
+        const publisherRoomList = toJS(roomList).filter(room => room.publisherId === userId);
+        const playerRoomList = toJS(roomList).filter(room => room.publisherId !== userId);
+
+        const totalRoomList = [...publisherRoomList, ...playerRoomList]
+
+        // console.log("publisherRoomList : ", publisherRoomList)
+        // console.log("playerRoomList : ", playerRoomList)
+
         return (
             <Container component="main" className={classes.mainContainer}>
                 <div className={classes.appBarSpacer}/>
@@ -132,15 +145,13 @@ class RoomList extends React.Component {
                 <br/>
                 <br/>
                 {
-                    this.state.length === 0
+                    totalRoomList.length === 0
                         ?
                         <div className={classes.mainContainer}><h1>시청할 수 있는 웨비나가 없습니다.</h1></div>
                         :
-                        
-                        
                         <Grid container spacing={3}>
                             
-                            {roomList
+                            {totalRoomList
                                 .slice(this.offset, this.offset + this.state.limit)
                                 .map(room =>
                                     <Grid item key={room.id} className={classes.card}>
@@ -162,14 +173,14 @@ class RoomList extends React.Component {
                                                 </CardContent>
                                             </CardActionArea>
                                             <CardActions style={{justifyContent: 'space-between', marginTop:'-8px'}}>
-                                                
+
                                                 {room.publisherId === sessionStorage.getItem(UserId) ?
                                                     <div style={{color: '#607d8b', marginLeft:'7px'}}><h3> 내가 만든 세미나 </h3></div>
                                                     :
                                                     <div></div>
                                                 }
-                                                
-                                                
+
+
                                                 {room.password
                                                     ?
                                                     <div style={{marginRight:'7px', color: '#607d8b'}}>
@@ -180,14 +191,17 @@ class RoomList extends React.Component {
                                                     :
                                                     ""
                                                 }
-                                            
-                                            
+
+
                                             </CardActions>
                                         </Card>
                                     </Grid>
                                 )}
                         </Grid>
                 }
+                <br/>
+                <br/>
+
                 
                 <footer>
                     <Pagination

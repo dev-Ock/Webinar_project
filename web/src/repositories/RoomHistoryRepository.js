@@ -7,23 +7,23 @@ export default class RoomHistoryRepository extends Repository {
         this.requestPrefix = props.serverContextPath + "/api/v1/roomhistories";
     };
 
-    // 세미나 기록을 Create 하는 경우 :  Wait 상태 / Progress 상태 / Complete 상태 / Fail 상태
-    setRoomHistory = (param) => {
-        return new Promise((resolve, reject) => {
-            this.getRequestPromise('post', this.requestPrefix + '/insert', param)
-                .then(data => {
-                    console.log('RoomHistoryRepository setRoomHistory result', data);
-                    resolve(data);
-                })
-                .catch(error => {
-                    console.log('RoomHistoryRepository setRoomHistory error', error);
-                    reject(error);
-
-                })
-        })
-    };
+    // // 세미나 기록을 Create 하는 경우 :  Wait 상태 / Progress 상태 / Complete 상태 / Fail 상태
+    // setRoomHistory = (param) => {
+    //     return new Promise((resolve, reject) => {
+    //         this.getRequestPromise('post', this.requestPrefix + '/insert', param)
+    //             .then(data => {
+    //                 console.log('RoomHistoryRepository setRoomHistory result', data);
+    //                 resolve(data);
+    //             })
+    //             .catch(error => {
+    //                 console.log('RoomHistoryRepository setRoomHistory error', error);
+    //                 reject(error);
+    //
+    //             })
+    //     })
+    // };
     
-    // 세미나 기록 : 유저가 만든 방 기록 Read
+    // 세미나 기록 : 유저가 만든 방 기록 Read : 2/15 삭제예정
     getRoomHistory = (paramId) => {
         return new Promise((resolve, reject) => {
             this.getRequestPromise('get', this.requestPrefix + '/read/' + paramId)
