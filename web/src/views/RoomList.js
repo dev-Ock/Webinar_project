@@ -110,6 +110,9 @@ class RoomList extends React.Component {
         const userId = this.props.authStore.loginUser.id;
         const publisherRoomList = toJS(roomList).filter(room => room.publisherId === userId);
         const playerRoomList = toJS(roomList).filter(room => room.publisherId !== userId);
+
+        const totalRoomList = [...publisherRoomList, ...playerRoomList]
+
         // console.log("publisherRoomList : ", publisherRoomList)
         // console.log("playerRoomList : ", playerRoomList)
 
@@ -142,13 +145,13 @@ class RoomList extends React.Component {
                 <br/>
                 <br/>
                 {
-                    playerRoomList.length === 0
+                    totalRoomList.length === 0
                         ?
                         <div className={classes.mainContainer}><h1>시청할 수 있는 웨비나가 없습니다.</h1></div>
                         :
                         <Grid container spacing={3}>
                             
-                            {playerRoomList
+                            {totalRoomList
                                 .slice(this.offset, this.offset + this.state.limit)
                                 .map(room =>
                                     <Grid item key={room.id} className={classes.card}>
@@ -196,6 +199,9 @@ class RoomList extends React.Component {
                                 )}
                         </Grid>
                 }
+                <br/>
+                <br/>
+
                 
                 <footer>
                     <Pagination

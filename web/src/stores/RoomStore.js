@@ -169,7 +169,7 @@ export default class RoomStore {
     //     }
     // }
 
-    // 유저가 자신이 만들었던 세미나(room) 조회 : 룸히스토리에서 사용
+    // 유저가 자신이 만든 세미나(room) 조회 : 2/15 삭제예정
     * getPublishedRoom(userId) {
         try {
             const publishedRoomData = yield this.roomRepository.getPublishedRoom( userId );

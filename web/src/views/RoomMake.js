@@ -155,7 +155,7 @@ class RoomMake extends React.Component {
 
                 }else{
                     this.props.roomStore.removeRoomData();
-                    return window.location.replace('/room-history')
+                    return window.location.replace('/room-list')
                 }
             })
             .catch((e) => {
