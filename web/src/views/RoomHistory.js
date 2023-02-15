@@ -3,14 +3,8 @@ import React from "react";
 import {Container} from "@material-ui/core";
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
-import Radio from '@mui/material/Radio';
-import RadioGroup from '@mui/material/RadioGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import FormControl from '@mui/material/FormControl';
-import FormLabel from '@mui/material/FormLabel';
 import Button from '@mui/material/Button';
 import {inject, observer} from "mobx-react";
-import { useState } from "react";
 import { withStyles, makeStyles } from '@material-ui/core/styles';
 
 import {withSnackbar} from "notistack";
@@ -42,21 +36,11 @@ class RoomMake extends React.Component {
         };
     }
 
-    //비밀번호 input
-    privateInput(){
-        this.setState({
-            private : true
-        })
-    }
-    //비밀번호 input
-    openInput(){
-        this.setState({
-            private : false
-        })
-    }
-    //초기화 함수
-    reload(){
-        window.location.replace("/room-make")
+    componentDidMount () {
+        const userId = this.props.authStore.loginUser.id;
+        // console.log("새로고침해도 있나 확인 userId : ", userId, typeof (userId))
+        const data = this.props.roomStore.getPublishedRoom(userId);
+        console.log("PublishedRoom data : ",data)
     }
 
 
@@ -117,9 +101,9 @@ class RoomMake extends React.Component {
                 <Stack direction="row" spacing={2} justifyContent="flex-start"
                        alignItems="flex-start" direction="row-reverse">
 
-                    <Button variant="contained" color="success" onClick={this.reload.bind(this)}>
-                        검색
-                    </Button>
+                    {/*<Button variant="contained" color="success" onClick={}>*/}
+                    {/*    검색*/}
+                    {/*</Button>*/}
                 </Stack>
             </Container>
         );

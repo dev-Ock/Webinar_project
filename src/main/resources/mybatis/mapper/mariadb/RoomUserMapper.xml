@@ -6,6 +6,7 @@
         <result property="publisherId"             column="publisher_id" />
         <result property="playerId"             column="player_id" />
         <result property="state"                 column="state" />
+        <result property="streamUrl"            column="stream_url" />
         <result property="createdDatetime"      column="created_datetime" />
         <result property="updatedDatetime"      column="updated_datetime" />
     </resultMap>
@@ -16,6 +17,7 @@
                publisher_id,
                player_id,
                state,
+               stream_url,
                created_datetime,
                updated_datetime
         FROM room_users
@@ -28,6 +30,7 @@
                room_users.publisher_id as publisherId,
                room_users.player_id as playerId,
                room_users.state,
+               stream_url,
                room_users.created_datetime as createdDatetime,
                room_users.updated_datetime as updatedDatetime,
                users.name
@@ -45,6 +48,12 @@
         AND player_id = #{playerId}
     </select>
 
+    <select id="selectRoomUserByStreamUrl" parameterType="String" resultType="int">
+        SELECT count(*)
+        FROM room_users
+        WHERE stream_url = #{value}
+    </select>
+
     <insert id="insertRoomUser" parameterType="BaseRoomUser" >
         INSERT INTO room_users (
             id,
@@ -52,6 +61,7 @@
             publisher_id,
             player_id,
             state,
+            stream_url,
             created_datetime,
             updated_datetime
         ) VALUES (
@@ -60,8 +70,29 @@
                      #{publisherId},
                      #{playerId},
                      #{state},
+                     #{streamUrl},
                      NOW(),
                      NOW()
                  )
     </insert>
+
+    <update id="updateRoomUserStreamUrl" parameterType="BaseRoomUser" >
+        update room_users
+            set stream_url = #{streamUrl}
+        WHERE room_id = #{roomId}
+          AND player_id = #{playerId}
+    </update>
+
+    <select id="selectRoomUserWithUrl" parameterType="BaseRoomUser" resultMap="BaseRoomUserResultMap">
+        SELECT id,
+               room_id,
+               publisher_id,
+               player_id,
+               state,
+               stream_url,
+               created_datetime,
+               updated_datetime
+        FROM room_users
+        WHERE room_id = #{roomId} AND player_id = #{playerId}
+    </select>
 </mapper>

@@ -11,7 +11,7 @@ public interface RoomHistoryMapper {
 //    List<BaseRoomHistory> selectRoomHistoriesWhereState(BaseRoomHistory state);
 
     // 룸 전체 기록 조회
-    List<BaseRoomHistory> selectRoomHistoryListById();
+    List<BaseRoomHistory> selectRoomHistoryListById(int publisherId);
 
     // 룸 기록 추가
     int insertRoomHistory(BaseRoomHistory roomHistory);

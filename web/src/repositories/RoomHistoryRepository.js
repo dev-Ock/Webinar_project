@@ -25,13 +25,14 @@ export default class RoomHistoryRepository extends Repository {
     // 세미나 기록 : 유저가 만든 방 기록 Read
     getRoomHistory = (paramId) => {
         return new Promise((resolve, reject) => {
-            this.getRequestPromise('get', this.requestPrefix + '/select' + paramId)
+            this.getRequestPromise('get', this.requestPrefix + '/read/' + paramId)
                 .then(data => {
-                    if(data > 0){
+                    if(data){
                         console.log("RoomHistoryRepository getRoomHistory data", data);
                     }else{
                         console.log("There's no data");
                     }
+                    resolve(data);
                 })
                 .catch( error => {
                     reject(error);

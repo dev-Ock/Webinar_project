@@ -82,7 +82,7 @@ create table room_histories
     description      varchar(256)                             null comment 'room 상세정보',
     public_or_not    tinyint(1)                               not null comment 'room 공개여부',
     maximum          bigint                                   not null comment 'room 최대 인원수',
-    state            varchar(128) default 'wait'              not null comment 'room 상태 [wait, progress, complete, failed]',
+    state            varchar(128) default 'wait'              not null comment 'room 상태 [wait, progress, complete, uncomplete, failed]',
     created_datetime datetime     default current_timestamp() not null comment 'room 각 state 생성일시',
     constraint fk_room_histories_publisher_id
         foreign key (publisher_id) references rooms (publisher_id),
@@ -90,6 +90,26 @@ create table room_histories
         foreign key (room_id) references rooms (id)
 )
     comment 'room histories 정보' collate = utf8mb4_unicode_ci;
+
+create table room_users
+(
+    id               bigint auto_increment comment 'room 참여자 ID'
+        primary key,
+    room_id          bigint                                   not null comment 'room ID',
+    publisher_id     bigint                                   not null comment 'room 생성자 ID',
+    player_id        bigint                                   not null comment 'room 참여자 ID',
+    state            varchar(128) default 'wait'              not null comment 'user 상태 [wait, progress, complete, uncomplete, failed]',
+    stream_url       varchar(128)                             null comment     'room 참여자 stream_url',
+    created_datetime datetime     default current_timestamp() not null comment 'room 참여자 생성일시',
+    updated_datetime datetime     default current_timestamp() not null comment 'room 참여자 변경일시',
+    constraint fk_room_users_player_id
+        foreign key (player_id) references users (id),
+    constraint fk_room_users_publisher_id
+        foreign key (publisher_id) references rooms (publisher_id),
+    constraint fk_room_users_room_id
+        foreign key (room_id) references rooms (id)
+)
+    comment 'room 참여자 정보' collate = utf8mb4_unicode_ci;
 
 create table room_user_histories
 (
@@ -105,27 +125,6 @@ create table room_user_histories
         foreign key (room_id) references rooms (id)
 )
     comment 'room 사용자 histories 정보' collate = utf8mb4_unicode_ci;
-
-create table room_users
-(
-    id               bigint auto_increment comment 'room 참여자 ID'
-        primary key,
-    room_id          bigint                                   not null comment 'room ID',
-    publisher_id     bigint                                   not null comment 'room 생성자 ID',
-    player_id        bigint                                   not null comment 'room 참여자 ID',
-    state            varchar(128) default 'wait'              not null comment 'user 상태 [wait, progress, complete, failed]',
-    created_datetime datetime     default current_timestamp() not null comment 'room 참여자 생성일시',
-    updated_datetime datetime     default current_timestamp() not null comment 'room 참여자 변경일시',
-    constraint fk_room_users_player_id
-        foreign key (player_id) references users (id),
-    constraint fk_room_users_publisher_id
-        foreign key (publisher_id) references rooms (publisher_id),
-    constraint fk_room_users_room_id
-        foreign key (room_id) references rooms (id)
-)
-    comment 'room 참여자 정보' collate = utf8mb4_unicode_ci;
-
-
 
 
 

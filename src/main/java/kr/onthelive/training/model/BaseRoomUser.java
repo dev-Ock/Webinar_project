@@ -20,6 +20,7 @@ public class BaseRoomUser {
     private String publisherId;
     private String playerId;
     private BaseRoomUserState state;
+    private String streamUrl;
     private LocalDateTime createdDatetime;
     private LocalDateTime updatedDatetime;
 

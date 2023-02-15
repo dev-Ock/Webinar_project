@@ -73,8 +73,8 @@ let camerasSelect = '';
 let option = '';
 
 export default class RoomStore {
-    
-    
+
+
     roomList = Object.assign([], EmptyRoomList)
     roomMakeState = RoomMakeState.Empty;
     roomMake = Object.assign({}, EmptyRoom);
@@ -88,55 +88,55 @@ export default class RoomStore {
         this.roomHistoryRepository = props.roomHistoryRepository;
         makeAutoObservable(this);
     }
-    
+
     changeTitle = (title) => {
         this.roomMake.title = title;
     };
-    
+
     changeDescription = (description) => {
         this.roomMake.description = description;
     };
-    
+
     changeMaximum = (maximum) => {
         this.roomMake.maximum = maximum;
     };
-    
+
     changeStartTime = (startTime) => {
         this.roomMake.startTime = startTime;
     };
-    
+
     changeLink = (link) => {
         this.roomMake.link = link;
     };
-    
+
     changePassword = (password) => {
         this.roomMake.password = password;
     };
-    
+
     // TopBar에서 보여줄 room title
     setRoomTitle = (title) => {
         this.roomTitle = title;
     }
-    
-    
+
+
     setOnRoom = (room) => {
         this.onRoom = room;
         console.log('onRoom', this.onRoom)
-        
+
         return this.onRoom;
     }
-    
+
     // 세미나 만들기 정보 서버로 보내기
     * doMakeRoom(userId) {
         try {
             this.roomMakeState = RoomMakeState.Pending; // room을 만들고 있는 상태
-            
+
             this.roomMake.publisherId = userId;
             this.roomMake.state = RoomStateType.Wait; // room의 state
-            
+
             const param = this.roomMake;
             const room = yield this.roomRepository.makeRoom(param);
-            
+
             this.roomMake = Object.assign({}, EmptyRoom);
             this.roomMakeState = RoomMakeState.Success;
             return room;
@@ -149,13 +149,25 @@ export default class RoomStore {
     }
 
     // 세미나 만든 후 roomHistory 정보 서버로 보냄
-    *doSetRoomHistory(roomHistoryInfo) {
-        // const param = { roomId: roomHistoryInfo.id, state: roomHistoryInfo.state }
-        // console.log("히스토리 날리기 진입", param)
-        yield this.roomHistoryRepository.setRoomHistory(roomHistoryInfo)
-        // yield this.roomHistoryRepository.setRoomHistory(param)
-    } catch (e) {
-        console.log('RoomStore doSetRoomHistory error', e.message());
+    * doSetRoomHistory(roomHistoryInfo) {
+        try {
+            // console.log("RoomStore *doSetRoomHistory", roomHistoryInfo)
+            yield this.roomHistoryRepository.setRoomHistory(roomHistoryInfo)
+        } catch(e) {
+            console.log('RoomStore *doSetRoomHistory error', e.message());
+        }
+    }
+
+    // 유저가 자신이 만들었던 세미나(room) 조회
+    * getPublishedRoom(userId){
+        try {
+            // console.log("RoomStore *getPublishedRoom", roomHistoryInfo)
+            const roomData = yield this.roomHistoryRepository.getRoomHistory(userId)
+            return roomData
+        } catch(e) {
+            console.log('RoomStore *getPublishedRoom error', e.message)
+        }
+
     }
     
     // publisher-room 입장시, sessionStorage의 room data 세팅

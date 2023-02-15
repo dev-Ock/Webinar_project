@@ -30,11 +30,11 @@ public class RoomHistoryController {
 
     }
 
-    // 세미나실(방) 기록 전체 조회
+    // 세미나실(방) 유저의 기록 전체 조회
     @GetMapping("/read/{publisherId}")
-    public  List<BaseRoomHistory> getRoomHistoryListById(HttpServletRequest httpRequest, @PathVariable("publisherId") String publisherId){
+    public  List<BaseRoomHistory> getRoomHistoryListById(HttpServletRequest httpRequest, @PathVariable("publisherId") int publisherId){
         log.trace("controller getRoomHistoryListById start...");
-        List<BaseRoomHistory> result = roomHistoryService.getRoomHistoryListById();
+        List<BaseRoomHistory> result = roomHistoryService.getRoomHistoryListById(publisherId);
         return result;
     }
 

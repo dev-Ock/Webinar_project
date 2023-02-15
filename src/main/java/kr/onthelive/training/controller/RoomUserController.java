@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.HashMap;
 import java.util.List;
 
 @RestController
@@ -45,6 +46,26 @@ public class RoomUserController {
         int result = roomUserService.createRoomUser(roomUser);
         return result;  // result가 1이면 insert 성공, -1이면 중복으로 실패, 0이면 에러로 실패
     }
+
+    // 룸 유저 state update
+//    @PutMapping("/state")
+
+
+    // 룸 유저 StreamUrl update
+    @PutMapping("/streamUrl")
+    public BaseRoomUser updateRoomUserStreamUrl(HttpServletRequest httpRequest, @RequestBody BaseRoomUser baseRoomUser){
+        BaseRoomUser roomUserStreamUrl = roomUserService.updateRoomUserStreamUrl(baseRoomUser);
+
+        return roomUserStreamUrl;
+    }
+
+//    // 룸 유저 StreamUrl update
+//    @PutMapping("/streamUrl/{roomId}/{userId}")
+//    public int updateRoomUserStreamUrl(HttpServletRequest httpRequest, @PathVariable("roomId") String roomId, @PathVariable("userId") String userId){
+//        int roomUserStreamUrl = roomUserService.updateRoomUserStreamUrl(roomId, userId);
+//        return roomUserStreamUrl;
+//        // 일단 update 되는지 숫자로만 보고 다음단계에서 streamUrl 리턴하는 걸로 바꾸기
+//    }
 
 
 
