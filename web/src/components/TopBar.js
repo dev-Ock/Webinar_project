@@ -79,8 +79,6 @@ function TopBar(props) {
     const classes = useStyles();
     const { mobileOpen, setMobileOpen, isLoggedIn, doLogout, menuOpen, user} = props;
 
-    // console.log('props.roomStore.roomTitle', props.roomStore.roomTitle)
-    
     const handleDrawerToggle = () => {
         setMobileOpen(!mobileOpen);
     };
@@ -114,7 +112,13 @@ function TopBar(props) {
                 >
                     <MenuIcon />
                 </IconButton>
-                {props.roomStore.roomTitle !== "" ? <div style={{marginLeft:'auto',marginRight:'auto'}}><h2>Title "{ props.roomStore.roomTitle}"</h2></div> : "" }
+                {/*{ props.roomStore.roomTitleAndPublisherName.title !== "" ?*/}
+                {/*    <div style={{alignItems:'left'}}>*/}
+                {/*        <h2> Title : { props.roomStore.roomTitleAndPublisherName.title} / Publisher : { props.roomStore.roomTitleAndPublisherName.publisherName }*/}
+                {/*        </h2>*/}
+                {/*    </div> :*/}
+                {/*    ""*/}
+                {/*}*/}
                 
                 {isLoggedIn ? <Typography variant="h6" noWrap className={classes.title}>
                     {user.name}님 환영합니다.

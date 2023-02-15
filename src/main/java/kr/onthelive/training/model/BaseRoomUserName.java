@@ -15,6 +15,7 @@ public class BaseRoomUserName {
     private String title;
     private String publisherId;
     private String description;
+    private String password;
     private String maximum;
     private BaseRoomState state;
     private String streamUrl;

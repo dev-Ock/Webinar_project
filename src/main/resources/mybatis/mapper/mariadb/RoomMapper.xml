@@ -30,9 +30,6 @@
     </resultMap>
 
 
-
-    <!-- select -->
-    <!--    <select id="selectRoom" parameterType="String" resultMap="BaseRoomResultMap">-->
     <select id="selectRoomList" parameterType="String" resultMap="BaseRoomResultMap">
         SELECT id,
                title,
@@ -50,21 +47,24 @@
         ORDER BY id DESC
     </select>
 
-    <select id="selectRoomById" parameterType="String" resultMap="BaseRoomResultMap">
-        SELECT id,
-               title,
-               publisher_id,
-               description,
-               password,
-               maximum,
-               state,
-               stream_url,
-               start_time,
-               link,
-               created_datetime,
-               updated_datetime
+    <select id="selectRoomById" parameterType="String" resultType="BaseRoomUserName">
+        SELECT rooms.id,
+               rooms.title,
+               rooms.publisher_id as publisherId,
+               rooms.description,
+               rooms.password,
+               rooms.maximum,
+               rooms.state,
+               rooms.stream_url as streamUrl,
+               rooms.start_time as startTime,
+               rooms.link,
+               rooms.created_datetime as createdDatetime,
+               rooms.updated_datetime as updatedDatetime,
+               users.name
         FROM rooms
-        WHERE id = #{value}
+                 JOIN users
+                      ON rooms.publisher_id = users.id
+        WHERE rooms.id = #{value}
     </select>
 
     <select id="selectRoomByStreamUrl" parameterType="String" resultMap="BaseRoomResultMap">
@@ -112,5 +112,10 @@
                  )
     </insert>
 
+    <update id="updateRoomState" parameterType="map">
+        UPDATE rooms
+        SET state = #{state}
+        WHERE id = #{id}
+    </update>
 
 </mapper>

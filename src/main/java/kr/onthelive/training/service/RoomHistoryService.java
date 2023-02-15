@@ -2,6 +2,7 @@ package kr.onthelive.training.service;
 
 import kr.onthelive.training.model.BaseRoomHistory;
 import kr.onthelive.training.model.BaseRoom;
+import kr.onthelive.training.model.BaseRoomUserName;
 import kr.onthelive.training.repository.RoomHistoryRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,15 +29,14 @@ public class RoomHistoryService {
 
 
     // 룸 기록 추가
-    public int setRoomHistory(BaseRoom roominfo) {
+    public int setRoomHistory(BaseRoomUserName roominfo) {
         log.debug("test : {}", roominfo);
         log.trace("service setRoomHistory roominfo... {}", roominfo);
 
         BaseRoomHistory roomHistory = new BaseRoomHistory();
         // getPassword() 에러처리 : 패스워드가 NULL 일 경우 에러남 >> if Null 이면 1 먹여주는거로 바꾸기
         int publicOrNot;
-        int passwordLength = roominfo.getPassword().length();
-        if(passwordLength > 0){
+        if(roominfo.getPassword().equals("")){
             publicOrNot = 0;
         }else{publicOrNot = 1;}
 

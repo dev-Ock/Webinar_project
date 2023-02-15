@@ -4,6 +4,8 @@ import kr.onthelive.training.model.BaseRoom;
 import kr.onthelive.training.model.BaseRoomUserName;
 import kr.onthelive.training.model.BaseSimpleRoom;
 import kr.onthelive.training.model.BaseRoomHistory;
+import kr.onthelive.training.model.support.BaseRoomState;
+import kr.onthelive.training.repository.RoomHistoryRepository;
 import kr.onthelive.training.repository.RoomRepository;
 import kr.onthelive.training.repository.RoomUserNameRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -16,26 +18,31 @@ import java.util.List;
 @Slf4j
 public class RoomService {
     private RoomRepository roomRepository;
+    private RoomHistoryRepository roomHistoryRepository;
     private RoomUserNameRepository roomUserNameRepository;
 
     @Autowired
     public RoomService(RoomRepository roomRepository, RoomUserNameRepository roomUserNameRepository){
 
         this.roomRepository = roomRepository;
+        this.roomHistoryRepository = roomHistoryRepository;
         this.roomUserNameRepository = roomUserNameRepository;
     }
 
-    // 룸 목록 전체 조회
+    // 룸 목록 전체 조회 (password 제외)
     public List<BaseRoom> getRoomList(){
 
         final List<BaseRoom> baseRoom =  roomRepository.selectRoomList();
         return baseRoom;
     }
-    //
-    public List<BaseRoomUserName> getRoomUserNameList(){
 
-        final List<BaseRoomUserName> BaseRoomUserName =  roomUserNameRepository.selectRoomDetailList();
-        return BaseRoomUserName;
+    // 룸 목록 전체 조회 (password 포함)
+    public List<BaseRoomUserName> getRoomUserNameList(){
+        BaseRoomState state1 = BaseRoomState.Wait;
+        BaseRoomState state2 = BaseRoomState.Progress;
+
+        final List<BaseRoomUserName> baseRoomUserName =  roomUserNameRepository.selectRoomDetailList(state1,state2);
+        return baseRoomUserName;
     }
 
     public String createStreamUrl(){
@@ -51,14 +58,13 @@ public class RoomService {
 
 
     // 새로운 룸 추가하고 해당 룸 정보 return
-    public BaseRoom createRoom(BaseRoom baseInfo) {
+    public BaseRoomUserName createRoom(BaseRoom baseInfo) {
         log.debug("BaseRoomService baseRoom : {}", baseInfo);
 
         // streamUrl 생성
         String streamUrl = this.createStreamUrl();
         // streamUrl 중복 검사
         BaseRoom result = roomRepository.selectRoomByStreamUrl(streamUrl);
-//        BaseRoom result = roomRepository.selectRoomByStreamUrl("nk2l9ZK5");
 
         log.trace("RoomService write streamUrl duplication test result ...{}, {}", streamUrl, result);
 
@@ -87,18 +93,29 @@ public class RoomService {
 
         // 새로 추가한 room의 id로 select
         String id = baseRoom.getId();
-        BaseRoom roomData =  roomRepository.selectRoomById(id);
+        BaseRoomUserName roomData =  roomRepository.selectRoomById(id);
         log.trace("RoomService roomData... {}", roomData);
         return roomData;
 
     }
 
-    // room list에서 들어간 room 조회
-    public BaseRoom getRoomById(String roomId) {
-        BaseRoom room = roomRepository.selectRoomById(roomId);
+    // room 비번방 password check
+    public int checkRoomPw(String roomId, String password){
+        BaseRoomUserName room = roomRepository.selectRoomById(roomId);
+        int result = (password.equals(room.getPassword())  ? 1 : 0);
+        return result;
+    }
+
+    // room list에서 입장한 room 조회
+    public BaseRoomUserName getRoomById(String roomId) {
+        BaseRoomUserName room = roomRepository.selectRoomById(roomId);
         return room;
     }
 
+    // room state update & roomHistory state insert
+    public int modifyRoomState(BaseRoomUserName roomInfo) {
+        return roomRepository.updateRoomState(roomInfo);
+    }
 
 
 }

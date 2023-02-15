@@ -2,6 +2,7 @@ package kr.onthelive.training.controller;
 
 
 import kr.onthelive.training.model.BaseRoomHistory;
+import kr.onthelive.training.model.BaseRoomUserName;
 import kr.onthelive.training.model.BaseSimpleRoom;
 import kr.onthelive.training.model.BaseRoom;
 import kr.onthelive.training.service.RoomHistoryService;
@@ -40,7 +41,7 @@ public class RoomHistoryController {
 
     // 세미나실(방) 기록 추가
     @PostMapping("/insert")
-    public ResponseEntity setRoomHistory(HttpServletRequest httpRequest, HttpSession session, @RequestBody BaseRoom roominfo) {
+    public ResponseEntity setRoomHistory(HttpServletRequest httpRequest, HttpSession session, @RequestBody BaseRoomUserName roominfo) {
         log.trace("roomHistory insert... {}", roominfo);
         int result = roomHistoryService.setRoomHistory(roominfo);
         return new ResponseEntity<>(result, HttpStatus.OK);

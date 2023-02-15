@@ -59,7 +59,7 @@
 
     <!-- select -->
     <!--rooms 목록과 users 의 name 컬럼 조인문-->
-    <select id="selectRoomDetailList" parameterType="String" resultMap="BaseRoomUserNameResultMap" >
+    <select id="selectRoomDetailList" parameterType="map" resultType="BaseRoomUserName" >
         SELECT rooms.id,
                rooms.title,
                rooms.publisher_id as publisherId,
@@ -67,15 +67,17 @@
                rooms.password,
                rooms.maximum,
                rooms.state,
-               rooms.stream_url,
-               rooms.start_time,
+               rooms.stream_url as streamUrl,
+               rooms.start_time as startTime,
                rooms.link,
-               rooms.created_datetime,
-               rooms.updated_datetime,
+               rooms.created_datetime as createdDatetime,
+               rooms.updated_datetime as updatedDatetime,
                users.name
         FROM rooms
                  JOIN users
                       ON rooms.publisher_id = users.id
+        WHERE rooms.state = #{state1}
+                OR rooms.state = #{state2}
         ORDER BY rooms.id DESC;
     </select>
 

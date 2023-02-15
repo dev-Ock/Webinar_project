@@ -44,8 +44,8 @@ const styles = theme => ({
         // gap                : '1em',
         minWidth : '300px',
         maxWidth : '300px',
-        minHeight: '200px',
-        maxHeight: '200px'
+        minHeight: '235px',
+        maxHeight: '235px'
     },
     
 })

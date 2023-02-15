@@ -22,6 +22,7 @@ export default class RoomHistoryRepository extends Repository {
                 })
         })
     };
+    
     // 세미나 기록 : 유저가 만든 방 기록 Read
     getRoomHistory = (paramId) => {
         return new Promise((resolve, reject) => {
@@ -41,5 +42,6 @@ export default class RoomHistoryRepository extends Repository {
     }
 
     // 세미나 기록 Delete
+    
 
 }

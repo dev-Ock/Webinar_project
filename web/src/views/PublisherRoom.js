@@ -4,6 +4,7 @@ import {withRouter} from "react-router-dom";
 import {withStyles} from "@material-ui/core/styles";
 import {inject, observer} from "mobx-react";
 import * as Repository from "../repositories/Repository";
+import * as Roomstore from "../stores/RoomStore"
 import moonPicture from '../assets/images/moon.jpg'
 import {RoomMakeRoomID} from "../repositories/Repository";
 import {Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from "@mui/material";
@@ -45,7 +46,7 @@ class PublisherRoom extends React.Component {
         super(props);
         this.state = {
             room      : {},
-            roomUser  : {},
+            roomPlayerList  : {},
             playerList: false,
             standBy   : true,
             view      : true,
@@ -58,11 +59,11 @@ class PublisherRoom extends React.Component {
     }
     
     componentDidMount() {
-        this.props.handleDrawerToggle(); // SideMenu 최소화
+        // SideMenu 최소화
+        this.props.handleDrawerToggle();
         // room 데이터 조회
         const roomId = sessionStorage.getItem(RoomMakeRoomID);
-        this.state.room = this.props.roomStore.getSelectedRoom(roomId);
-        console.log('this.state.room : ', this.state.room);
+        this.props.roomStore.getSelectedRoom(roomId)
         // 방송 기본 세팅
         const stream = this.props.roomStore.setRoom();
         stream.then(data => this.setState({stream : data}));
@@ -70,9 +71,9 @@ class PublisherRoom extends React.Component {
         const selectPlayerList = this.props.roomUserStore.getRoomUserList(roomId);
         selectPlayerList
             .then((data) => {
-                this.state.roomUser = data;
+                this.state.roomPlayerList = data;
             })
-            .then((data) => {
+            .then((_) => {
                 this.setState({playerList: !this.state.playerList});
             })
     }
@@ -84,8 +85,13 @@ class PublisherRoom extends React.Component {
     
     // SRS server-Publisher 연결
     async onServerPublisherConnection() {
+        // room state : pending
+        await this.props.roomStore.onPendingRoomState(this.props.roomStore.onRoom);
         const streamUrl = sessionStorage.getItem(Repository.RoomMakeStreamUrl);
+        // SRS server-Publisher 연결
         await this.props.roomStore.serverPublisherConnection(streamUrl);
+        // room state : progress
+        await this.props.roomStore.onProgressRoomState(this.props.roomStore.onRoom);
         this.setState({view: false});
     }
     
@@ -108,7 +114,7 @@ class PublisherRoom extends React.Component {
     async onRefreshPlayerList() {
         console.log('111')
         const roomId = sessionStorage.getItem(RoomMakeRoomID);
-        this.state.roomUser = await this.props.roomUserStore.getRoomUserList(roomId);
+        this.state.roomPlayerList = await this.props.roomUserStore.getRoomUserList(roomId);
     }
     
     // 방송 일시정지
@@ -120,6 +126,12 @@ class PublisherRoom extends React.Component {
         } else {
             pauseBtn.innerText = '방송 다시 시작';
         }
+    }
+    
+    // 방송 종료
+    onComplete() {
+        console.log('onRoom', this.props.roomStore.onRoom)
+        this.props.roomStore.onCompleteRoomState(this.props.roomStore.onRoom);
     }
     
     // 오른쪽 tab change
@@ -135,7 +147,7 @@ class PublisherRoom extends React.Component {
                 <Grid container direction='row'>
                     <Grid item xs className={classes.leftGrid}>
                         <Grid item sm>
-                            <Box bgcolor='lightgray' color="info.contrastText"
+                            <Box bgcolor='black' color="info.contrastText"
                                  style={{height: '52vh', textAlign: 'center'}}>
                                 <div>
                                     {/*<div style={{textAlign: 'center', padding:'0px'}}>*/}
@@ -149,8 +161,8 @@ class PublisherRoom extends React.Component {
                                                     // poster={moonPicture}
                                                     autoPlay
                                                     playsInline
-                                                    width={600}
-                                                    height={500}
+                                                    width={700}
+                                                    // height='100%'
                                                 ></video>
                                             </div>
                                             {/* <video
@@ -271,6 +283,7 @@ class PublisherRoom extends React.Component {
                                                 <Button
                                                     style={{fontSize: "17px", fontWeight:"bolder", borderStyle:'solid',borderWidth : '2px', borderColor:"#90a4ae", color:"white",backgroundColor: "#90a4ae"}}
                                                     variant="contained"
+                                                    onClick={this.onComplete.bind(this)}
                                                 >
                                                     방송 끝내기
                                                 </Button>
@@ -322,7 +335,7 @@ class PublisherRoom extends React.Component {
                                             this.state.playerList
                                                 ?
                                                     <PlayerList onRefreshPlayerList={this.onRefreshPlayerList.bind(this)}
-                                                                roomUserList={this.state.roomUser}/>
+                                                                roomUserList={this.state.roomPlayerList}/>
                                                 :
                                                 ""
                                         }

@@ -25,14 +25,17 @@ export const RoomStateType = { // 만든 세미나의 스트리밍 상태
     Wait    : "Wait",
     Progress: "Progress",
     Complete: "Complete",
-    Fail    : "Fail"
+    Pending : "Pending",
+    Failed  : "Failed"
 }
 
-export const RoomUserStateType = { // 만든 세미나의 스트리밍 상태
-    Wait    : "Wait",
-    Progress: "Progress",
-    Complete: "Complete",
-    Fail    : "Fail"
+export const RoomUserStateType = { // player의 스트리밍 상태
+    Wait      : "Wait",
+    Progress  : "Progress",
+    Complete  : "Complete",
+    Uncomplete: "Uncomplete",
+    Pending   : "Pending",
+    Failed    : "Failed"
 }
 
 const EmptyRoom = {
@@ -58,8 +61,15 @@ const EmptyOnRoom = {
     streamUrl      : '',
     link           : '',
     createdDatetime: '',
-    updatedDatetime: ''
+    updatedDatetime: '',
+    name           : ''
 }
+
+const EmptyRoomTitleAndPublisherName = {
+    title        : "",
+    publisherName: ""
+}
+
 
 const EmptyRoomList = [];
 let EmptyRoomTitle = "";
@@ -73,14 +83,14 @@ let camerasSelect = '';
 let option = '';
 
 export default class RoomStore {
-
-
+    
+    
     roomList = Object.assign([], EmptyRoomList)
     roomMakeState = RoomMakeState.Empty;
     roomMake = Object.assign({}, EmptyRoom);
     onRoom = Object.assign({}, EmptyOnRoom);
     // roomListLength = toJS(this.roomList.length);
-    roomTitle = EmptyRoomTitle;
+    roomTitleAndPublisherName = Object.assign({}, EmptyRoomTitleAndPublisherName);
     
     constructor(props) {
         this.roomRepository = props.roomRepository;
@@ -114,15 +124,16 @@ export default class RoomStore {
     };
 
     // TopBar에서 보여줄 room title
-    setRoomTitle = (title) => {
-        this.roomTitle = title;
+    setRoomTitleAndPublisherName = (title, name) => {
+        this.roomTitleAndPublisherName.title = title;
+        this.roomTitleAndPublisherName.publisherName = name;
     }
 
 
     setOnRoom = (room) => {
+        console.log('setOnRoom', room)
         this.onRoom = room;
         console.log('onRoom', this.onRoom)
-
         return this.onRoom;
     }
 
@@ -158,17 +169,20 @@ export default class RoomStore {
         }
     }
 
-    // 유저가 자신이 만들었던 세미나(room) 조회
-    * getPublishedRoom(userId){
-        try {
-            // console.log("RoomStore *getPublishedRoom", roomHistoryInfo)
-            const roomData = yield this.roomHistoryRepository.getRoomHistory(userId)
-            return roomData
-        } catch(e) {
-            console.log('RoomStore *getPublishedRoom error', e.message)
-        }
+    // // 유저가 자신이 만들었던 세미나(room) 조회
+    // * getPublishedRoom(userId){
+    //     try {
+    //         // console.log("RoomStore *getPublishedRoom", roomHistoryInfo)
+    //         const roomData = yield this.roomHistoryRepository.getRoomHistory(userId)
+    //         return roomData
+    //     } catch(e) {
+    //         console.log('RoomStore *getPublishedRoom error', e.message)
+    //     }
+    //
+    // }
 
-    }
+
+
     
     // publisher-room 입장시, sessionStorage의 room data 세팅
     setRoomData(room) {
@@ -197,7 +211,7 @@ export default class RoomStore {
     }
     
     // 방 기본 세팅
-    async setRoom(){
+    async setRoom() {
         const constraints = {
             audio: true,
             video: {
@@ -208,7 +222,7 @@ export default class RoomStore {
         stream = await navigator.mediaDevices.getUserMedia(constraints);
         myVideo = document.getElementById("myVideoTag");
         myVideo.srcObject = stream;
-    
+
         // 비디오 장치들이 cameras 옵션에 달리도록 세팅
         const devices = await navigator.mediaDevices.enumerateDevices();
         const cameras = devices.filter((device) => device.kind === "videoinput");
@@ -225,7 +239,7 @@ export default class RoomStore {
             }
             camerasSelect.appendChild(option);
         });
-    
+
         stream.getAudioTracks()
             .forEach((track) => (track.enabled = !track.enabled));
         console.log('방송세팅 stream', stream);
@@ -259,14 +273,12 @@ export default class RoomStore {
             // myVideo.srcObject = stream;
             // console.log('stream2 : ', stream)
             
-            
-            
+
             // addTrack
             stream.getTracks().forEach((track) => {
                 pc.addTrack(track);
                 // ontrack && ontrack({ track: track });
             });
-    
 
             
             // createOffer & setLocalDescription
@@ -303,10 +315,10 @@ export default class RoomStore {
         // };
         
         pc = new RTCPeerConnection();
-        
         await publish(streamUrl);
-        let btnOptionBoxBtn = document.getElementById("BtnOptionBox");
-        btnOptionBoxBtn.hidden = false;
+        //  merge 중 아래 두줄 없길래 주석처리 합니다.(나은)
+        // let btnOptionBoxBtn = document.getElementById("BtnOptionBox");
+        // btnOptionBoxBtn.hidden = false;
     }
     
     // SRS server-publisher axios
@@ -315,7 +327,7 @@ export default class RoomStore {
         return result;
     }
     
-    // Video turn on/off
+    // publisher용 Video turn on/off
     setVideoOnOff(videoOn) {
         console.log('RoomStore setVideoOnOff 진입');
         // let videoBtn = document.getElementById("videoBtnTag");
@@ -324,7 +336,7 @@ export default class RoomStore {
         return !videoOn;
     }
     
-    // Audio turn on/off
+    // publisher용 Audio turn on/off
     setAudioOnOff(audioOff) {
         console.log('RoomStore setAudioOnOff 진입');
         // let muteBtn = document.getElementById("muteBtnTag");
@@ -408,8 +420,8 @@ export default class RoomStore {
             myVideo.srcObject = stream;
         };
         
-        const pc = new RTCPeerConnection();
-        const stream = new MediaStream();
+        pc = new RTCPeerConnection();
+        stream = new MediaStream();
         
         pc.ontrack = function (event) {
             if (ontrack) {
@@ -425,28 +437,73 @@ export default class RoomStore {
         return result;
     }
     
+    // player용 Video turn on/off
+    // setVideoOnOff2(videoOn) {
+    setVideoOnOff2() {
+        console.log('RoomStore setVideoOnOff 진입');
+        // let videoBtn = document.getElementById("videoBtnTag");
+        stream.getVideoTracks()
+            .forEach((track) => (track.enabled = !track.enabled));
+        // return !videoOn;
+    }
+
+    // player용 Audio turn on/off
+    // setAudioOnOff2(audioOff) {
+    setAudioOnOff2() {
+        console.log('RoomStore setAudioOnOff 진입');
+        // let muteBtn = document.getElementById("muteBtnTag");
+        stream.getAudioTracks()
+            .forEach((track) => (track.enabled = !track.enabled));
+        // return !audioOff;
+    }
+
     // 룸 전체 리스트 조회
     * selectRoomList() {
         console.log("selectroomusername확인")
         try {
-            const roomList = yield this.roomRepository.getRoomList();
+            const roomList = yield this.roomRepository.getRoomUserNameList();
             this.roomList = roomList;
-            // console.log('RoomStore selectRoomList roomList', roomList)
+            console.log('RoomStore selectRoomList roomList', roomList)
             // this.roomListLength = toJS(roomList).length;
             // console.log('param확인', toJS(roomList).length);
             return this.roomList;
         } catch (e) {
             console.log('세미나 목록 조회 error', e);
         }
-        
     };
+
+    // room password double-check(front)
+    passwordCheckFront(room) {
+        const passwordCheck = prompt("password를 입력해 주세요")
+        if (passwordCheck == null) {
+            return null;
+        } else {
+            return passwordCheck == room.password ? this.passwordCheckDB(room) : this.passwordCheckFront(room);
+        }
+    }
     
+    // room password double-check(Server)
+    passwordCheckDB(room) {
+        this.roomRepository.onCheckRoomPw(room.id, room.password)
+            .then(result => {
+                return result === 1 ? null : this.passwordCheckFront(room);
+            })
+            .catch(error => {
+                console.log("RoomStore passwordCheckDB error", error)
+            })
+    }
+
     // room list에서 room 들어갈 때 player인지 publisher인지 체크하고 이동
-    async playerOrPublisherChoice(room, userId, checkLogin,onCreateRoomUser) {
-        console.log('room',room);
-        if(userId === undefined){
+    async playerOrPublisherChoice(room, userId, checkLogin, onCreateRoomUser) {
+        console.log('room', room);
+        if (userId === undefined) {
             checkLogin();
         }
+        if (room.password) {
+            // password Front & Server double-check
+            this.passwordCheckFront(room)
+        }
+
         try {
             if (room.publisherId === userId) {
                 console.log('publisher');
@@ -462,7 +519,7 @@ export default class RoomStore {
                     playerId   : userId,
                     state      : RoomUserStateType.Wait
                 };
-                console.log('param',param);
+                console.log('param', param);
                 const result = await onCreateRoomUser(param);
                 console.log('RoomStore onCreateRoomUser result', result);
                 if (result === 0) {
@@ -475,7 +532,6 @@ export default class RoomStore {
                     await window.location.replace('/player-room');
                 }
             }
-    
         } catch (e) {
             console.log(e);
         }
@@ -488,14 +544,78 @@ export default class RoomStore {
         
     }
     
-    // 선택한 room 정보 조회
+    // 선택한 room 정보 조회 + TopBar에 보여줄 room name과 publisher name 세팅
     async getSelectedRoom(roomId) {
         const room = this.roomRepository.onSelectRoom(roomId);
         room.then(room => {
-                this.setRoomTitle(room.title)
-                console.log('room', room);
-                return room;
+                // TopBar에 보여줄 room name과 publisher name 세팅
+                // this.setRoomTitleAndPublisherName(room.title, room.name);
+                console.log('getSelectedRoom room', room);
+                this.setOnRoom(room);
             }
         )
+    }
+
+    // room state change DB Update
+    * onUpdateRoomState(data) {
+        return yield this.roomRepository.onUpdateRoom(data);
+    }
+
+    // room state : Pending
+    onPendingRoomState(data) {
+        console.log('onProgressRoom data : ', data);
+        data.state = RoomStateType.Pending;
+        this.onUpdateRoomState(data)
+            .then(result => {
+                console.log("onProgressRoom", result);
+                if (result !== 1) {
+                    this.onFailedRoomState(data);
+                }
+            })
+    }
+
+    // room state : Progress
+    onProgressRoomState(data) {
+        console.log('onProgressRoom data : ', data);
+        data.state = RoomStateType.Progress;
+        this.onUpdateRoomState(data)
+            .then(result => {
+                console.log("onProgressRoom", result);
+                if (result !== 1) {
+                    this.onFailedRoomState(data);
+                }
+            })
+    }
+
+    // room state : Complete
+    onCompleteRoomState(data) {
+        console.log('onCompleteRoom data : ', data);
+        data.state = RoomStateType.Complete;
+        this.onUpdateRoomState(data)
+            .then(result => {
+                console.log("onCompleteRoom", result);
+                alert('세미나가 종료되었습니다.');
+                if (result !== 1) {
+                    this.onFailedRoomState(data);
+                    window.location.replace("/room-list");
+                }
+                sessionStorage.removeItem(Repository.RoomMakeRoomID);
+                sessionStorage.removeItem(Repository.RoomMakePublisherId);
+                sessionStorage.removeItem(Repository.RoomMakeStreamUrl);
+                window.location.replace("/room-list");
+            })
+    }
+
+    // room state : Failed
+    onFailedRoomState(data) {
+        console.log('onFailedRoom data : ', data);
+        data.state = RoomStateType.Failed;
+        this.onUpdateRoomState(data)
+            .then(result => {
+                console.log("room state 'Failed' update success")
+                if (result !== 1) {
+                    throw new Error("room state 'Failed' update error ")
+                }
+            })
     }
 }
