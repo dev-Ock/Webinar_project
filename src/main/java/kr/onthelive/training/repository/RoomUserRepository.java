@@ -6,6 +6,8 @@ import kr.onthelive.training.repository.mapper.RoomUserMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+
+import java.util.HashMap;
 import java.util.List;
 
 @Repository
@@ -32,6 +34,26 @@ public class RoomUserRepository {
     public Boolean checkExistedRoomUser(String roomId, String playerId){
         int count =  mapper.countRoomUserByRoomIdAndPlayerId(roomId, playerId);
         return count > 0; // true or false
+    }
+
+    // streamUrl 중복검사 : 나나 : 나중 추가
+    public Boolean checkExistedStreamUrl(String streamUrl){
+        int count = mapper.selectRoomUserByStreamUrl(streamUrl);
+        return count > 0;
+    }
+
+    // roomUser의 컬럼에 streamUrl추가
+    public int updateRoomUserStreamUrl(BaseRoomUser roomUser){
+        log.trace("RoomUserRepository updateRoomUserStreamUrl... {},{}", roomUser);
+        int result = mapper.updateRoomUserStreamUrl(roomUser);
+        return result;
+    }
+
+    // roomId와 playerId로 update한 streamUrl 찾아오기
+    public BaseRoomUser selectRoomUserWithUrl(BaseRoomUser roomUser){
+        log.trace("RoomUserRepository selectRoomUser... {},{}", roomUser);
+        BaseRoomUser roomUserWithUrl = mapper.selectRoomUserWithUrl(roomUser);
+        return roomUserWithUrl;
     }
 
     // 새로운 룸 유저 추가

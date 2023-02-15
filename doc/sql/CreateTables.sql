@@ -91,6 +91,27 @@ create table room_histories
 )
     comment 'room histories 정보' collate = utf8mb4_unicode_ci;
 
+
+create table room_users
+(
+    id               bigint auto_increment comment 'room 참여자 ID'
+        primary key,
+    room_id          bigint                                   not null comment 'room ID',
+    publisher_id     bigint                                   not null comment 'room 생성자 ID',
+    player_id        bigint                                   not null comment 'room 참여자 ID',
+    state            varchar(128) default 'wait'              not null comment 'user 상태 [Wait, Progress, Complete, Uncomplete, Pending, Failed]',
+    stream_url       varchar(128)                             null comment     'room 참여자 stream_url',
+    created_datetime datetime     default current_timestamp() not null comment 'room 참여자 생성일시',
+    updated_datetime datetime     default current_timestamp() not null comment 'room 참여자 변경일시',
+    constraint fk_room_users_player_id
+        foreign key (player_id) references users (id),
+    constraint fk_room_users_publisher_id
+        foreign key (publisher_id) references rooms (publisher_id),
+    constraint fk_room_users_room_id
+        foreign key (room_id) references rooms (id)
+)
+    comment 'room 참여자 정보' collate = utf8mb4_unicode_ci;
+
 create table room_user_histories
 (
     id               bigint auto_increment comment 'room histories ID'
@@ -105,27 +126,6 @@ create table room_user_histories
         foreign key (room_id) references rooms (id)
 )
     comment 'room 사용자 histories 정보' collate = utf8mb4_unicode_ci;
-
-create table room_users
-(
-    id               bigint auto_increment comment 'room 참여자 ID'
-        primary key,
-    room_id          bigint                                   not null comment 'room ID',
-    publisher_id     bigint                                   not null comment 'room 생성자 ID',
-    player_id        bigint                                   not null comment 'room 참여자 ID',
-    state            varchar(128) default 'wait'              not null comment 'user 상태 [Wait, Progress, Complete, Uncomplete, Pending, Failed]',
-    created_datetime datetime     default current_timestamp() not null comment 'room 참여자 생성일시',
-    updated_datetime datetime     default current_timestamp() not null comment 'room 참여자 변경일시',
-    constraint fk_room_users_player_id
-        foreign key (player_id) references users (id),
-    constraint fk_room_users_publisher_id
-        foreign key (publisher_id) references rooms (publisher_id),
-    constraint fk_room_users_room_id
-        foreign key (room_id) references rooms (id)
-)
-    comment 'room 참여자 정보' collate = utf8mb4_unicode_ci;
-
-
 
 
 

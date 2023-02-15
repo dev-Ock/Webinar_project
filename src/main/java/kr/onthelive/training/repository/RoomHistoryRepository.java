@@ -17,8 +17,8 @@ public class RoomHistoryRepository {
     public RoomHistoryRepository(RoomHistoryMapper mapper) { this.mapper = mapper;}
 
     // 룸 전체 기록 조회
-    public List<BaseRoomHistory> selectRoomHistoryListById(){
-        return mapper.selectRoomHistoryListById();
+    public List<BaseRoomHistory> selectRoomHistoryListById(int publisherId){
+        return mapper.selectRoomHistoryListById(publisherId);
     }
 
     // 룸 기록 추가

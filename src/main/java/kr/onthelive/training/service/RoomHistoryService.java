@@ -22,8 +22,8 @@ public class RoomHistoryService {
     }
 
     // 룸 전체 기록 조회
-    public List<BaseRoomHistory> getRoomHistoryListById(){
-        final List<BaseRoomHistory> roomHistory = roomHistoryRepository.selectRoomHistoryListById();
+    public List<BaseRoomHistory> getRoomHistoryListById(int publisherId){
+        final List<BaseRoomHistory> roomHistory = roomHistoryRepository.selectRoomHistoryListById(publisherId);
         return roomHistory;
     }
 
@@ -34,7 +34,7 @@ public class RoomHistoryService {
         log.trace("service setRoomHistory roominfo... {}", roominfo);
 
         BaseRoomHistory roomHistory = new BaseRoomHistory();
-
+        // getPassword() 에러처리 : 패스워드가 NULL 일 경우 에러남 >> if Null 이면 1 먹여주는거로 바꾸기
         int publicOrNot;
         if(roominfo.getPassword().equals("")){
             publicOrNot = 0;

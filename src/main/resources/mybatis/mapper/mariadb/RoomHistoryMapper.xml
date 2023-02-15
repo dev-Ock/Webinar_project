@@ -7,13 +7,13 @@
         <result property="publisherId"           column="publisher_id" />
         <result property="title"                 column="title" />
         <result property="description"           column="description" />
-        <result property="publicOrNot"              column="public_or_not" />
+        <result property="publicOrNot"           column="public_or_not" />
         <result property="maximum"               column="maximum" />
         <result property="createdDatetime"       column="created_datetime" />
     </resultMap>
 
     <!-- select -->
-    <select id="selectRoomHistoryListById" parameterType="String" resultMap="BaseRoomHistoryResultMap">
+    <select id="selectRoomHistoryListById" parameterType="int" resultMap="BaseRoomHistoryResultMap">
         SELECT id,
                room_id,
                state,
@@ -24,6 +24,7 @@
                maximum,
                created_datetime
         FROM room_histories
+            WHERE publisher_id=#{publisherId}
     </select>
 
     <!-- insert -->
