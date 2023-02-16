@@ -57,18 +57,16 @@ const styles = theme => ({
                                 'view1'
                                 'view3'
                                 'view4'
-                                'view5'
                                 'view2'
             `,
         },
         [theme.breakpoints.up('lg')]: {
             gridTemplateColumns: '4fr 1fr',
-            gridTemplateRows: '3fr 0.5fr 1fr 74px',
+            gridTemplateRows: '3fr 1fr 74px',
             gridTemplateAreas: `
                                 'view1 view2'
                                 'view3 view2'
                                 'view4 view2'
-                                'view5 view2'
             `,
             height: '100vh'
         },
@@ -86,16 +84,11 @@ const styles = theme => ({
     },
     gridView3: {
         gridArea: 'view3',
-        background: 'orange',
+        background: 'blue',
         padding: '50px'
     },
     gridView4: {
         gridArea: 'view4',
-        background: 'blue',
-        padding: '50px'
-    },
-    gridView5: {
-        gridArea: 'view5',
         background: 'grey',
     }
 
@@ -245,11 +238,7 @@ class PlayerRoom extends React.Component {
 
                         </Box>
                     </div>
-
                     <div className={classes.gridView3}>
-                        <div>화면 구성 플레이어 룸에선 필요 없어여</div>
-                    </div>
-                    <div className={classes.gridView4}>
                         참여자
                         <video
                             id="peerFace"
@@ -268,7 +257,7 @@ class PlayerRoom extends React.Component {
                         {/*</video>*/}
 
                     </div>
-                    <div className={classes.gridView5}>
+                    <div className={classes.gridView4}>
                         {/*<Box bgcolor='text.disabled' color="info.contrastText" style={{height: '43.8vh', textAlign:'center', verticalAlign:'middle'}}>*/}
                         <div style={{textAlign: 'center'}}>
 
@@ -343,6 +332,7 @@ class PlayerRoom extends React.Component {
 
 export default withSnackbar(withRouter(
         withStyles(styles)(
+
             inject('roomStore', 'authStore','roomUserStore')(
                 observer(PlayerRoom)
             )
