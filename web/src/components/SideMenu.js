@@ -15,9 +15,13 @@ import {makeStyles, useTheme} from "@material-ui/core/styles";
 import {ReactComponent as ArrowLineLeftIcon} from "../common/images/ArrowLineLeftIcon.svg";
 import {ReactComponent as GearSixGrayIcon} from "../common/images/GearSixGrayIcon.svg";
 import OnTheLiveLogo from "../common/images/onthelive_logo.svg";
+import Logo from "../common/images/logo.png";
 import clsx from "clsx";
 import HomeIcon from '@mui/icons-material/Home';
 import { grey } from '@mui/material/colors';
+import AddIcon from '@mui/icons-material/Add';
+import HistoryIcon from '@mui/icons-material/History';
+import ListAltIcon from '@mui/icons-material/ListAlt';
 
 const useStyles = makeStyles((theme) => ({
     root:{
@@ -123,7 +127,9 @@ export default function SideMenu(props) {
                 {/*<ListSubheader inset>관리</ListSubheader>*/}
                 <Link to="/room-list" className={classes.link}>
                     <ListItem button disableRipple onClick={ () => handleListItemClick(1) }  selected={selectedIndex === 1}  >
-                        <ListItemIcon></ListItemIcon>
+                        <ListItemIcon>
+                            <ListAltIcon sx={{ color: grey[50] }}/>
+                        </ListItemIcon>
                         <ListItemText primary="세미나 목록" />
                     </ListItem>
                     {/*{user.type === UserType.ADMIN &&*/}
@@ -138,7 +144,7 @@ export default function SideMenu(props) {
                 <Link to="/room-make" className={classes.link}>
                     <ListItem button disableRipple onClick={() => handleListItemClick(2)} selected={selectedIndex === 2}>
                         <ListItemIcon>
-                            {/*<ComputerIcon />*/}
+                            <AddIcon sx={{ color: grey[50] }}/>
                         </ListItemIcon>
                         <ListItemText primary="세미나 만들기" />
                     </ListItem>
@@ -147,7 +153,7 @@ export default function SideMenu(props) {
                 <Link to="/room-history" className={classes.link}>
                     <ListItem button disableRipple onClick={() => handleListItemClick(3)} selected={selectedIndex === 3}>
                         <ListItemIcon>
-                            {/*<ComputerIcon />*/}
+                            <HistoryIcon sx={{ color: grey[50] }} />
                         </ListItemIcon>
                         <ListItemText primary="세미나 히스토리" />
                     </ListItem>
@@ -160,8 +166,23 @@ export default function SideMenu(props) {
         <div className={classes.menu}>
             <List>
                 <Link to="/home" className={classes.link}>
-                    <ListItem button>
-                        <ListItemIcon><HomeIcon sx={{ color: grey[50] }}/></ListItemIcon>
+                    <ListItem button style={{padding: 0}}>
+                        <ListItemIcon><HomeIcon sx={{ color: grey[50] }} style={{height: '59.8611px'}}/></ListItemIcon>
+                    </ListItem>
+                </Link>
+                <Link to="/room-make" className={classes.link}>
+                    <ListItem button style={{padding: 0}}>
+                        <ListItemIcon><AddIcon sx={{ color: grey[50] }} style={{height: '59.8611px'}}/></ListItemIcon>
+                    </ListItem>
+                </Link>
+                <Link to="/room-list" className={classes.link}>
+                    <ListItem button style={{padding: 0}}>
+                        <ListItemIcon><ListAltIcon sx={{ color: grey[50] }} style={{height: '59.8611px'}}/></ListItemIcon>
+                    </ListItem>
+                </Link>
+                <Link to="/room-history" className={classes.link}>
+                    <ListItem button style={{padding: 0}}>
+                        <ListItemIcon><HistoryIcon sx={{ color: grey[50] }} style={{height: '59.8611px'}}/></ListItemIcon>
                     </ListItem>
                 </Link>
             </List>
@@ -178,7 +199,7 @@ export default function SideMenu(props) {
                 >
                     <Box className={classes.toolbar}>
                         <Link to='/home'  className={classes.link} style={{width: '100%'}}>
-                            <img src={OnTheLiveLogo} alt="OnTheLive" className={classes.logo}/>
+                            <img src={Logo} alt="OnTheLive" className={classes.logo}/>
                         </Link>
                         <IconButton
                             aria-label="open drawer"
