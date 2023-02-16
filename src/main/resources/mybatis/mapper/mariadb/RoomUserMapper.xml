@@ -30,7 +30,7 @@
                room_users.publisher_id as publisherId,
                room_users.player_id as playerId,
                room_users.state,
-               stream_url,
+               room_users.stream_url as streamUrl,
                room_users.created_datetime as createdDatetime,
                room_users.updated_datetime as updatedDatetime,
                users.name

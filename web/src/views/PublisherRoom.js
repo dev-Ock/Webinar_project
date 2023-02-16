@@ -7,19 +7,41 @@ import * as Repository from "../repositories/Repository";
 import * as Roomstore from "../stores/RoomStore"
 import moonPicture from '../assets/images/moon.jpg'
 import {RoomMakeRoomID} from "../repositories/Repository";
-import {Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from "@mui/material";
-import {typography} from '@mui/system';
-import {Grid, Box, Typography, Button, Paper, Switch} from "@mui/material";
+import {Box, Button, Paper, Table, TableBody, TableContainer, TableHead, TableRow} from "@mui/material";
 import PlayerList from "./PlayerList";
-import FormControlLabel from "@mui/material/FormControlLabel";
+// import FormControlLabel from "@mui/material/FormControlLabel";
 import Tab from '@mui/material/Tab';
 import {TabContext, TabList, TabPanel} from '@mui/lab';
 import MicIcon from '@mui/icons-material/Mic';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import VideocamIcon from '@mui/icons-material/Videocam';
-import SettingsIcon from '@mui/icons-material/Settings';
 import MicOffIcon from '@mui/icons-material/MicOff';
 import VideocamOffIcon from '@mui/icons-material/VideocamOff';
+import Snackbar from '@mui/material/Snackbar';
+import IconButton from '@mui/material/IconButton';
+import CloseIcon from '@mui/icons-material/Close';
+import Badge from '@mui/material/Badge';
+import MailIcon from '@mui/icons-material/Mail';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import Slide from '@mui/material/Slide';
+import {useState} from "react";
+import {styled} from '@mui/material/styles';
+import TableCell, {tableCellClasses} from '@mui/material/TableCell';
+
+const StyledTableCell = styled(TableCell)(({theme}) => ({
+    [`&.${tableCellClasses.head}`]: {
+        backgroundColor: '#b0bec5',
+        // color: ,
+    },
+    [`&.${tableCellClasses.body}`]: {
+        fontSize: 14,
+        // color: #b0bec5,
+    },
+}));
 
 const styles = (theme) => ({
     mainContainer: {
@@ -114,36 +136,38 @@ class PublisherRoom extends React.Component {
             playerList    : false,
             standBy       : true,
             view          : true,
-            stream        : "",
+            stream        : {},
             pause         : false,
             videoOn       : true,
             audioOff      : false,
-            tabValue      : '1'
+            tabValue      : '1',
+            pannelRequestList : [],
+            pannelRequestListBar : false
         }
         
     }
     
     
-    
     componentDidMount() {
         // SideMenu 최소화
         this.props.handleDrawerToggle();
-    
+        
         // room 데이터 조회
         const roomId = sessionStorage.getItem(RoomMakeRoomID);
         this.props.roomStore.getSelectedRoom(roomId)
         // 방송 기본 세팅
-        const stream = this.props.roomStore.setRoom();
-        stream.then(data => this.setState({stream: data}));
+        this.props.roomStore.setRoom();
+        // const stream = this.props.roomStore.setRoom();
+        // stream.then(data => this.setState({stream: data}));
         // 세미나 참여한 player 조회
         const selectPlayerList = this.props.roomUserStore.getRoomUserList(roomId);
-        selectPlayerList
-            .then((data) => {
-                this.state.roomPlayerList = data;
-            })
-            .then((_) => {
-                this.setState({playerList: !this.state.playerList});
-            })
+        if(selectPlayerList !== undefined){
+            selectPlayerList
+                .then((data) => {
+                    this.state.roomPlayerList = data;
+                    this.setState({playerList: true});
+                })
+        }
     }
     
     // 방송 준비
@@ -156,8 +180,7 @@ class PublisherRoom extends React.Component {
         // room state : pending
         await this.props.roomStore.onPendingRoomState(this.props.roomStore.onRoom);
         // SRS server-Publisher 연결
-        const streamUrl = sessionStorage.getItem(Repository.RoomMakeStreamUrl);
-        await this.props.roomStore.serverPublisherConnection(streamUrl);
+        await this.props.roomStore.serverPublisherConnection();
         // room state : progress
         await this.props.roomStore.onProgressRoomState(this.props.roomStore.onRoom);
         this.setState({view: false});
@@ -180,9 +203,15 @@ class PublisherRoom extends React.Component {
     
     // player List 조회 새로고침
     async onRefreshPlayerList() {
-        console.log('111')
         const roomId = sessionStorage.getItem(RoomMakeRoomID);
-        this.state.roomPlayerList = await this.props.roomUserStore.getRoomUserList(roomId);
+        const selectPlayerList = this.props.roomUserStore.getRoomUserList(roomId);
+        if(selectPlayerList !== undefined){
+            selectPlayerList
+                .then((data) => {
+                    this.state.roomPlayerList = data;
+                    this.setState({playerList: true});
+                })
+        }
     }
     
     // 방송 일시정지
@@ -222,17 +251,32 @@ class PublisherRoom extends React.Component {
         await this.props.roomStore.onSelectDisplayOption();
     }
     
-    endDisplaySharing = async(e) => {
-        e.preventDefault()
+    // 화면 공유 정지
+    endDisplaySharing = async (e) => {
+        e.preventDefault();
         await this.props.roomStore.onEndDisplaySharing();
     }
 
-
+    // pannel 요청 확인
+    checkPannelRequest = async (e) => {
+        e.preventDefault();
+        const result = await this.props.roomUserStore.onCheckPannelRequest(this.props.roomStore.onRoom.id);
+        await this.setState({pannelRequestList : result});
+    }
+    
+    // pannel 요청 명단 열기
+    openPannelRequest = (e) => {
+        e.preventDefault();
+        
+    }
+    
 // if ((navigator.mediaDevices && 'getDisplayMedia' in navigator.mediaDevices)) {
 //     startButton.disabled = false;
 // } else {
 //     errorMsg('getDisplayMedia is not supported');
 // }
+    
+    
     
     render() {
         const {classes} = this.props;
@@ -243,7 +287,8 @@ class PublisherRoom extends React.Component {
                     <div className={classes.gridView1}>
                         <Box>
                             <div style={{textAlign: 'center', paddingTop: '20px'}}>
-                                <h2>세미나 제목 : {this.props.roomStore.roomTitle}</h2>
+                                <h2>title : {this.props.roomStore.onRoom.title} / master
+                                    : {this.props.roomStore.onRoom.name}</h2>
                                 <div className="call">
                                     <div style={{textAlign: 'center'}}>
                                         <div>
@@ -255,21 +300,6 @@ class PublisherRoom extends React.Component {
                                                 width={600}
                                                 height={500}
                                             ></video>
-                                            
-                                            {/*<button id="startButton" disabled>Start*/}
-                                            {/*</button>*/}
-                                            <fieldset id="options" style={{display: 'block'}}>
-                                                <legend>송출할 화면 선택</legend>
-                                                <select id="displaySurface" defaultValue={"camera"}
-                                                        onChange={this.selectDisplayOption}>
-                                                    <option value="camera">카메라</option>
-                                                    <option value="browser">화면 공유</option>
-                                                    {/*<option value="window">윈도우</option>*/}
-                                                    {/*<option value="monitor">전체화면</option>*/}
-                                                </select>
-                                                <button id="endSharing" hidden={true} onClick={this.endDisplaySharing}>공유 중지</button>
-                                            </fieldset>
-                                            {/*<div id="errorMsg"></div>*/}
                                         </div>
                                         {/* <video
                                 id="peerFace"
@@ -315,12 +345,45 @@ class PublisherRoom extends React.Component {
                                         <Button style={{display: 'block'}} onClick={this.onVideoOnOff.bind(this)}>
                                             <div><VideocamOffIcon></VideocamOffIcon></div>
                                             <span></span></Button>}
-                                    <Button startIcon={<SettingsIcon/>} style={{display: 'block'}}>
-                                        <select
-                                            id="cameras"
-                                            style={{fontSize: "16px", color: '#37474f', width: '200px'}}
-                                            onInput={this.onChangeVideoOption.bind(this)}
-                                        ></select></Button>
+                                    {/*<Button startIcon={<SettingsIcon/>} style={{display: 'block'}}>*/}
+                                    <Button style={{display: 'block'}}>
+                                        <fieldset id="options"
+                                                  style={{display: 'block', marginTop: '-8px', marginBottom: '-3px'}}>
+                                            <legend>송출할 화면 선택</legend>
+                                            <div style={{marginTop: "-12px", marginBottom: "-12px"}}>
+                                                <select id="displaySurface" defaultValue={"camera"}
+                                                        onChange={this.selectDisplayOption}
+                                                        style={{fontSize: "15px"}}
+                                                >
+                                                    <option value="camera">카메라</option>
+                                                    <option value="browser">화면 공유</option>
+                                                    {/*<option value="window">윈도우</option>*/}
+                                                    {/*<option value="monitor">전체화면</option>*/}
+                                                </select>
+                                                <select
+                                                    id="cameras"
+                                                    hidden={false}
+                                                    style={{
+                                                        fontSize  : "15px",
+                                                        color     : '#37474f',
+                                                        width     : '120px',
+                                                        marginLeft: '5px'
+                                                    }}
+                                                    onInput={this.onChangeVideoOption.bind(this)}
+                                                ></select>
+                                                <span id="endSharing" style={{
+                                                    fontSize       : "15px",
+                                                    color          : '#37474f',
+                                                    backgroundColor: 'white',
+                                                    paddingLeft    : '5px',
+                                                    paddingRight   : '5px',
+                                                    // width     : '120px',
+                                                    marginLeft: '5px'
+                                                }} hidden={true} onClick={this.endDisplaySharing}>공유 중지
+                                        </span>
+                                            </div>
+                                        </fieldset>
+                                    </Button>
                                     {this.state.standBy
                                         ?
                                         <Button
@@ -345,82 +408,6 @@ class PublisherRoom extends React.Component {
                                         
                                     }
                                 </ButtonGroup>
-                                {/*<div style={{display: "inline-block"}}>*/}
-                                {/*    <FormControlLabel*/}
-                                {/*        style={{color: '#37474f'}}*/}
-                                {/*        label="Video"*/}
-                                {/*        control={*/}
-                                {/*            <Switch*/}
-                                {/*                style={{color: '#455a64'}}*/}
-                                {/*                checked={this.state.videoOn}*/}
-                                {/*                onChange={this.onVideoOnOff.bind(this)}*/}
-                                {/*                name="loading"*/}
-                                {/*                color="primary"*/}
-                                {/*            />*/}
-                                {/*        }*/}
-                                {/*    />*/}
-                                
-                                {/*    <FormControlLabel*/}
-                                {/*        style={{color: '#37474f'}}*/}
-                                {/*        label="Audio"*/}
-                                {/*        control={*/}
-                                {/*            <Switch*/}
-                                {/*                style={{color: '#455a64'}}*/}
-                                {/*                checked={this.state.audioOff}*/}
-                                {/*                onChange={this.onAudioOnOff.bind(this)}*/}
-                                {/*                name="loading"*/}
-                                {/*                color="primary"*/}
-                                {/*            />*/}
-                                {/*        }*/}
-                                {/*    />*/}
-                                {/*</div>*/}
-                                
-                                
-                                {/*{this.state.standBy*/}
-                                {/*    ?*/}
-                                {/*    <div*/}
-                                {/*        style={{margin: 'auto', display: 'block'}}*/}
-                                {/*    >*/}
-                                {/*        <Button*/}
-                                {/*            style={{fontSize: "17px", fontWeight:"bolder", borderStyle:'solid',borderWidth : '4px', borderColor:"#90a4ae", color:"#546e7a"}}*/}
-                                {/*            variant="outlined"*/}
-                                {/*            onClick={this.onStandBy.bind(this)}>*/}
-                                {/*            방송 준비 완료*/}
-                                {/*        </Button>*/}
-                                {/*    </div>*/}
-                                
-                                {/*    :*/}
-                                {/*    this.state.view*/}
-                                {/*        ?*/}
-                                {/*        <div*/}
-                                {/*            style={{margin: 'auto'}}*/}
-                                {/*        >*/}
-                                {/*            <Button*/}
-                                {/*                style={{fontSize: "17px", fontWeight:"bolder", borderStyle:'solid',borderWidth : '2px', borderColor:"#90a4ae", color:"white",backgroundColor: "#90a4ae"}}*/}
-                                {/*                variant="contained"*/}
-                                {/*                onClick={this.onServerPublisherConnection.bind(this)}>*/}
-                                {/*                방송 시작*/}
-                                {/*            </Button>*/}
-                                {/*        </div>*/}
-                                {/*        :*/}
-                                {/*        <div style={{margin: 'auto'}}>*/}
-                                {/*            <Button*/}
-                                {/*                id={'pause'}*/}
-                                {/*                style={{fontSize: "17px", fontWeight:"bolder", borderStyle:'solid',borderWidth : '2px', borderColor:"#90a4ae", color:"white",backgroundColor: "#90a4ae"}}*/}
-                                {/*                variant="contained"*/}
-                                {/*                onClick={this.onPause.bind(this)}*/}
-                                {/*            >*/}
-                                {/*                방송 일시정지*/}
-                                {/*            </Button>*/}
-                                {/*            &nbsp;*/}
-                                {/*            <Button*/}
-                                {/*                style={{fontSize: "17px", fontWeight:"bolder", borderStyle:'solid',borderWidth : '2px', borderColor:"#90a4ae", color:"white",backgroundColor: "#90a4ae"}}*/}
-                                {/*                variant="contained"*/}
-                                {/*            >*/}
-                                {/*                방송 끝내기*/}
-                                {/*            </Button>*/}
-                                {/*        </div>*/}
-                                {/*}*/}
                             </div>
                         </div>
                     </div>
@@ -442,7 +429,10 @@ class PublisherRoom extends React.Component {
                                             this.state.playerList
                                                 ?
                                                 <PlayerList onRefreshPlayerList={this.onRefreshPlayerList.bind(this)}
-                                                            roomUserList={this.state.roomPlayerList}/>
+                                                            roomUserList={this.state.roomPlayerList}
+                                                            roomMaximum={this.props.roomStore.onRoom.maximum}
+                                                            pannelRequest={this.state.pannelRequestList}
+                                                />
                                                 :
                                                 ""
                                         }

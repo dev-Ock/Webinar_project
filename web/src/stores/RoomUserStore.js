@@ -27,9 +27,35 @@ export default class RoomUserStore {
     
     // 세미나 참석 중인 player list 조회
     * getRoomUserList(roomId) {
-        const roomUser = yield this.roomUserRepository.onSelectRoomUserList(roomId)
+        let roomUser = yield this.roomUserRepository.onSelectRoomUserList(roomId);
         console.log('roomUser', roomUser)
+    
+        let pannelList = [];
+        let notPannelIst = [];
+        roomUser.map(roomUser => {
+            roomUser.streamUrl ? pannelList.push(roomUser) : notPannelIst.push(roomUser);
+        })
+        roomUser = pannelList.concat(notPannelIst);
         return roomUser;
+    }
+    
+    // pannel 요청 확인
+    async onCheckPannelRequest(roomId) {
+        const roomUser = await this.roomUserRepository.onSelectRoomUserList(roomId);
+        let pannelRequestList = [];
+        await roomUser.map((player) => {
+            if(player.streamUrl){
+                pannelRequestList.push(player);
+            }
+                // pannelRequestList[player.playerId] = {
+                //     roomUserTableId : player.id,
+                //     roomId : player.roomId,
+                //     publisherId : player.publisherId,
+                //
+                // }
+        } )
+        console.log("pannelRequestList", pannelRequestList)
+        return pannelRequestList;
     }
     
 }
