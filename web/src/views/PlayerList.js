@@ -52,30 +52,32 @@ const StyledTableCell = styled(TableCell)(({theme}) => ({
 }));
 
 const styles = (theme) => ({
-    root : {
+    root    : {
         textAlign: 'center'
     },
-    countDiv : {
+    countDiv: {
         margin: '0 auto',
-        width: '150px'
+        width : '280px'
     },
-    count  : {
+    count   : {
         color: 'black',
         float: 'left',
-        width: '120px'
+        width: '210px'
     },
+
     table : {
         minWidth: '420px',
         maxWidth: '420px',
         margin:'0 5px 0 5px',
         textAlign:'center'
+
     },
-    refresh: {
-        color    : '#90a4ae',
-        fontWeight : 'bolder',
-        float    : 'left',
-        width    : '32px',
-        '&:hover': {
+    refresh : {
+        color     : '#90a4ae',
+        fontWeight: 'bolder',
+        float     : 'left',
+        width     : '32px',
+        '&:hover' : {
             color    : '#ff5252',
             cursor   : 'pointer',
             transform: 'translateY(-1px)'
@@ -89,37 +91,22 @@ function PlayerList(props) {
     const [limit, setLimit] = useState(10);
     const [page, setPage] = useState(1);
     const offset = (page - 1) * limit;
-    
+
     
     return (
         
-        <div className={classes.root} >
+        <div className={classes.root}>
             <br/>
             <br/>
             <div className={classes.countDiv}>
-                <div className={classes.count}> Player 수
-                    : {props.roomUserList.length} 명 &nbsp; &nbsp;</div>
+                <div className={classes.count}> Player 수 : {props.roomUserList.length} 명 / 최대 인원
+                    : {props.roomMaximum} 명</div>
                 <RefreshIcon
                     className={classes.refresh}
                     onClick={props.onRefreshPlayerList}
                 />
             </div>
-            
             <br/>
-            {/*<label>*/}
-            {/*    한 페이지에 표시할 player 수 :*/}
-            {/*    &nbsp;*/}
-            {/*    <select*/}
-            {/*        value={limit}*/}
-            {/*        onChange={({target: {value}}) => setLimit(Number(value))}*/}
-            {/*    >*/}
-            {/*        <option value={10}>10</option>*/}
-            {/*        <option value={20}>20</option>*/}
-            {/*        <option value={30}>30</option>*/}
-            {/*    </select>*/}
-            {/*</label>*/}
-            {/*<br/>*/}
-            {/*<br/>*/}
             
             <TableContainer component={Paper}>
                 <Table className={classes.table} size="small">
@@ -142,11 +129,23 @@ function PlayerList(props) {
                                             style={{color: '#455a64', fontWeight: 'border'}}
                                             align={"center"}> {roomUser.name} </StyledTableCell>
                                         <StyledTableCell align={"center"}>
+    
+                                            {
+                                                roomUser.streamUrl ?
+                                                    <Button
+                                                        style={{backgroundColor: '#ff8a65', color: '#455a64'}}
+                                                        variant="outlined"
+                                                    >
+                                                        패널 요청 옴
+                                                    </Button> :
+                                                    null
+                                            }
+                                            &nbsp;
                                             <Button
                                                 style={{color: '#455a64'}}
                                                 variant="outlined"
                                             >
-                                                패널
+                                                패널 요청
                                             </Button>
                                             &nbsp;
                                             <Button
