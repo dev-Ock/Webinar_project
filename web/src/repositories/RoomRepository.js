@@ -44,7 +44,7 @@ export default class RoomRepository extends Repository {
             this.getRequestPromise('get', this.requestPrefix + '/read/withnamelist')
                 .then(data => {
                     resolve(data);
-                    // console.log('RoomRepository getRoomUserNameList result : ', data)
+                    console.log('RoomRepository getRoomUserNameList result : ', data)
                 })
                 .catch(error => {
                     console.log('RoomRepository getRoomUserNameList error : ', error)
