@@ -51,6 +51,13 @@ public class RoomController {
     public BaseRoomUserName  createRoom(HttpServletRequest httpRequest, @RequestBody BaseRoom room) {
         log.trace("createRoom start... {}", room);
         BaseRoomUserName roomData = roomService.createRoom(room);
+
+        // 룸 히스토리 생성
+        int historyResult = roomHistoryService.createRoomHistory(roomData);
+        if(historyResult != 1){
+            throw new Error("roomHistoryService.createRoomHistory failed");
+        }
+
         return roomData;
     }
 
@@ -81,10 +88,13 @@ public class RoomController {
             throw new Error("roomService.modifyRoomState failed");
         }
         log.trace("### {}",roomInfo);
-        int result2 = roomHistoryService.setRoomHistory(roomInfo);
-        if(result2 != 1){
-            throw new Error("roomHistoryService.setRoomHistory failed");
+
+        // 룸 히스토리 생성
+        int historyResult = roomHistoryService.createRoomHistory(roomInfo);
+        if(historyResult != 1){
+            throw new Error("roomHistoryService.createRoomHistory failed");
         }
+
         log.trace("RoomController modifyRoomStateAndCreateRoomHistory finished... {}", result);
         return result;
     }
