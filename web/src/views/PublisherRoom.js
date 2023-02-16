@@ -130,10 +130,12 @@ class PublisherRoom extends React.Component {
         this.props.handleDrawerToggle();
         // room 데이터 조회
         const roomId = sessionStorage.getItem(RoomMakeRoomID);
-        this.props.roomStore.getSelectedRoom(roomId)
+        this.state.room = this.props.roomStore.getSelectedRoom(roomId);
+        console.log('this.state.room : ', this.state.room);
         // 방송 기본 세팅
         const stream = this.props.roomStore.setRoom();
         stream.then(data => this.setState({stream : data}));
+        console.log('퍼블리셔',stream);
         // 세미나 참여한 player 조회
         const selectPlayerList = this.props.roomUserStore.getRoomUserList(roomId);
         selectPlayerList

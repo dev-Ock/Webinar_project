@@ -185,7 +185,7 @@ export default class RoomStore {
 
 
 
-    
+
     // publisher-room 입장시, sessionStorage의 room data 세팅
     setRoomData(room) {
         try {
@@ -408,8 +408,8 @@ export default class RoomStore {
             };
             
             onPlay(data).then(async (session) => {
-                console.log("session", session);
-                console.log("Publisher session.sdp", session.sdp);
+                console.log("player session", session);
+                console.log("player session.sdp", session.sdp);
                 await pc.setRemoteDescription(
                     new RTCSessionDescription({type: "answer", sdp: session.sdp})
                 );
@@ -418,7 +418,7 @@ export default class RoomStore {
         
         const ontrack = (event) => {
             stream.addTrack(event.track);
-            myVideo = document.getElementById("myVideoTag");
+            myVideo = document.getElementById("myVideoTag"); // peerFace
             myVideo.srcObject = stream;
         };
         
@@ -436,6 +436,7 @@ export default class RoomStore {
     // SRS server-player axios
     * setSRSserverPlayerConnection(data) {
         const result = yield this.roomRepository.onSRSserverPlayerConnection(data);
+        console.log('data check', result)
         return result;
     }
     
@@ -474,7 +475,7 @@ export default class RoomStore {
             console.log('세미나 목록 조회 error', e);
         }
     };
-    
+
     // room password double-check<1>(front)
     passwordCheckFront(room) {
         const passwordCheck = prompt("password를 정확하게 입력해 주세요")
@@ -497,9 +498,10 @@ export default class RoomStore {
                 console.log("RoomStore passwordCheckDB error", error)
             })
     }
-    
+
     // publisher or player check
     async checkPublisherOrPlayer(room, userId, onCreateRoomUser) {
+        console.log('room.id', room.id);
         if (room.publisherId === userId) {
             console.log('publisher');
             await this.setRoomData(room); // sessionStorage에 publisher 정보 세팅
@@ -507,7 +509,7 @@ export default class RoomStore {
         } else {
             console.log('player')
             await this.beforePlayerRoom(room.id, room.streamUrl); // sessionStorage에 player 정보 세팅
-            
+
             const param = {
                 roomId     : room.id,
                 publisherId: room.publisherId,
@@ -528,7 +530,7 @@ export default class RoomStore {
             }
         }
     }
-    
+
     // room list에서 room 들어갈 때 player인지 publisher인지 체크하고 이동
     async playerOrPublisherChoice(room, userId, checkLogin, onCreateRoomUser) {
         console.log('room', room);

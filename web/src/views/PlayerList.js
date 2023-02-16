@@ -65,7 +65,10 @@ const styles = (theme) => ({
         width: '120px'
     },
     table : {
-        minWidth: '420px', maxWidth: '420px', margin:'0 5px 0 5px', textAlign:'center'
+        minWidth: '420px',
+        maxWidth: '420px',
+        margin:'0 5px 0 5px',
+        textAlign:'center'
     },
     refresh: {
         color    : '#90a4ae',
