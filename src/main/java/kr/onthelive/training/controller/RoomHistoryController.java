@@ -39,13 +39,13 @@ public class RoomHistoryController {
         return result;
     }
 
-    // 세미나실(방) 기록 추가
-    @PostMapping("/insert")
-    public ResponseEntity setRoomHistory(HttpServletRequest httpRequest, HttpSession session, @RequestBody BaseRoomUserName roominfo) {
-        log.trace("roomHistory insert... {}", roominfo);
-        int result = roomHistoryService.setRoomHistory(roominfo);
-        return new ResponseEntity<>(result, HttpStatus.OK);
-    }
+//    // 세미나실(방) 기록 추가 : 룸 컨트롤러에서 룸히스토리 서비스호출 할것이므로 삭제 예정
+//    @PostMapping("/insert")
+//    public ResponseEntity createRoomHistory(HttpServletRequest httpRequest, HttpSession session, @RequestBody BaseRoomUserName roominfo) {
+//        log.trace("roomHistory insert... {}", roominfo);
+//        int result = roomHistoryService.createRoomHistory(roominfo);
+//        return new ResponseEntity<>(result, HttpStatus.OK);
+//    }
 
 
 }

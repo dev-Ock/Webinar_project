@@ -332,7 +332,8 @@ class PlayerRoom extends React.Component {
 
 export default withSnackbar(withRouter(
         withStyles(styles)(
-            inject('roomStore', 'authStore', 'roomUserStore')(
+
+            inject('roomStore', 'authStore','roomUserStore')(
                 observer(PlayerRoom)
             )
         )
