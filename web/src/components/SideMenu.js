@@ -16,6 +16,8 @@ import {ReactComponent as ArrowLineLeftIcon} from "../common/images/ArrowLineLef
 import {ReactComponent as GearSixGrayIcon} from "../common/images/GearSixGrayIcon.svg";
 import OnTheLiveLogo from "../common/images/onthelive_logo.svg";
 import clsx from "clsx";
+import HomeIcon from '@mui/icons-material/Home';
+import { grey } from '@mui/material/colors';
 
 const useStyles = makeStyles((theme) => ({
     root:{
@@ -159,7 +161,7 @@ export default function SideMenu(props) {
             <List>
                 <Link to="/home" className={classes.link}>
                     <ListItem button>
-                        <ListItemIcon><GearSixGrayIcon color={"primary"}/></ListItemIcon>
+                        <ListItemIcon><HomeIcon sx={{ color: grey[50] }}/></ListItemIcon>
                     </ListItem>
                 </Link>
             </List>
