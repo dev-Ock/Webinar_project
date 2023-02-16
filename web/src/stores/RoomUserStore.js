@@ -9,8 +9,17 @@ import {
     UserId
 } from "../repositories/Repository";
 
+export const EmptyRoomUserDetail ={
+    id: '',
+    roomI: '',
+    publisherId: '',
+    playerId: '',
+    state: '',
+    streamUrl: '',
+}
 
 export default class RoomUserStore {
+    streamUser = Object.assign([],EmptyRoomUserDetail)
 
     constructor(props) {
         this.roomUserRepository = props.roomUserRepository;
@@ -35,8 +44,10 @@ export default class RoomUserStore {
     }
     //handsupuser streamurl 추가
     * handsUpUser(data) {
+        console.log('여기오나')
         const streamUser = yield this.roomUserRepository.onHandsUpRoomUser(data)
         console.log('roomUser', streamUser)
+        this.streamUser = streamUser;
         return streamUser;
     }
 

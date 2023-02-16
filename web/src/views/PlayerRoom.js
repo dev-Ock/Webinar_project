@@ -18,6 +18,7 @@ import VideocamIcon from "@mui/icons-material/Videocam";
 import VideocamOffIcon from "@mui/icons-material/VideocamOff";
 import SettingsIcon from "@mui/icons-material/Settings";
 import ButtonGroup from "@mui/material/ButtonGroup";
+import {EmptyRoomUserDetail} from "../stores/RoomUserStore";
 
 
 const styles = theme => ({
@@ -108,6 +109,7 @@ class PlayerRoom extends React.Component {
             playerList: false,
             room: {},
             roomPlayerList: {},
+            playerurl: '',
             view: true,//필요없음
             pause: false //일시정지라서 필요없을 듯
         }
@@ -118,26 +120,28 @@ class PlayerRoom extends React.Component {
         //발표참여
         const roomId = sessionStorage.getItem(RoomViewRoomID);
         console.log('id확인',roomId)
-        this.state.room = this.props.roomStore.getSelectedRoom(roomId);
-        console.log('this.state.room : ', this.state.room);
+        const playerId = this.props.authStore.loginUser.id;
+        this.state.playerurl = this.props.roomStore.getSelectedRoom(roomId);
+        console.log('this.state.room : ', this.state.playerurl);
         //undefined 뜸
         // const onRoom = this.props.roomStore.setRoomTitleAndPublisherName();
         // console.log('플레이어룸정보확인',onRoom)
-        // // 방송 기본 세팅 현재 충돌이 일어나는 듯
-        // const handStream = this.props.roomStore.setRoom();
-        // handStream.then(data => this.setState({handStream: data}));
-        // console.log('스트림테스트',handStream)
-        // const selectPlayerList = this.props.roomUserStore.getRoomUserList(roomId);
-        // selectPlayerList
-        //     .then((data) => {
-        //         this.state.roomUser = data;
-        //     })
-        //     .then((data) => {
-        //         this.setState({playerList: !this.state.playerList});
-        //     })
+        // // 방송 기본 세팅 현재 충돌이 일어나는 듯 비디오 테그 1개만 열어도 클릭 안됌
+        const stream = this.props.roomStore.playerSetRoom();
+        stream.then(data => this.setState({stream: data}));
+        console.log('스트림테스트',stream)
+        const selectPlayerList = this.props.roomUserStore.getRoomUserList(roomId);
+        selectPlayerList
+            .then((data) => {
+                this.state.roomUser = data;
+            })
+            .then((data) => {
+                this.setState({playerList: !this.state.playerList});
+            })
 
 
     }
+
 
     handleSubmitHandsUp = async (e) => {
         e.preventDefault()
@@ -146,8 +150,14 @@ class PlayerRoom extends React.Component {
             roomId: sessionStorage.getItem(RoomViewRoomID)
         }
         console.log('data check hands', data)
+
         const handsUp = await this.props.roomUserStore.handsUpUser(data)
-        console.log('data check hands', handsUp)
+        this.setState({playerUrl:handsUp.streamUrl})
+        // console.log('data check hands', handsUp.streamUrl)
+        const streamUrl = handsUp.streamUrl;
+        // console.log('같은지 테스트',streamUrl) 같음확인
+        // SRS server-발표자 연결
+        await this.props.roomStore.serverPublisherConnection(streamUrl);
     }
 
 
@@ -158,18 +168,8 @@ class PlayerRoom extends React.Component {
         this.setState({connection: false});
     }
 
-    // SRS server-발표자 연결
-    // async onServerPublisherConnection() {
-    //     console.log("clk check")
-    //     // room state : pending
-    //     await this.props.roomStore.onPendingRoomState(this.props.roomStore.onRoom);
-    //     const streamUrl = sessionStorage.getItem(Repository.RoomViewStreamUrl);
-    //     // SRS server-Publisher 연결 재사용(스트림url은 생성하는 걸루 붙일 예정)
-    //     await this.props.roomStore.serverPublisherConnection(streamUrl);
-    //     // room state : progress
-    //     await this.props.roomStore.onProgressRoomState(this.props.roomStore.onRoom);
-    //     this.setState({view: false});
-    // }
+
+
 
     onVideoOnOff2 = () => {
         this.props.roomStore.setVideoOnOff2();
@@ -216,21 +216,21 @@ class PlayerRoom extends React.Component {
                                 <div style={{textAlign: 'center'}}>
                                     <div>
                                         {/*온트랙에서 getElementById와 맞춘 곳으로 비디오가 재생된다*/}
+                                        {/*<video*/}
+                                        {/*    id="myVideoTag"*/}
+                                        {/*    autoPlay*/}
+                                        {/*    playsInline*/}
+                                        {/*    width={400}*/}
+                                        {/*    height={400}*/}
+                                        {/*    style={{marginLeft: "20px"}}*/}
+                                        {/*>*/}
+                                        {/*</video>*/}
                                         <video
-                                            id="myVideoTag"
+                                            id="peerFace"
                                             autoPlay
                                             playsInline
                                             width={400}
-                                            height={400}
-                                            style={{marginLeft: "20px"}}
-                                        >
-                                        </video>
-                                        {/*<video*/}
-                                        {/*    id="peerFace"*/}
-                                        {/*    // autoPlay*/}
-                                        {/*    playsInline*/}
-                                        {/*    width={400}*/}
-                                        {/*    height={400}></video>*/}
+                                            height={400}></video>
                                     </div>
                                 </div>
 
@@ -240,21 +240,21 @@ class PlayerRoom extends React.Component {
                     </div>
                     <div className={classes.gridView3}>
                         참여자
-                        <video
-                            id="peerFace"
-                            autoPlay
-                            playsInline
-                            width={150}
-                            height={100}></video>
                         {/*<video*/}
-                        {/*    id="myVideoTag"*/}
+                        {/*    id="peerFace"*/}
                         {/*    autoPlay*/}
                         {/*    playsInline*/}
-                        {/*    width={250}*/}
-                        {/*    height={200}*/}
-                        {/*    style={{marginLeft: "20px"}}*/}
-                        {/*>*/}
-                        {/*</video>*/}
+                        {/*    width={150}*/}
+                        {/*    height={100}></video>*/}
+                        <video
+                            id="myVideoTag"
+                            autoPlay
+                            playsInline
+                            width={250}
+                            height={200}
+                            style={{marginLeft: "20px"}}
+                        >
+                        </video>
 
                     </div>
                     <div className={classes.gridView4}>
@@ -275,13 +275,13 @@ class PlayerRoom extends React.Component {
                                     <Button
                                         style={{fontSize: "25px"}}
                                         onClick={(e)=>this.handleSubmitHandsUp(e)}
-                                    > 요청
+                                    > 발표요청
                                     </Button>
                                     <Button
                                         style={{fontSize: "25px"}}
                                         // onClick={this.onPause.bind(this)}
                                     >
-                                        세팅
+                                        발표자 카메라 설정
                                     </Button>
                                 </ButtonGroup>
 

@@ -131,9 +131,7 @@ export default class RoomStore {
 
 
     setOnRoom = (room) => {
-        console.log('setOnRoom', room)
         this.onRoom = room;
-        console.log('onRoom', this.onRoom)
         return this.onRoom;
     }
 
@@ -222,6 +220,7 @@ export default class RoomStore {
         };
         stream = new MediaStream();
         stream = await navigator.mediaDevices.getUserMedia(constraints);
+        console.log('test',stream.getTracks())
         myVideo = document.getElementById("myVideoTag");
         myVideo.srcObject = stream;
 
@@ -241,6 +240,42 @@ export default class RoomStore {
             }
             camerasSelect.appendChild(option);
         });
+
+        stream.getAudioTracks()
+            .forEach((track) => (track.enabled = !track.enabled));
+        console.log('방송세팅 stream', stream);
+        return stream;
+    }
+    //player용 비디오, 오디오 셋팅 테스트
+    async playerSetRoom() {
+        const constraints = {
+            audio: true,
+            video: {
+                width: {ideal: 320, max: 576},
+            },
+        };
+        stream = new MediaStream();
+        stream = await navigator.mediaDevices.getUserMedia(constraints);
+        console.log('test',stream.getTracks())
+        myVideo = document.getElementById("myVideoTag");
+        myVideo.srcObject = stream;
+
+        // 비디오 장치들이 cameras 옵션에 달리도록 세팅
+        // const devices = await navigator.mediaDevices.enumerateDevices();
+        // const cameras = devices.filter((device) => device.kind === "videoinput");
+        // console.log("devices", cameras);
+        // camerasSelect = document.getElementById("cameras");
+        // const currentCamera = stream.getVideoTracks()[0]; // 현재 선택되어 있는 카메라
+        // cameras.forEach((camera) => {
+        //     option = document.createElement("option");
+        //     option.value = camera.deviceId;
+        //     option.innerText = camera.label;
+        //     option.style.textAlign = 'center';
+        //     if (currentCamera.label === camera.label) {
+        //         option.selected = true; // 현재 선택되어 있는 카메라가 보기의 main으로 보여지도록
+        //     }
+        //     camerasSelect.appendChild(option);
+        // });
 
         stream.getAudioTracks()
             .forEach((track) => (track.enabled = !track.enabled));
@@ -368,7 +403,7 @@ export default class RoomStore {
             deviceId ? cameraConstraints : initialConstrains
         );
         
-        myVideo = document.getElementById("myVideoTag");
+        myVideo = document.getElementById("myVideoTag"); //
         myVideo.srcObject = stream;
         
         if (pc) {
@@ -418,7 +453,8 @@ export default class RoomStore {
         
         const ontrack = (event) => {
             stream.addTrack(event.track);
-            myVideo = document.getElementById("myVideoTag"); // peerFace
+            console.log('playertest', stream.getTracks())
+            myVideo = document.getElementById("peerFace"); // peerFace myVideoTag
             myVideo.srcObject = stream;
         };
         
@@ -569,7 +605,7 @@ export default class RoomStore {
         room.then(room => {
                 // TopBar에 보여줄 room name과 publisher name 세팅
                 // this.setRoomTitleAndPublisherName(room.title, room.name);
-                console.log('getSelectedRoom room', room);
+                // console.log('getSelectedRoom room', room);
                 this.setOnRoom(room);
             }
         )
