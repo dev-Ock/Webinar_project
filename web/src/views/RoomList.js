@@ -66,8 +66,7 @@ class RoomList extends React.Component {
             pending : true,
             limit   : 12,
             page    : 1,
-            length  : 0,
-            //publishedRoomLength : 0
+            length  : 0
         };
         this.offset = (this.state.page - 1) * this.state.limit
     }
@@ -168,7 +167,7 @@ class RoomList extends React.Component {
                                                         {
                                                             room.state === Roomstore.RoomStateType.Progress ?
                                                                 <Typography variant='body2' style={{color:'#ef5350', fontWeight:'bolder'}}> {room.state}</Typography> :
-                                                                <Typography variant='body2'style={{color:'#546e7a'}}>{room.state}</Typography>
+                                                                <Typography variant='body2' style={{color:'#546e7a'}}>{room.state}</Typography>
                                                         }
                                                 </CardContent>
                                             </CardActionArea>

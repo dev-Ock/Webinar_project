@@ -159,7 +159,7 @@ export default class RoomStore {
         }
     }
 
-    // // 세미나 만든 후 roomHistory 정보 서버로 보냄
+    // 삭제하기 // 세미나 만든 후 roomHistory 정보 서버로 보냄
     // * doSetRoomHistory(roomHistoryInfo) {
     //     try {
     //         // console.log("RoomStore *doSetRoomHistory", roomHistoryInfo)
@@ -169,10 +169,10 @@ export default class RoomStore {
     //     }
     // }
 
-    // 유저가 자신이 만든 세미나(room) 조회 : 2/15 삭제예정
+    // roomHistory : 유저가 만들었던 세미나(Publised room History) 조회
     * getPublishedRoom(userId) {
         try {
-            const publishedRoomData = yield this.roomRepository.getPublishedRoom( userId );
+            const publishedRoomData = yield this.roomHistoryRepository.getRoomHistory( userId );
             this.publishedRoomList = publishedRoomData;
             console.log("RoomStore getPublishedRoom publishedRoomData", publishedRoomData);
             console.log("RoomStore getPublishedRoom this.publishedRoomList", this.publishedRoomList);
