@@ -28,30 +28,30 @@ public class RoomHistoryService {
     }
 
 
-    // 룸 기록 추가
-    public int setRoomHistory(BaseRoomUserName roominfo) {
-        log.debug("test : {}", roominfo);
-        log.trace("service setRoomHistory roominfo... {}", roominfo);
+    // 룸 기록 생성
+    public int createRoomHistory(BaseRoomUserName roomInfo) {
+        log.debug("test : {}", roomInfo);
+        log.trace("service createRoomHistory roomInfo... {}", roomInfo);
 
         BaseRoomHistory roomHistory = new BaseRoomHistory();
         // getPassword() 에러처리 : 패스워드가 NULL 일 경우 에러남 >> if Null 이면 1 먹여주는거로 바꾸기
         int publicOrNot;
-        if(roominfo.getPassword().equals("")){
+        if(roomInfo.getPassword().equals("")){
             publicOrNot = 0;
         }else{publicOrNot = 1;}
 
-        roomHistory.setRoomId(roominfo.getId());
-        roomHistory.setState(roominfo.getState());
-        roomHistory.setPublisherId(roominfo.getPublisherId());
-        roomHistory.setTitle(roominfo.getTitle());
-        roomHistory.setDescription(roominfo.getDescription());
+        roomHistory.setRoomId(roomInfo.getId());
+        roomHistory.setState(roomInfo.getState());
+        roomHistory.setPublisherId(roomInfo.getPublisherId());
+        roomHistory.setTitle(roomInfo.getTitle());
+        roomHistory.setDescription(roomInfo.getDescription());
         roomHistory.setPublicOrNot(publicOrNot);
-        roomHistory.setMaximum(roominfo.getMaximum());
+        roomHistory.setMaximum(roomInfo.getMaximum());
 
-        log.trace("service setRoomHistory roomHistory... {}", roomHistory);
+        log.trace("service createRoomHistory roomHistory... {}", roomHistory);
 
         int result = roomHistoryRepository.insertRoomHistory(roomHistory);
-        log.trace("service setRoomHistory result... {}", result);
+        log.trace("service createRoomHistory result... {}", result);
 
         return result;
 

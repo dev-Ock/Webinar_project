@@ -85,8 +85,8 @@ let stream = {};
 let deviceId = "";
 
 export default class RoomStore {
-    
-    
+
+    publishedRoomList = Object.assign([],EmptyRoomList);
     roomList = Object.assign([], EmptyRoomList)
     roomMakeState = RoomMakeState.Empty;
     roomMake = Object.assign({}, EmptyRoom);
@@ -162,29 +162,32 @@ export default class RoomStore {
             this.removeRoomData();
         }
     }
-    
-    // 세미나 만든 후 roomHistory 정보 서버로 보냄
-    * doSetRoomHistory(roomHistoryInfo) {
-        try {
-            // console.log("RoomStore *doSetRoomHistory", roomHistoryInfo)
-            yield this.roomHistoryRepository.setRoomHistory(roomHistoryInfo)
-        } catch (e) {
-            console.log('RoomStore *doSetRoomHistory error', e.message());
-        }
-    }
-    
-    // 유저가 자신이 만들었던 세미나(room) 조회 : 룸히스토리에서 사용
+
+
+    // // 세미나 만든 후 roomHistory 정보 서버로 보냄
+    // * doSetRoomHistory(roomHistoryInfo) {
+    //     try {
+    //         // console.log("RoomStore *doSetRoomHistory", roomHistoryInfo)
+    //         yield this.roomHistoryRepository.setRoomHistory(roomHistoryInfo)
+    //     } catch(e) {
+    //         console.log('RoomStore *doSetRoomHistory error', e.message());
+    //     }
+    // }
+
+    // 유저가 자신이 만든 세미나(room) 조회 : 2/15 삭제예정
     * getPublishedRoom(userId) {
         try {
-            // console.log("RoomStore getPublishedRoom",  roomHistoryInfo)
-            const roomData = yield this.roomHistoryRepository.getRoomHistory(userId)
-            return roomData;
-        } catch (e) {
-            console.log('RoomStore getPublishedRoom error', e.message)
+            const publishedRoomData = yield this.roomRepository.getPublishedRoom( userId );
+            this.publishedRoomList = publishedRoomData;
+            console.log("RoomStore getPublishedRoom publishedRoomData", publishedRoomData);
+            console.log("RoomStore getPublishedRoom this.publishedRoomList", this.publishedRoomList);
+            // return toJS(publishedRoomData);
+            return this.publishedRoomList;
+        } catch(e){
+            console.log('RoomStore getPublishedRoom error', e.message )
         }
     }
-    
-    
+
     // publisher-room 입장시, sessionStorage의 room data 세팅
     setRoomData(room) {
         try {
@@ -510,8 +513,8 @@ export default class RoomStore {
             };
             
             onPlay(data).then(async (session) => {
-                console.log("session", session);
-                console.log("Publisher session.sdp", session.sdp);
+                console.log("player session", session);
+                console.log("player session.sdp", session.sdp);
                 await pc.setRemoteDescription(
                     new RTCSessionDescription({type: "answer", sdp: session.sdp})
                 );
@@ -520,7 +523,7 @@ export default class RoomStore {
         
         const ontrack = (event) => {
             stream.addTrack(event.track);
-            myVideo = document.getElementById("myVideoTag");
+            myVideo = document.getElementById("myVideoTag"); // peerFace
             myVideo.srcObject = stream;
         };
         
@@ -538,6 +541,7 @@ export default class RoomStore {
     // SRS server-player axios
     * setSRSserverPlayerConnection(data) {
         const result = yield this.roomRepository.onSRSserverPlayerConnection(data);
+        console.log('data check', result)
         return result;
     }
     
@@ -563,19 +567,20 @@ export default class RoomStore {
     
     // 룸 전체 리스트 조회
     * selectRoomList() {
-        console.log("selectroomusername확인")
+        // console.log("selectroomusername확인")
         try {
             const roomList = yield this.roomRepository.getRoomUserNameList();
             this.roomList = roomList;
-            console.log('RoomStore selectRoomList roomList', roomList)
+            console.log('스토어에서 RoomStore selectRoomList roomList', roomList)
             // this.roomListLength = toJS(roomList).length;
             // console.log('param확인', toJS(roomList).length);
+            // return roomList;
             return this.roomList;
         } catch (e) {
             console.log('세미나 목록 조회 error', e);
         }
     };
-    
+
     // room password double-check<1>(front)
     passwordCheckFront(room) {
         const passwordCheck = prompt("password를 정확하게 입력해 주세요")
@@ -598,9 +603,10 @@ export default class RoomStore {
                 console.log("RoomStore passwordCheckDB error", error)
             })
     }
-    
+
     // publisher or player check
     async checkPublisherOrPlayer(room, userId, onCreateRoomUser) {
+        console.log('room.id', room.id);
         if (room.publisherId === userId) {
             console.log('publisher');
             await this.setRoomData(room); // sessionStorage에 publisher 정보 세팅
@@ -608,7 +614,7 @@ export default class RoomStore {
         } else {
             console.log('player')
             await this.beforePlayerRoom(room.id, room.streamUrl); // sessionStorage에 player 정보 세팅
-            
+
             const param = {
                 roomId     : room.id,
                 publisherId: room.publisherId,
@@ -620,16 +626,17 @@ export default class RoomStore {
             console.log('RoomStore onCreateRoomUser result', result);
             if (result === 0) {
                 throw Error('room user DB 저장 실패');
-            // } else if (result === -1) {
-            //     alert('해당 세미나에 이미 참여 중입니다!');
-            //     throw Error('해당 세미나에 이미 참여 중입니다.');
+            } else if (result === -1) {
+                alert('참여중이었던 세미나에 재입장합니다.');
+                await window.location.replace('/player-room');
+
             } else {
                 console.log('room user DB 저장 성공');
                 await window.location.replace('/player-room');
             }
         }
     }
-    
+
     // room list에서 room 들어갈 때 player인지 publisher인지 체크하고 이동
     async playerOrPublisherChoice(room, userId, checkLogin, onCreateRoomUser) {
         console.log('room', room);

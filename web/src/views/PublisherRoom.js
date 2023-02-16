@@ -60,8 +60,12 @@ const styles = (theme) => ({
         width: '100%',
         
     },
-    leftGrid     : {
-        width: '80vw'
+
+    body : {
+        margin: 0
+    },
+    leftGrid : {
+        width : '80vw'
     },
     rightGrid    : {
         width: '20vw'
@@ -78,8 +82,10 @@ const styles = (theme) => ({
             `,
         [theme.breakpoints.up('xs')]: {
             gridTemplateColumns: '1fr',
-            gridTemplateRows   : '600px 200px 200px 200px 1fr',
-            gridTemplateAreas  : `
+
+            gridTemplateRows: '600px 200px 200px 74px 1fr',
+            gridTemplateAreas: `
+
                                 'view1'
                                 'view3'
                                 'view4'
@@ -89,19 +95,23 @@ const styles = (theme) => ({
         },
         [theme.breakpoints.up('lg')]: {
             gridTemplateColumns: '4fr 1fr',
-            gridTemplateRows   : '3fr 0.5fr 1fr 0.5fr',
-            gridTemplateAreas  : `
+
+            gridTemplateRows: '3fr 0.5fr 1fr 74px',
+            gridTemplateAreas: `
+
                                 'view1 view2'
                                 'view3 view2'
                                 'view4 view2'
                                 'view5 view2'
             `,
+            height: '100vh'
         },
     },
-    gridView1    : {
-        gridArea  : 'view1',
-        background: 'white',
-        padding   : '50px'
+
+    gridView1 : {
+        gridArea: 'view1',
+        background: 'red',
+        padding: '50px',
     },
     gridView2    : {
         gridArea  : 'view2',
@@ -122,7 +132,6 @@ const styles = (theme) => ({
     gridView5    : {
         gridArea  : 'view5',
         background: 'grey',
-        padding   : '50px'
     }
 });
 
@@ -154,8 +163,10 @@ class PublisherRoom extends React.Component {
         
         // room 데이터 조회
         const roomId = sessionStorage.getItem(RoomMakeRoomID);
-        this.props.roomStore.getSelectedRoom(roomId)
+        this.state.room = this.props.roomStore.getSelectedRoom(roomId);
+        console.log('this.state.room : ', this.state.room);
         // 방송 기본 세팅
+
         this.props.roomStore.setRoom();
         // const stream = this.props.roomStore.setRoom();
         // stream.then(data => this.setState({stream: data}));
@@ -219,7 +230,7 @@ class PublisherRoom extends React.Component {
         this.setState({pause: !this.state.pause});
         const pauseBtn = document.getElementById('pause');
         if (this.state.pause) {
-            pauseBtn.innerText = '방송 일시정지';
+            pauseBtn.innerText = '방송 일시 정지';
         } else {
             pauseBtn.innerText = '방송 다시 시작';
         }
@@ -329,6 +340,7 @@ class PublisherRoom extends React.Component {
                             <div
                                 id="BtnOptionBox"
                             >
+
                                 <ButtonGroup variant="outlined" aria-label="outlined primary button group" size="large"
                                              color="inherit">
                                     {this.state.audioOff ?
@@ -384,6 +396,17 @@ class PublisherRoom extends React.Component {
                                             </div>
                                         </fieldset>
                                     </Button>
+
+                              /*  <ButtonGroup variant="outlined" aria-label="outlined primary button group" size="large" color="inherit">
+                                    {this.state.audioOff ? <Button onClick={this.onAudioOnOff.bind(this)} style={{display: 'block'}}><div><MicIcon></MicIcon></div><span>Mute</span></Button>:<Button style={{display: 'block'}} onClick={this.onAudioOnOff.bind(this)}><div><MicOffIcon></MicOffIcon></div><span>Unmute</span></Button>}
+                                    {this.state.videoOn ? <Button onClick={this.onVideoOnOff.bind(this)} style={{display: 'block'}}><div><VideocamIcon></VideocamIcon></div><span>Start cam</span></Button>:<Button style={{display: 'block'}} onClick={this.onVideoOnOff.bind(this)}><div><VideocamOffIcon></VideocamOffIcon></div><span>Stop cam</span></Button>}
+                                    <Button startIcon={<SettingsIcon />} style={{display: 'block', cursor: 'auto'}} disableTouchRipple disableRipple focusRipple>
+                                        <select
+                                            id="cameras"
+                                            style={{fontSize: "16px", color: '#37474f', width:'200px'}}
+                                            onInput={this.onChangeVideoOption.bind(this)}
+                                        ></select></Button>    */
+
                                     {this.state.standBy
                                         ?
                                         <Button
@@ -403,7 +426,7 @@ class PublisherRoom extends React.Component {
                                                 id={'pause'}
                                                 onClick={this.onPause.bind(this)}
                                             >
-                                                방송 일시정지
+                                                방송 일시 정지
                                             </Button>
                                         
                                     }

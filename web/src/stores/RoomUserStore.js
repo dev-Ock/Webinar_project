@@ -11,12 +11,12 @@ import {
 
 
 export default class RoomUserStore {
-    
+
     constructor(props) {
         this.roomUserRepository = props.roomUserRepository;
         makeAutoObservable(this);
     }
-    
+
     // create RoomUser
     * onCreateRoomUser(param){
         console.log("RoomUserStore onCreateRoomUser param : ",param)
@@ -24,7 +24,7 @@ export default class RoomUserStore {
         const result = yield this.roomUserRepository.onCreateRoomUser(param);
         return result;
     }
-    
+
     // 세미나 참석 중인 player list 조회
     * getRoomUserList(roomId) {
         let roomUser = yield this.roomUserRepository.onSelectRoomUserList(roomId);
@@ -37,7 +37,10 @@ export default class RoomUserStore {
         })
         roomUser = pannelList.concat(notPannelIst);
         return roomUser;
+
+        //참여요청한 player streamurl update
     }
+
     
     // pannel 요청 확인
     async onCheckPannelRequest(roomId) {
@@ -58,4 +61,14 @@ export default class RoomUserStore {
         return pannelRequestList;
     }
     
+
+    //handsupuser streamurl 추가
+    * handsUpUser(data) {
+        const streamUser = yield this.roomUserRepository.onHandsUpRoomUser(data)
+        console.log('roomUser', streamUser)
+        return streamUser;
+    }
+
+
+
 }

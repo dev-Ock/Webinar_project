@@ -44,7 +44,7 @@ export default class RoomRepository extends Repository {
             this.getRequestPromise('get', this.requestPrefix + '/read/withnamelist')
                 .then(data => {
                     resolve(data);
-                    // console.log('RoomRepository getRoomUserNameList result : ', data)
+                    console.log('RoomRepository getRoomUserNameList result : ', data)
                 })
                 .catch(error => {
                     console.log('RoomRepository getRoomUserNameList error : ', error)
@@ -139,6 +139,24 @@ export default class RoomRepository extends Repository {
                     reject(error);
                 });
         })
+    }
+
+// 세미나 기록 : 유저가 만든 방 기록 Read : 2/15 삭제예정
+    getPublishedRoom = (paramId) => {
+        return new Promise((resolve, reject) => {
+            this.getRequestPromise('get', this.requestPrefix + '/read/' + paramId)
+                .then(data => {
+                    if(data){
+                        // console.log("RoomRepository getPublishedRoom data", data);
+                    }else{
+                        console.log("There's no data");
+                    }
+                    resolve(data);
+                })
+                .catch( error => {
+                    reject(error);
+                })
+        });
     }
     
     

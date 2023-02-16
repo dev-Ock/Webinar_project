@@ -39,8 +39,8 @@ class RoomMake extends React.Component {
     componentDidMount () {
         const userId = this.props.authStore.loginUser.id;
         // console.log("새로고침해도 있나 확인 userId : ", userId, typeof (userId))
-        const data = this.props.roomStore.getPublishedRoom(userId);
-        console.log("PublishedRoom data : ",data)
+        // const data = this.props.roomStore.getPublishedRoom(userId);
+        // console.log("PublishedRoom data : ",data)
     }
 
 
