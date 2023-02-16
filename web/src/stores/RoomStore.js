@@ -520,8 +520,8 @@ export default class RoomStore {
             if (result === 0) {
                 throw Error('room user DB 저장 실패');
             } else if (result === -1) {
-                alert('해당 세미나에 이미 참여 중입니다!');
-                throw Error('해당 세미나에 이미 참여 중입니다.');
+                alert('참여중이었던 세미나에 재입장합니다.');
+                await window.location.replace('/player-room');
             } else {
                 console.log('room user DB 저장 성공');
                 await window.location.replace('/player-room');
