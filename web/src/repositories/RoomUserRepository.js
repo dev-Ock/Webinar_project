@@ -39,6 +39,7 @@ export default class RoomUserRepository extends Repository {
         })
     }
 
+
     //handsupuser streamurl 추가
     onHandsUpRoomUser = (data) => {
         return new Promise((resolve, reject)=>{
@@ -53,5 +54,6 @@ export default class RoomUserRepository extends Repository {
                 });
         })
     }
+
     
 }
