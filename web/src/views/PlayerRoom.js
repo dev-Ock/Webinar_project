@@ -6,6 +6,16 @@ import {inject, observer} from "mobx-react";
 import * as Repository from "../repositories/Repository";
 import {Box, Container, Grid, Toolbar, useMediaQuery} from "@material-ui/core";
 import {maxWidth} from "@mui/system";
+import {TabContext, TabList, TabPanel} from "@mui/lab";
+import Tab from "@mui/material/Tab";
+import PlayerList from "./PlayerList";
+import {Button} from "@mui/material";
+import MicIcon from "@mui/icons-material/Mic";
+import MicOffIcon from "@mui/icons-material/MicOff";
+import VideocamIcon from "@mui/icons-material/Videocam";
+import VideocamOffIcon from "@mui/icons-material/VideocamOff";
+import SettingsIcon from "@mui/icons-material/Settings";
+import ButtonGroup from "@mui/material/ButtonGroup";
 
 
 const styles = theme => ({
@@ -19,26 +29,29 @@ const styles = theme => ({
         backgroundColor: 'black',
         width          : 'calc(100%-appBarSpacer)'
     },
-    subMainCon      : {
-        height       : '80vh',
-        maxWidth     : '100%',
-        display      : 'flex',
-        flexDirection: 'row',
-        // direction: 'column',
-        backgroundColor           : 'blue',
-        padding                   : theme.spacing(1),
-        flexWrap                  : 'wrap',
-        '@media (max-width:760px)': {
-            flexDirection: 'column',
-        }
-    },
-    subMainConMobile: {
-        flexDirection: 'column',
-    },
+    // subMainCon      : {
+    //     height       : '80vh',
+    //     maxWidth     : '100%',
+    //     display      : 'flex',
+    //     flexDirection: 'row',
+    //     // direction: 'column',
+    //     backgroundColor           : 'blue',
+    //     padding                   : theme.spacing(1),
+    //     flexWrap                  : 'wrap',
+    //     '@media (max-width:760px)': {
+    //         flexDirection: 'column',
+    //     }
+    // },
+    // subMainConMobile: {
+    //     flexDirection: 'column',
+    // },
     
     appBarSpacer: theme.mixins.toolbar,
     toolbar     : {
         width: '100%',
+    },
+    body : {
+        margin: 0
     },
     leftGrid    : {
         backgroundColor: 'white',
@@ -67,6 +80,64 @@ const styles = theme => ({
         flexDirection  : 'row',
         backgroundColor: 'purple',
         height         : '20%'
+    },
+    gridContainer : {
+        display: 'grid',
+        gridTemplateColumns: '4fr 1fr',
+        gridTemplateRows: '3fr 1fr 1fr 1fr',
+        gridTemplateAreas: `
+                                'view1 view2'
+                                'view3 view2'
+                                'view4 view2'
+                                'view5 view2'           
+            `,
+        [theme.breakpoints.up('xs')]: {
+            gridTemplateColumns: '1fr',
+            gridTemplateRows: '600px 200px 200px 74px 1fr',
+            gridTemplateAreas: `
+                                'view1'
+                                'view3'
+                                'view4'
+                                'view5'
+                                'view2'
+            `,
+        },
+        [theme.breakpoints.up('lg')]: {
+            gridTemplateColumns: '4fr 1fr',
+            gridTemplateRows: '3fr 0.5fr 1fr 74px',
+            gridTemplateAreas: `
+                                'view1 view2'
+                                'view3 view2'
+                                'view4 view2'
+                                'view5 view2'
+            `,
+            height: '100vh'
+        },
+    },
+    gridView1 : {
+        gridArea: 'view1',
+        background: 'red',
+        padding: '50px',
+    },
+    gridView2 : {
+        gridArea: 'view2',
+        background: 'pink',
+        padding: '55px',
+        textAlign: 'center'
+    },
+    gridView3 : {
+        gridArea: 'view3',
+        background: 'orange',
+        padding: '50px'
+    },
+    gridView4 : {
+        gridArea: 'view4',
+        background: 'blue',
+        padding: '50px'
+    },
+    gridView5 : {
+        gridArea: 'view5',
+        background: 'grey',
     }
     
     // roomMakeImg: {
@@ -87,7 +158,12 @@ class PlayerRoom extends React.Component {
         this.state = {
             connection: true,
             view      : true,
-            pause     : false
+            pause     : false,
+            videoOn   : true,
+            audioOff  : false,
+            tabValue : '1',
+            standBy   : true,
+            playerList: false,
         }
     }
     
@@ -183,67 +259,90 @@ class PlayerRoom extends React.Component {
             //                 </div>
             //             </div>
             //         </div>
-            <Grid container className={classes.mainContainer}>
-                
-                <Box>
-                    <div className={classes.appBarSpacer}/>
-                    
-                    <h1 style={{color: "green"}}>여기는 player</h1>
-                
-                </Box>
-                <Toolbar className={classes.toolbar}>
-                    <Grid container spacing={1} className={classes.subMainCon}>
-                        <Grid item className={classes.leftGrid}>
-                            <div className={classes.leftTop}>
-                                <label>여기가 비디오자리</label>
-                                <video
-                                    id="myVideoTag"
-                                    autoPlay
-                                    playsInline
-                                    width={400}
-                                    height={400}
-                                    style={{marginLeft: "20px"}}
-                                >
-                                </video>
-                                <br/>
-                            
-                            
+            <div style={{marginTop: "64px", width: '100%', height: '100%', margin: '0px'}}>
+                <div className={classes.gridContainer}>
+                    <div className={classes.gridView1}>
+                        <Box>
+                            <div style={{textAlign: 'center', paddingTop: '20px'}}>
+                                <h2>세미나 제목 : { this.props.roomStore.roomTitle}</h2>
+                                <div style={{textAlign: 'center'}}>
+                                    <div>
+                                        <video
+                                            id="myVideoTag"
+                                            autoPlay
+                                            playsInline
+                                            width={600}
+                                            height={500}
+                                            // style={{marginLeft: "20px"}}
+                                        ></video>
+                                    </div>
+                                </div>
+
                             </div>
-                            <div className={classes.leftBottom}> {/* style={{ textAlign: "center" }} */}
-                                <span>
-                                <button
-                                    style={{fontSize: "25px"}}
-                                    onClick={this.onServerPlayerConnection.bind(this)}>
-                                    방송 시청
-                                </button>
-                          <button
-                              id="videoBtnTag"
-                              style={{fontSize: "25px"}}
-                              onClick={this.onVideoOnOff.bind(this)}
-                          >
-                                카메라 끄기
-                            </button>
-                               <button
-                                   id="muteBtnTag"
-                                   style={{fontSize: "25px", marginLeft: '15px'}}
-                                   onClick={this.onAudioOnOff.bind(this)}
-                               >
-                                음소거
-                            </button>
-                                                                     <button
-                                                                         id={'pause'}
-                                                                         style={{fontSize: "25px"}}
-                                                                         onClick={this.onPause.bind(this)}
-                                                                     >
-                                                    방송 일시정지
-                                                </button>
-                            <button
-                                id="muteBtnTag"
-                                style={{fontSize: "25px", marginLeft: '15px'}}
-                                // onClick={this.onAudioOnOff.bind(this)}
+
+                        </Box>
+                    </div>
+
+                    <div className={classes.gridView3}>
+                        <div>화면 구성</div>
+                    </div>
+                    <div className={classes.gridView4}>
+                        참여자
+                    </div>
+                    <div className={classes.gridView5}>
+                        {/*<Box bgcolor='text.disabled' color="info.contrastText" style={{height: '43.8vh', textAlign:'center', verticalAlign:'middle'}}>*/}
+                        <div style={{textAlign: 'center'}}>
+
+                            <div
+                                id="BtnOptionBox"
                             >
-                                나가기
-                            </button>
+                                <ButtonGroup variant="outlined" aria-label="outlined primary button group" size="large" color="inherit">
+                                    {this.state.audioOff ? <Button onClick={this.onAudioOnOff.bind(this)} style={{display: 'block'}}><div><MicIcon></MicIcon></div><span>Mute</span></Button>:<Button style={{display: 'block'}} onClick={this.onAudioOnOff.bind(this)}><div><MicOffIcon></MicOffIcon></div><span>Unmute</span></Button>}
+                                    {this.state.videoOn ? <Button onClick={this.onVideoOnOff.bind(this)} style={{display: 'block'}}><div><VideocamIcon></VideocamIcon></div><span>Start cam</span></Button>:<Button style={{display: 'block'}} onClick={this.onVideoOnOff.bind(this)}><div><VideocamOffIcon></VideocamOffIcon></div><span>Stop cam</span></Button>}
+                                    {/*<Button startIcon={<SettingsIcon />} style={{display: 'block', cursor: 'auto'}} disableTouchRipple disableRipple focusRipple>*/}
+                                    {/*    <select*/}
+                                    {/*        id="cameras"*/}
+                                    {/*        style={{fontSize: "16px", color: '#37474f', width:'200px'}}*/}
+                                    {/*        onInput={this.onChangeVideoOption.bind(this)}*/}
+                                    {/*    ></select></Button>*/}
+                                    {/*{this.state.standBy*/}
+                                    {/*    ?*/}
+                                    {/*    <Button*/}
+                                    {/*        onClick={this.onStandBy.bind(this)}>*/}
+                                    {/*        방송 준비 완료*/}
+                                    {/*    </Button>*/}
+
+                                    {/*    :*/}
+                                    {/*    this.state.view*/}
+                                    {/*        ?*/}
+                                    {/*        <Button*/}
+                                    {/*            onClick={this.onServerPlayerConnection.bind(this)}>*/}
+                                    {/*            방송 시작*/}
+                                    {/*        </Button>*/}
+                                    {/*        :*/}
+                                    {/*        <Button*/}
+                                    {/*            id={'pause'}*/}
+                                    {/*            onClick={this.onPause.bind(this)}*/}
+                                    {/*        >*/}
+                                    {/*            방송 일시 정지*/}
+                                    {/*        </Button>*/}
+
+                                    {/*}*/}
+                                </ButtonGroup>
+
+
+                            {/*    <button*/}
+                            {/*        style={{fontSize: "25px"}}*/}
+                            {/*        onClick={this.onServerPlayerConnection.bind(this)}>*/}
+                            {/*        방송 시청*/}
+                            {/*    </button>*/}
+                            {/*<button*/}
+                            {/*    id="muteBtnTag"*/}
+                            {/*    style={{fontSize: "25px", marginLeft: '15px'}}*/}
+                            {/*    // onClick={this.onAudioOnOff.bind(this)}*/}
+                            {/*>*/}
+                            {/*    나가기*/}
+                            {/*</button>*/}
                                     
                                     {/* <button
 
@@ -258,16 +357,43 @@ class PlayerRoom extends React.Component {
             playsInline
             width={400}
             height={400}></video> */}
-                        </span>
                             </div>
-                        </Grid>
-                        <Grid item className={classes.rightGrid}>
-                            <div>여기가 채팅자리</div>
-                            <div>testestestestestestesetestestestestestestesetestestestestestestesetstestestestestestestesetstestestestestestestesets</div>
-                        </Grid>
-                    </Grid>
-                </Toolbar>
-            </Grid>
+                        </div>
+                    </div>
+
+                    <div className={classes.gridView2}>
+                        <div style={{textAlign: 'center'}}>
+                            {/*<TabContext value={this.state.tabValue}>*/}
+                            {/*    <Box>*/}
+                            {/*        <TabList onChange={(e, value)=>this.handleChange(e, value)} >*/}
+                            {/*            <Tab label="Player List" value="1" />*/}
+                            {/*            <Tab label="Chat" value="2" />*/}
+                            {/*        </TabList>*/}
+                            {/*    </Box>*/}
+                            {/*    <div style={{width: '430px', textAlign: 'center'}}>*/}
+                            {/*        <TabPanel value= "1" style={{padding: '0px'}}>*/}
+
+                            {/*            {*/}
+                            {/*                this.state.playerList*/}
+                            {/*                    ?*/}
+                            {/*                    <PlayerList onRefreshPlayerList={this.onRefreshPlayerList.bind(this)}*/}
+                            {/*                                roomUserList={this.state.roomPlayerList}/>*/}
+                            {/*                    :*/}
+                            {/*                    ""*/}
+                            {/*            }*/}
+
+                            {/*        </TabPanel>*/}
+                            {/*        <TabPanel value= "2" >*/}
+                            {/*            <div style={{width: '380px', backgroundColor: 'white', height: '80vh'}}>채팅창</div>*/}
+                            {/*            <div style={{textAlign: 'center'}}>*/}
+                            {/*                <div style={{marginTop: '3px'}}><input placeholder="내용을 입력해주세요." style={{width: '300px', margin: '5px'}}></input><Button variant="contained">전송</Button></div>*/}
+                            {/*            </div></TabPanel>*/}
+                            {/*    </div>*/}
+                            {/*</TabContext>*/}
+                        </div>
+                    </div>
+                </div>
+            </div>
         )
     }
     
