@@ -117,14 +117,14 @@ class RoomList extends React.Component {
         const publisherRoomList = toJS(roomList).filter(room => room.publisherId === userId);
         const playerRoomList = toJS(roomList).filter(room => room.publisherId !== userId);
 
-        const totalRoomList = [...publisherRoomList, ...playerRoomList]
+        const totalRooms = [...publisherRoomList, ...playerRoomList]
 
-        const totalRoomList2 = totalRoomList.map((obj) => {
+        const totalRoomList = totalRooms.map((obj) => {
             let countParticipants = toJS(roomUserList).filter((user) =>  obj.id === user.roomId )
             obj["participants"] = countParticipants.length
             return obj
         })
-        console.log("하하호호호 : ", totalRoomList2)
+        console.log("하하호호호 : ", totalRoomList)
         // 토탈 룸리스트의 하나하나에 '키 인원수 : 현재 들어가있는 인원' 이렇게 넣어줘야 함.
 
         // console.log("publisherRoomList : ", publisherRoomList)
@@ -159,13 +159,13 @@ class RoomList extends React.Component {
                 <br/>
                 <br/>
                 {
-                    totalRoomList2.length === 0
+                    totalRoomList.length === 0
                         ?
                         <div className={classes.mainContainer}><h1>시청할 수 있는 웨비나가 없습니다.</h1></div>
                         :
                         <Grid container spacing={3}>
                             
-                            {totalRoomList2
+                            {totalRoomList
                                 .slice(this.offset, this.offset + this.state.limit)
                                 .map(room =>
                                     <Grid item key={room.id} className={classes.card}>

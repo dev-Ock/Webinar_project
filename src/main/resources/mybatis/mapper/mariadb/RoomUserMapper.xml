@@ -24,6 +24,18 @@
         WHERE id = #{value}
     </select>
 
+    <select id="selectAllRoomUsers" resultMap="BaseRoomUserResultMap">
+        SELECT id,
+               room_id,
+               publisher_id,
+               player_id,
+               state,
+               stream_url,
+               created_datetime,
+               updated_datetime
+        FROM room_users
+    </select>
+
     <select id="selectRoomUserListByRoomId" parameterType="String" resultType="BaseRoomUserWithUserName">
         SELECT room_users.id,
                room_users.room_id as roomId,
