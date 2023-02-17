@@ -127,7 +127,7 @@ const styles = (theme) => ({
     gridView4    : {
         gridArea  : 'view4',
         background: 'blue',
-        padding   : '50px'
+        padding   : '0 50px 10px 50px',
     },
     gridView5    : {
         gridArea  : 'view5',
@@ -267,19 +267,13 @@ class PublisherRoom extends React.Component {
         e.preventDefault();
         await this.props.roomStore.onEndDisplaySharing();
     }
-
-    // pannel 요청 확인
-    checkPannelRequest = async (e) => {
-        e.preventDefault();
-        const result = await this.props.roomUserStore.onCheckPannelRequest(this.props.roomStore.onRoom.id);
-        await this.setState({pannelRequestList : result});
-    }
     
-    // pannel 요청 명단 열기
-    openPannelRequest = (e) => {
+    // 패널 추가
+    addPannel = async (e, roomUser) => {
         e.preventDefault();
-        
+        await this.props.roomStore.onAddPannel(roomUser);
     }
+
     
 // if ((navigator.mediaDevices && 'getDisplayMedia' in navigator.mediaDevices)) {
 //     startButton.disabled = false;
@@ -298,7 +292,7 @@ class PublisherRoom extends React.Component {
                     <div className={classes.gridView1}>
                         <Box>
                             <div style={{textAlign: 'center', paddingTop: '20px'}}>
-                                <h2>title : {this.props.roomStore.onRoom.title} / master
+                                <h2>PUBLISHER ROOM &nbsp; / &nbsp; Title : {this.props.roomStore.onRoom.title} &nbsp; / &nbsp; Master
                                     : {this.props.roomStore.onRoom.name}</h2>
                                 <div className="call">
                                     <div style={{textAlign: 'center'}}>
@@ -306,18 +300,13 @@ class PublisherRoom extends React.Component {
                                             <video
                                                 id="myVideoTag"
                                                 // poster={moonPicture}
+                                                controls
                                                 autoPlay
                                                 playsInline
-                                                width={600}
-                                                height={500}
+                                                width={800}
+                                                // height={400}
                                             ></video>
                                         </div>
-                                        {/* <video
-                                id="peerFace"
-                                autoPlay
-                                playsInline
-                                width={400}
-                                height={400}></video> */}
                                     </div>
                                 </div>
                             
@@ -330,9 +319,57 @@ class PublisherRoom extends React.Component {
                         <div>화면 구성</div>
                     </div>
                     <div className={classes.gridView4}>
-                        참여자
+                        <h3>참여자</h3>
+                        <video
+                                id="friendFace1"
+                                controls
+                                autoPlay
+                                playsInline
+                                width={200}
+                                height={200}>
+                            
+                        </video>
+                        &nbsp;&nbsp;&nbsp;&nbsp;
+                        <video
+                            id="friendFace2"
+                            controls
+                            autoPlay
+                            playsInline
+                            width={200}
+                            height={200}>
+    
+                        </video>
+                        &nbsp;&nbsp;&nbsp;&nbsp;
+                        <video
+                            id="friendFace3"
+                            controls
+                            autoPlay
+                            playsInline
+                            width={200}
+                            height={200}>
+    
+                        </video>
+                        &nbsp;&nbsp;&nbsp;&nbsp;
+                        <video
+                            id="friendFace4"
+                            controls
+                            autoPlay
+                            playsInline
+                            width={200}
+                            height={200}>
+    
+                        </video>
+                        &nbsp;&nbsp;&nbsp;&nbsp;
+                        <video
+                            id="friendFace5"
+                            controls
+                            autoPlay
+                            playsInline
+                            width={200}
+                            height={200}>
+    
+                        </video>
                     </div>
-                    
                     <div className={classes.gridView5}>
                         {/*<Box bgcolor='text.disabled' color="info.contrastText" style={{height: '43.8vh', textAlign:'center', verticalAlign:'middle'}}>*/}
                         <div style={{textAlign: 'center'}}>
@@ -340,7 +377,7 @@ class PublisherRoom extends React.Component {
                             <div
                                 id="BtnOptionBox"
                             >
-
+                                <br/>
                                 <ButtonGroup variant="outlined" aria-label="outlined primary button group" size="large"
                                              color="inherit">
                                     {this.state.audioOff ?
@@ -397,6 +434,7 @@ class PublisherRoom extends React.Component {
                                         </fieldset>
                                     </Button>
 
+
                                {/*<ButtonGroup variant="outlined" aria-label="outlined primary button group" size="large" color="inherit">*/}
                                {/*     {this.state.audioOff ? <Button onClick={this.onAudioOnOff.bind(this)} style={{display: 'block'}}><div><MicIcon></MicIcon></div><span>Mute</span></Button>:<Button style={{display: 'block'}} onClick={this.onAudioOnOff.bind(this)}><div><MicOffIcon></MicOffIcon></div><span>Unmute</span></Button>}*/}
                                {/*     {this.state.videoOn ? <Button onClick={this.onVideoOnOff.bind(this)} style={{display: 'block'}}><div><VideocamIcon></VideocamIcon></div><span>Start cam</span></Button>:<Button style={{display: 'block'}} onClick={this.onVideoOnOff.bind(this)}><div><VideocamOffIcon></VideocamOffIcon></div><span>Stop cam</span></Button>}*/}
@@ -406,6 +444,7 @@ class PublisherRoom extends React.Component {
                                {/*             style={{fontSize: "16px", color: '#37474f', width:'200px'}}*/}
                                {/*             onInput={this.onChangeVideoOption.bind(this)}*/}
                                {/*         ></select></Button>    */}
+
 
                                     {this.state.standBy
                                         ?
@@ -455,6 +494,7 @@ class PublisherRoom extends React.Component {
                                                             roomUserList={this.state.roomPlayerList}
                                                             roomMaximum={this.props.roomStore.onRoom.maximum}
                                                             pannelRequest={this.state.pannelRequestList}
+                                                            addPannel={this.addPannel.bind(this)}
                                                 />
                                                 :
                                                 ""
