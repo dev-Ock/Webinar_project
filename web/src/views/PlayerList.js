@@ -135,6 +135,7 @@ function PlayerList(props) {
                                                     <Button
                                                         style={{backgroundColor: '#ff8a65', color: '#455a64'}}
                                                         variant="outlined"
+                                                        onClick={(e) => props.addPannel(e, roomUser)}
                                                     >
                                                         패널 요청 옴
                                                     </Button> :
