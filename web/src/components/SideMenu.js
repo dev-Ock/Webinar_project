@@ -22,6 +22,7 @@ import { grey } from '@mui/material/colors';
 import AddIcon from '@mui/icons-material/Add';
 import HistoryIcon from '@mui/icons-material/History';
 import ListAltIcon from '@mui/icons-material/ListAlt';
+import Tooltip from '@mui/material/Tooltip';
 
 const useStyles = makeStyles((theme) => ({
     root:{
@@ -165,26 +166,34 @@ export default function SideMenu(props) {
     const drawerIcon = (
         <div className={classes.menu}>
             <List>
+                <Tooltip title="홈으로 가기" followCursor>
                 <Link to="/home" className={classes.link}>
                     <ListItem button style={{padding: 0}}>
                         <ListItemIcon><HomeIcon sx={{ color: grey[50] }} style={{height: '59.8611px'}}/></ListItemIcon>
                     </ListItem>
                 </Link>
-                <Link to="/room-make" className={classes.link}>
-                    <ListItem button style={{padding: 0}}>
-                        <ListItemIcon><AddIcon sx={{ color: grey[50] }} style={{height: '59.8611px'}}/></ListItemIcon>
-                    </ListItem>
-                </Link>
+                </Tooltip>
+                <Tooltip title="세미나 리스트" followCursor>
                 <Link to="/room-list" className={classes.link}>
                     <ListItem button style={{padding: 0}}>
                         <ListItemIcon><ListAltIcon sx={{ color: grey[50] }} style={{height: '59.8611px'}}/></ListItemIcon>
                     </ListItem>
                 </Link>
+                </Tooltip>
+                <Tooltip title="세미나 만들기" followCursor>
+                <Link to="/room-make" className={classes.link}>
+                    <ListItem button style={{padding: 0}}>
+                        <ListItemIcon><AddIcon sx={{ color: grey[50] }} style={{height: '59.8611px'}}/></ListItemIcon>
+                    </ListItem>
+                </Link>
+                </Tooltip>
+                <Tooltip title="세미나 히스토리" followCursor>
                 <Link to="/room-history" className={classes.link}>
                     <ListItem button style={{padding: 0}}>
                         <ListItemIcon><HistoryIcon sx={{ color: grey[50] }} style={{height: '59.8611px'}}/></ListItemIcon>
                     </ListItem>
                 </Link>
+                </Tooltip>
             </List>
         </div>
     );
