@@ -172,12 +172,6 @@ function PlayerList(props) {
                                                             null
                                                     }
                                                     &nbsp;
-                                                    <Button
-                                                        style={{color: '#455a64'}}
-                                                        variant="outlined"
-                                                    >
-                                                        패널 요청
-                                                    </Button>
                                                     &nbsp;
                                                     <Button
                                                         style={{color: '#546e7a'}}
