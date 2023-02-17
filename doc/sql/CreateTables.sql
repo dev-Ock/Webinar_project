@@ -85,7 +85,7 @@ create table room_histories
     state            varchar(128) default 'wait'              not null comment 'room 상태 [Wait, Progress, Complete, Pending, Failed]',
     created_datetime datetime     default current_timestamp() not null comment 'room 각 state 생성일시',
     constraint fk_room_histories_publisher_id
-        foreign key (publisher_id) references rooms (publisher_id),
+        foreign key (publisher_id) references users (id),
     constraint fk_room_histories_room_id
         foreign key (room_id) references rooms (id)
 )
