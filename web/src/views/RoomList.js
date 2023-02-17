@@ -124,7 +124,7 @@ class RoomList extends React.Component {
             obj["participants"] = countParticipants.length
             return obj
         })
-        console.log("하하호호호 : ", totalRoomList)
+        // console.log("하하호호호 : ", totalRoomList)
         // 토탈 룸리스트의 하나하나에 '키 인원수 : 현재 들어가있는 인원' 이렇게 넣어줘야 함.
 
         // console.log("publisherRoomList : ", publisherRoomList)
