@@ -6,6 +6,7 @@ import {inject, observer} from "mobx-react";
 import * as Repository from "../repositories/Repository";
 import * as Roomstore from "../stores/RoomStore"
 import moonPicture from '../assets/images/moon.jpg'
+import notice from '../assets/images/notice.png'
 import {RoomMakeRoomID} from "../repositories/Repository";
 import {Box, Button, Paper, Table, TableBody, TableContainer, TableHead, TableRow} from "@mui/material";
 import PlayerList from "./PlayerList";
@@ -60,12 +61,12 @@ const styles = (theme) => ({
         width: '100%',
         
     },
-
-    body : {
+    
+    body         : {
         margin: 0
     },
-    leftGrid : {
-        width : '80vw'
+    leftGrid     : {
+        width: '80vw'
     },
     rightGrid    : {
         width: '20vw'
@@ -78,12 +79,12 @@ const styles = (theme) => ({
                                 'view1 view2'
                                 'view3 view2'
                                 'view4 view2'
-                                'view5 view2'           
+                                'view5 view2'
             `,
         [theme.breakpoints.up('xs')]: {
             gridTemplateColumns: '1fr',
-
-            gridTemplateRows: '600px 200px 200px 74px 1fr',
+            
+            gridTemplateRows : '600px 200px 200px 74px 1fr',
             gridTemplateAreas: `
 
                                 'view1'
@@ -95,8 +96,8 @@ const styles = (theme) => ({
         },
         [theme.breakpoints.up('lg')]: {
             gridTemplateColumns: '4fr 1fr',
-
-            gridTemplateRows: '3fr 0.5fr 1fr 74px',
+            
+            gridTemplateRows : '3fr 0.5fr 1fr 74px',
             gridTemplateAreas: `
 
                                 'view1 view2'
@@ -104,32 +105,41 @@ const styles = (theme) => ({
                                 'view4 view2'
                                 'view5 view2'
             `,
-            height: '100vh'
+            height           : '100vh'
         },
     },
-
-    gridView1 : {
-        gridArea: 'view1',
-        background: 'red',
-        padding: '50px',
+    
+    myVideo: {
+        // width : '100%'
+        // '&[poster]': {
+        //     width : '100%'
+        //     // objectFit: 'fill'
+        // }
     },
-    gridView2    : {
+    
+    
+    gridView1: {
+        gridArea  : 'view1',
+        background: 'red',
+        padding   : '50px',
+    },
+    gridView2: {
         gridArea  : 'view2',
         background: 'pink',
         padding   : '55px',
         textAlign : 'center'
     },
-    gridView3    : {
+    gridView3: {
         gridArea  : 'view3',
         background: 'orange',
         padding   : '50px'
     },
-    gridView4    : {
+    gridView4: {
         gridArea  : 'view4',
         background: 'blue',
         padding   : '0 50px 10px 50px',
     },
-    gridView5    : {
+    gridView5: {
         gridArea  : 'view5',
         background: 'grey',
     }
@@ -140,18 +150,19 @@ class PublisherRoom extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            room          : {},
-            roomPlayerList: {},
-            playerList    : false,
-            standBy       : true,
-            view          : true,
-            stream        : {},
-            pause         : false,
-            videoOn       : true,
-            audioOff      : false,
-            tabValue      : '1',
-            pannelRequestList : [],
-            pannelRequestListBar : false
+            room                : {},
+            roomPlayerList      : {},
+            playerList          : false,
+            standBy             : true,
+            view                : true,
+            stream              : {},
+            pause               : false,
+            videoOn             : true,
+            audioOff            : false,
+            tabValue            : '1',
+            pannelRequestList   : [],
+            pannelRequestListBar: false,
+            pannelAddition      : false
         }
         
     }
@@ -161,18 +172,23 @@ class PublisherRoom extends React.Component {
         // SideMenu 최소화
         this.props.handleDrawerToggle();
         
+        
+        
+        const myvideo = document.getElementById("myVideoTag");
+        myvideo.poster = notice;
+        
         // room 데이터 조회
         const roomId = sessionStorage.getItem(RoomMakeRoomID);
         this.state.room = this.props.roomStore.getSelectedRoom(roomId);
         console.log('this.state.room : ', this.state.room);
         // 방송 기본 세팅
-
+        
         this.props.roomStore.setRoom();
         // const stream = this.props.roomStore.setRoom();
         // stream.then(data => this.setState({stream: data}));
         // 세미나 참여한 player 조회
         const selectPlayerList = this.props.roomUserStore.getRoomUserList(roomId);
-        if(selectPlayerList !== undefined){
+        if (selectPlayerList !== undefined) {
             selectPlayerList
                 .then((data) => {
                     this.state.roomPlayerList = data;
@@ -217,7 +233,7 @@ class PublisherRoom extends React.Component {
     async onRefreshPlayerList() {
         const roomId = sessionStorage.getItem(RoomMakeRoomID);
         const selectPlayerList = this.props.roomUserStore.getRoomUserList(roomId);
-        if(selectPlayerList !== undefined){
+        if (selectPlayerList !== undefined) {
             selectPlayerList
                 .then((data) => {
                     this.state.roomPlayerList = data;
@@ -272,16 +288,23 @@ class PublisherRoom extends React.Component {
     // 패널 추가
     addPannel = async (e, roomUser) => {
         e.preventDefault();
-        await this.props.roomStore.onAddPannel(roomUser);
+        console.log("333", this.state.pannelAddition)
+        await this.props.roomStore.onAddPannel(roomUser, this.state.pannelAddition, this.pannelAdditionStateTrue.bind(this), this.pannelAdditionStateFalse.bind(this));
+    }
+    
+    pannelAdditionStateTrue() {
+        this.setState({pannelAddition: true})
+    }
+    
+    pannelAdditionStateFalse() {
+        this.setState({pannelAddition: false})
     }
 
-    
 // if ((navigator.mediaDevices && 'getDisplayMedia' in navigator.mediaDevices)) {
 //     startButton.disabled = false;
 // } else {
 //     errorMsg('getDisplayMedia is not supported');
 // }
-    
     
     
     render() {
@@ -293,19 +316,22 @@ class PublisherRoom extends React.Component {
                     <div className={classes.gridView1}>
                         <Box>
                             <div style={{textAlign: 'center', paddingTop: '20px'}}>
-                                <h2>PUBLISHER ROOM &nbsp; / &nbsp; Title : {this.props.roomStore.onRoom.title} &nbsp; / &nbsp; Master
-                                    : {this.props.roomStore.onRoom.name}</h2>
+                                <h2>PUBLISHER ROOM &nbsp; [ Title
+                                    : {this.props.roomStore.onRoom.title} &nbsp; / &nbsp; Publisher
+                                    : {this.props.roomStore.onRoom.name}  &nbsp; /  &nbsp; {this.props.roomStore.onRoom.name} 's position : publisher ]</h2>
                                 <div className="call">
                                     <div style={{textAlign: 'center'}}>
                                         <div>
                                             <video
+                                                className={classes.myVideo}
                                                 id="myVideoTag"
                                                 // poster={moonPicture}
                                                 controls
                                                 autoPlay
                                                 playsInline
-                                                width={800}
-                                                // height={400}
+                                                width={1000}
+                                                height={800}
+                                                style={{backgroundColor: 'black'}}
                                             ></video>
                                         </div>
                                     </div>
@@ -319,57 +345,59 @@ class PublisherRoom extends React.Component {
                     <div className={classes.gridView3}>
                         <div>화면 구성</div>
                     </div>
-                    <div className={classes.gridView4}>
+                    <div className={classes.gridView4}
+                         id='pannelBox'
+                    >
                         <h3>참여자</h3>
-                        <video
-                                id="friendFace1"
-                                controls
-                                autoPlay
-                                playsInline
-                                width={200}
-                                height={200}>
-                            
-                        </video>
-                        &nbsp;&nbsp;&nbsp;&nbsp;
-                        <video
-                            id="friendFace2"
-                            controls
-                            autoPlay
-                            playsInline
-                            width={200}
-                            height={200}>
-    
-                        </video>
-                        &nbsp;&nbsp;&nbsp;&nbsp;
-                        <video
-                            id="friendFace3"
-                            controls
-                            autoPlay
-                            playsInline
-                            width={200}
-                            height={200}>
-    
-                        </video>
-                        &nbsp;&nbsp;&nbsp;&nbsp;
-                        <video
-                            id="friendFace4"
-                            controls
-                            autoPlay
-                            playsInline
-                            width={200}
-                            height={200}>
-    
-                        </video>
-                        &nbsp;&nbsp;&nbsp;&nbsp;
-                        <video
-                            id="friendFace5"
-                            controls
-                            autoPlay
-                            playsInline
-                            width={200}
-                            height={200}>
-    
-                        </video>
+                        {/*<video*/}
+                        {/*        id="friendFace1"*/}
+                        {/*        controls*/}
+                        {/*        autoPlay*/}
+                        {/*        playsInline*/}
+                        {/*        width={200}*/}
+                        {/*        height={200}>*/}
+                        {/*    */}
+                        {/*</video>*/}
+                        {/*&nbsp;&nbsp;&nbsp;&nbsp;*/}
+                        {/*<video*/}
+                        {/*    id="friendFace2"*/}
+                        {/*    controls*/}
+                        {/*    autoPlay*/}
+                        {/*    playsInline*/}
+                        {/*    width={200}*/}
+                        {/*    height={200}>*/}
+                        
+                        {/*</video>*/}
+                        {/*&nbsp;&nbsp;&nbsp;&nbsp;*/}
+                        {/*<video*/}
+                        {/*    id="friendFace3"*/}
+                        {/*    controls*/}
+                        {/*    autoPlay*/}
+                        {/*    playsInline*/}
+                        {/*    width={200}*/}
+                        {/*    height={200}>*/}
+                        
+                        {/*</video>*/}
+                        {/*&nbsp;&nbsp;&nbsp;&nbsp;*/}
+                        {/*<video*/}
+                        {/*    id="friendFace4"*/}
+                        {/*    controls*/}
+                        {/*    autoPlay*/}
+                        {/*    playsInline*/}
+                        {/*    width={200}*/}
+                        {/*    height={200}>*/}
+                        
+                        {/*</video>*/}
+                        {/*&nbsp;&nbsp;&nbsp;&nbsp;*/}
+                        {/*<video*/}
+                        {/*    id="friendFace5"*/}
+                        {/*    controls*/}
+                        {/*    autoPlay*/}
+                        {/*    playsInline*/}
+                        {/*    width={200}*/}
+                        {/*    height={200}>*/}
+                        
+                        {/*</video>*/}
                     </div>
                     <div className={classes.gridView5}>
                         {/*<Box bgcolor='text.disabled' color="info.contrastText" style={{height: '43.8vh', textAlign:'center', verticalAlign:'middle'}}>*/}
@@ -434,19 +462,19 @@ class PublisherRoom extends React.Component {
                                             </div>
                                         </fieldset>
                                     </Button>
-
-
-                               {/*<ButtonGroup variant="outlined" aria-label="outlined primary button group" size="large" color="inherit">*/}
-                               {/*     {this.state.audioOff ? <Button onClick={this.onAudioOnOff.bind(this)} style={{display: 'block'}}><div><MicIcon></MicIcon></div><span>Mute</span></Button>:<Button style={{display: 'block'}} onClick={this.onAudioOnOff.bind(this)}><div><MicOffIcon></MicOffIcon></div><span>Unmute</span></Button>}*/}
-                               {/*     {this.state.videoOn ? <Button onClick={this.onVideoOnOff.bind(this)} style={{display: 'block'}}><div><VideocamIcon></VideocamIcon></div><span>Start cam</span></Button>:<Button style={{display: 'block'}} onClick={this.onVideoOnOff.bind(this)}><div><VideocamOffIcon></VideocamOffIcon></div><span>Stop cam</span></Button>}*/}
-                               {/*     <Button startIcon={<SettingsIcon />} style={{display: 'block', cursor: 'auto'}} disableTouchRipple disableRipple focusRipple>*/}
-                               {/*         <select*/}
-                               {/*             id="cameras"*/}
-                               {/*             style={{fontSize: "16px", color: '#37474f', width:'200px'}}*/}
-                               {/*             onInput={this.onChangeVideoOption.bind(this)}*/}
-                               {/*         ></select></Button>    */}
-
-
+                                    
+                                    
+                                    {/*<ButtonGroup variant="outlined" aria-label="outlined primary button group" size="large" color="inherit">*/}
+                                    {/*     {this.state.audioOff ? <Button onClick={this.onAudioOnOff.bind(this)} style={{display: 'block'}}><div><MicIcon></MicIcon></div><span>Mute</span></Button>:<Button style={{display: 'block'}} onClick={this.onAudioOnOff.bind(this)}><div><MicOffIcon></MicOffIcon></div><span>Unmute</span></Button>}*/}
+                                    {/*     {this.state.videoOn ? <Button onClick={this.onVideoOnOff.bind(this)} style={{display: 'block'}}><div><VideocamIcon></VideocamIcon></div><span>Start cam</span></Button>:<Button style={{display: 'block'}} onClick={this.onVideoOnOff.bind(this)}><div><VideocamOffIcon></VideocamOffIcon></div><span>Stop cam</span></Button>}*/}
+                                    {/*     <Button startIcon={<SettingsIcon />} style={{display: 'block', cursor: 'auto'}} disableTouchRipple disableRipple focusRipple>*/}
+                                    {/*         <select*/}
+                                    {/*             id="cameras"*/}
+                                    {/*             style={{fontSize: "16px", color: '#37474f', width:'200px'}}*/}
+                                    {/*             onInput={this.onChangeVideoOption.bind(this)}*/}
+                                    {/*         ></select></Button>    */}
+                                    
+                                    
                                     {this.state.standBy
                                         ?
                                         <Button

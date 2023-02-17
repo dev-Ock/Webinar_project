@@ -78,6 +78,8 @@ let videoOn = true; // 처음에는 카메리가 켜져 있음 (cameraOn : true)
 let muteOn = false; // 처음에는 소리가 켜져 있음 (muteOn : false)
 let camerasSelect = '';
 let option = '';
+let pannelBoxTag = '';
+let pannelVideo = '';
 let constraints = "";
 let preferredDisplaySurface = "";
 let endSharingTag = "";
@@ -249,7 +251,7 @@ export default class RoomStore {
             }
             camerasSelect.appendChild(option);
         });
-
+        
         stream.getAudioTracks()
             .forEach((track) => (track.enabled = false));
         console.log('퍼블리셔방송세팅 stream', stream);
@@ -754,21 +756,37 @@ export default class RoomStore {
                 );
             });
         };
-
+        
         const ontrack = (event) => {
             pannelStream.addTrack(event.track);
-            const friendFace1 = document.getElementById("friendFace1"); // peerFace
-            friendFace1.srcObject = pannelStream;
+            
+            pannelBoxTag = document.getElementById("pannelBox");
+            const video = document.createElement("video");
+            
+                video.id = pannelStream;
+                video.controls = true;
+                video.muted = true;
+                video.autoPlay = true;
+                video.playsinline = true;
+                video.width = 200;
+                video.width = 250;
+                video.srcObject = pannelStream;
+    
+                pannelBoxTag.appendChild(video);
+      
+            
+            // const friendFace1 = document.getElementById("friendFace1"); // peerFace
+            // friendFace1.srcObject = pannelStream;
         };
 
         pc = new RTCPeerConnection();
         let pannelStream = new MediaStream();
-
-        pc.ontrack = function (event) {
-            if (ontrack) {
-                ontrack(event);
-            }
-        };
+            pc.ontrack = function (event) {
+               
+                if (ontrack) {
+                    ontrack(event);
+                }
+            };
         await play(streamUrl);
     }
 
@@ -781,11 +799,11 @@ export default class RoomStore {
 
     // room state : Pending
     onPendingRoomState(data) {
-        console.log('onProgressRoom data : ', data);
+        console.log('onPendingRoom data : ', data);
         data.state = RoomStateType.Pending;
         this.onUpdateRoomState(data)
             .then(result => {
-                console.log("onProgressRoom", result);
+                console.log("onPendingRoom", result);
                 if (result !== 1) {
                     this.onFailedRoomState(data);
                 }
