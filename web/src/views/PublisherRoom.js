@@ -5,7 +5,7 @@ import {withStyles} from "@material-ui/core/styles";
 import {inject, observer} from "mobx-react";
 import * as Repository from "../repositories/Repository";
 import * as Roomstore from "../stores/RoomStore"
-import moonPicture from '../assets/images/moon.jpg'
+import viewLogo from '../assets/images/viewlogo.png'
 import {RoomMakeRoomID} from "../repositories/Repository";
 import {Box, Button, Paper, Table, TableBody, TableContainer, TableHead, TableRow} from "@mui/material";
 import PlayerList from "./PlayerList";
@@ -286,12 +286,12 @@ class PublisherRoom extends React.Component {
                                         <div>
                                             <video
                                                 id="myVideoTag"
-                                                poster={moonPicture}
+                                                poster={viewLogo}
                                                 controls
                                                 autoPlay
                                                 playsInline
                                                 style={{backgroundColor: 'black'}}
-                                                // width={800}
+                                                width={900}
                                                 height={700}
                                             ></video>
                                         </div>
