@@ -141,10 +141,10 @@ export default class RoomStore {
 
     // stream 변경
     changeStream = (stream) => {
-        this.playerOnStream = stream;
+        this.onStream = stream;
     };
     playerChangeStream = (playerStream) => {
-        this.onStream = playerStream;
+        this.playerOnStream = playerStream;
     };
 
     // pannel stream
@@ -299,7 +299,7 @@ export default class RoomStore {
         playserStream.getAudioTracks()
             .forEach((track) => (track.enabled = false));
         console.log('플레이어 송출용 stream', playserStream);
-        this.changeStream(playserStream);
+        this.playerChangeStream(playserStream);
         // return stream;
     }
     
@@ -360,7 +360,63 @@ export default class RoomStore {
         pc = new RTCPeerConnection();
         await publish(streamUrl);
     }
-    
+    async pServerPublisherConnection(playerUrl) {
+        const playerStreamUrl = playerUrl;
+        const publish = async (playerStreamUrl) => {
+            pc.addTransceiver("audio", {direction: "sendonly"});
+            pc.addTransceiver("video", {direction: "sendonly"});
+
+            if (
+                !navigator.mediaDevices &&
+                window.location.protocol === "http:" &&
+                window.location.hostname !== "localhost"
+            ) {
+                console.log(
+                    "HttpsRequiredError : Please use HTTPS or localhost to publish"
+                );
+            }
+            console.log('stream : ', this.playerOnStream);
+
+            let playerStream = this.playerOnStream;
+
+            // addTrack
+            playerStream.getTracks().forEach((track) => {
+                pc.addTrack(track); // stream의 각 track을 peer connection에 track으로 추가한다.
+                // ontrack && ontrack({ track: track });
+            });
+
+
+            // createOffer & setLocalDescription
+            let playerOffer = await pc.createOffer(); // addTransceiver와 addTrack을 거친 peer connection에서 offer를 만든다.
+            // console.log("offer", offer);
+            await pc.setLocalDescription(playerOffer);
+
+            // SRS server에 POST
+            let playerData = {
+                api      : "http://haict.onthe.live:1985/rtc/v1/publish/",
+                streamurl: `webrtc://haict.onthe.live/live/${playerStreamUrl}`,
+                sdp      : playerOffer.sdp,
+            };
+            console.log('playerData.streamurl', playerData.streamurl);
+
+            const onPublish = (playerData) => {
+                console.log("roomRepository onPublish 진입");
+                return this.setSRSserverPublisherConnection(playerData);
+            };
+
+            onPublish(playerData).then(async (session) => {
+                console.log("player session", session);
+                console.log("player publishing session.sdp", session.sdp);
+                await pc.setRemoteDescription(
+                    new RTCSessionDescription({type: "answer", sdp: session.sdp})
+                );
+            });
+        };
+
+        pc = new RTCPeerConnection();
+        await publish(playerStreamUrl);
+    }
+
     // SRS server-publisher axios
     * setSRSserverPublisherConnection(data) {
         const result = yield this.roomRepository.onSRSserverPublisherConnection(data);
@@ -462,7 +518,7 @@ export default class RoomStore {
         myVideo = document.getElementById("myVideoTag");
         myVideo.srcObject = stream;
 
-        this.changeStream(stream);
+        this.playerChangeStream(stream);
         await this.onChangeBroadcastingStream();
     }
 
@@ -538,7 +594,7 @@ export default class RoomStore {
                     myVideo.srcObject = stream;
                     this.changeStream(stream);
                     // 송출 stream도 변경
-                    await this.onChangeBroadcastingStream();
+                    await this.playerOnChangeBroadcastingStream();
 
                     // 화면공유 끝내면
                     stream.getVideoTracks()[0].onended = async () => {
@@ -693,7 +749,9 @@ export default class RoomStore {
         };
         await play(streamUrl);
     }
-    
+    //srs player-server-player 연결
+
+
     // SRS server-player axios
     * setSRSserverPlayerConnection(data) {
         const result = yield this.roomRepository.onSRSserverPlayerConnection(data);
