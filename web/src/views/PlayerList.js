@@ -1,3 +1,4 @@
+import {makeAutoObservable, toJS} from "mobx";
 import {
     Button,
     Paper,
@@ -92,7 +93,22 @@ function PlayerList(props) {
     const [page, setPage] = useState(1);
     const offset = (page - 1) * limit;
 
-    
+
+    const {publisherId} = props.roomStore.onRoom;
+    const logInUserId = props.authStore.loginUser.id;
+    // console.log("PublisherId : ", publisherId, " LoggedInUserId : ", logInUserId)
+    // console.log("props.roomStore.onRoom : ", toJS(props.roomStore.onRoom))
+
+    let arrangedRoomUserList = [];
+    const logInPlayer = props.roomUserList.filter((user) => user.playerId === logInUserId)
+    if(logInPlayer.length){ ; // 방에 입장한 사람이 플레이어일 때 PlayerList 맨위에 노출하도록 리스트 재배열 (사실 이거 안해줘도 에러 안나지만..)
+        const otherPlayers = props.roomUserList.filter((user) => user.playerId !== logInUserId);
+        arrangedRoomUserList = [...logInPlayer, ...otherPlayers];
+    }else{
+        arrangedRoomUserList = props.roomUserList; // 방에 입장한 사람이 퍼블리셔인 경우 때 PlayerList 재배열 안함.
+    }
+    // console.log("logInPlayer: ",logInPlayer,"arrangedRoomUserList", arrangedRoomUserList);
+
     return (
         
         <div className={classes.root}>
@@ -112,49 +128,85 @@ function PlayerList(props) {
                 <Table className={classes.table} size="small">
                     <TableHead>
                         <TableRow>
+                            <StyledTableCell align={"center"}> 패널 </StyledTableCell>
                             <StyledTableCell
                                 // className={props.classes.btn}
-                                align={"center"}> Player 이름 </StyledTableCell>
-                            <StyledTableCell align={"center"}> 기능 </StyledTableCell>
+                                align={"center"}> 찹여자 아이디 </StyledTableCell>
+                            <StyledTableCell align={"center"}>  </StyledTableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {props.roomUserList.length !== 0
+                        {arrangedRoomUserList.length !== 0
                             ?
-                            props.roomUserList
+                            arrangedRoomUserList
                                 .slice(offset, offset + limit)
                                 .map(roomUser => (
                                     <TableRow key={roomUser.id}>
+                                    {/*{console.log(roomUser)}*/}
+
+                                        <StyledTableCell align={"center"}>
+                                                {
+                                                    roomUser.streamUrl ?
+                                                        <div> 🟢 </div>
+                                                        :
+                                                        <div> 🔘 </div>
+                                                }
+                                        </StyledTableCell>
                                         <StyledTableCell
                                             style={{color: '#455a64', fontWeight: 'border'}}
-                                            align={"center"}> {roomUser.name} </StyledTableCell>
+                                            align={"center"}>
+                                            {roomUser.name}
+                                        </StyledTableCell>
                                         <StyledTableCell align={"center"}>
-    
-                                            {
-                                                roomUser.streamUrl ?
+                                            { logInUserId === publisherId ?
+                                                <div style={{textAlign:"right"}}>
+                                                    {
+                                                        roomUser.streamUrl ?
+                                                            <Button
+                                                                style={{backgroundColor: '#ff8a65', color: '#455a64'}}
+                                                                variant="outlined"
+                                                                onClick={(e) => props.addPannel(e, roomUser)}
+                                                            >
+                                                                패널 요청 옴
+                                                            </Button> :
+                                                            null
+                                                    }
+                                                    &nbsp;
                                                     <Button
-                                                        style={{backgroundColor: '#ff8a65', color: '#455a64'}}
+                                                        style={{color: '#455a64'}}
                                                         variant="outlined"
-                                                        onClick={(e) => props.addPannel(e, roomUser)}
                                                     >
-                                                        패널 요청 옴
-                                                    </Button> :
-                                                    null
+                                                        패널 요청
+                                                    </Button>
+                                                    &nbsp;
+                                                    <Button
+                                                        style={{color: '#546e7a'}}
+                                                        variant="outlined"
+                                                    >
+                                                        강퇴
+                                                    </Button>
+                                                </div>
+                                                :
+                                                    <div>
+                                                        { roomUser.playerId === logInUserId  ?
+                                                                <Button
+                                                                    style={{color: '#546e7a'}}
+                                                                    // variant="outlined"
+                                                                >
+                                                                    나
+                                                                </Button>
+                                                            :
+                                                                <Button
+                                                                    style={{color: '#546e7a'}}
+                                                                    variant="outlined"
+                                                                >
+                                                                    신고
+                                                                </Button>
+                                                        }
+                                                    </div>
+
                                             }
-                                            &nbsp;
-                                            <Button
-                                                style={{color: '#455a64'}}
-                                                variant="outlined"
-                                            >
-                                                패널 요청
-                                            </Button>
-                                            &nbsp;
-                                            <Button
-                                                style={{color: '#546e7a'}}
-                                                variant="outlined"
-                                            >
-                                                강퇴
-                                            </Button>
+
                                         </StyledTableCell>
                                     </TableRow>
                                 ))

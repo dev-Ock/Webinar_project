@@ -67,7 +67,6 @@ class RoomList extends React.Component {
             limit   : 12,
             page    : 1,
             length  : 0,
-            // allROOMUSER : [],
         };
         this.offset = (this.state.page - 1) * this.state.limit
     }
@@ -81,10 +80,6 @@ class RoomList extends React.Component {
             }
         )
         this.props.roomUserStore.getAllRoomUsers();
-        // const data = this.props.roomUserStore.getAllRoomUsers();
-        // this.state.allROOMUSER.push(data);
-        // console.log("data나나 : ", toJS(data));
-        // console.log("allROOMUSER나나 : ", toJS(this.state.allROOMUSER));
     }
     
     componentDidUpdate(prevProps, prevState, snapshot) {
