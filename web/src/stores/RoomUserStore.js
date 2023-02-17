@@ -9,6 +9,15 @@ import {
     UserId
 } from "../repositories/Repository";
 
+export const RoomUserStateType = { // player의 스트리밍 상태
+    Wait      : "Wait",
+    Progress  : "Progress",
+    Complete  : "Complete",
+    Uncomplete: "Uncomplete",
+    Pending   : "Pending",
+    Failed    : "Failed"
+}
+
 export const EmptyRoomUserDetail ={
     id: '',
     roomI: '',
@@ -19,7 +28,7 @@ export const EmptyRoomUserDetail ={
 }
 
 export default class RoomUserStore {
-    streamUser = Object.assign([],EmptyRoomUserDetail)
+    streamUser = Object.assign({},EmptyRoomUserDetail) // EmptyRoomUserDetail가 { } 여서, target도 [ ] 에서 { } 로 바꿨습니다
 
     constructor(props) {
         this.roomUserRepository = props.roomUserRepository;

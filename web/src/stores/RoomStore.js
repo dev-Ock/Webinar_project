@@ -295,8 +295,8 @@ export default class RoomStore {
     }
     
     // SRS server-publisher 연결
-    async serverPublisherConnection() {
-        const streamUrl = sessionStorage.getItem(Repository.RoomMakeStreamUrl);
+    async serverPublisherConnection(url) {
+        const streamUrl = url;
         const publish = async (streamUrl) => {
             pc.addTransceiver("audio", {direction: "sendonly"});
             pc.addTransceiver("video", {direction: "sendonly"});

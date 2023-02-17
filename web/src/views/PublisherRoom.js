@@ -191,7 +191,8 @@ class PublisherRoom extends React.Component {
         // room state : pending
         await this.props.roomStore.onPendingRoomState(this.props.roomStore.onRoom);
         // SRS server-Publisher 연결
-        await this.props.roomStore.serverPublisherConnection();
+        const streamUrl = sessionStorage.getItem(Repository.RoomMakeStreamUrl);
+        await this.props.roomStore.serverPublisherConnection(streamUrl);
         // room state : progress
         await this.props.roomStore.onProgressRoomState(this.props.roomStore.onRoom);
         this.setState({view: false});

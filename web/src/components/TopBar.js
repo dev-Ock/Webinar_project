@@ -90,18 +90,17 @@ function TopBar(props) {
         )
     }
     
-    // if (window.location.pathname === '/service') return null;
     return (
         <AppBar position="fixed" className={isLoggedIn ? menuOpen ? clsx(classes.appBar, classes.appBarLogin) : clsx(classes.appBar, classes.appBarLoginMenuClose) : classes.appBar}>
             
             <Toolbar>
-                {!isLoggedIn ? (
-                    <Link to='/'>
-                        <img src={OnTheLiveLogo} alt="Onthelive" />
-                    </Link>
-                ) : (
-                    ''
-                )}
+                {/*{!isLoggedIn ? (*/}
+                {/*    <Link to='/'>*/}
+                {/*        <img src={OnTheLiveLogo} alt="Onthelive" />*/}
+                {/*    </Link>*/}
+                {/*) : (*/}
+                {/*    ''*/}
+                {/*)}*/}
 
                 <IconButton
                     color="inherit"

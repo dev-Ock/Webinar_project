@@ -211,9 +211,13 @@ class PlayerRoom extends React.Component {
                                         <video
                                             id="peerFace"
                                             autoPlay
+                                            controls
                                             playsInline
-                                            width={400}
-                                            height={400}></video>
+                                            width={800}
+                                            // height={400}
+                                        >
+                                        
+                                        </video>
                                     </div>
                                 </div>
 
@@ -225,6 +229,7 @@ class PlayerRoom extends React.Component {
                         <video
                             id="myVideoTag"
                             autoPlay
+                            controls
                             playsInline
                             width={250}
                             height={200}
