@@ -5,7 +5,7 @@ import {withStyles} from "@material-ui/core/styles";
 import {inject, observer} from "mobx-react";
 import * as Repository from "../repositories/Repository";
 import * as Roomstore from "../stores/RoomStore"
-import moonPicture from '../assets/images/moon.jpg'
+import viewLogo from '../assets/images/viewlogo.png'
 import {RoomMakeRoomID} from "../repositories/Repository";
 import {Box, Button, Paper, Table, TableBody, TableContainer, TableHead, TableRow} from "@mui/material";
 import PlayerList from "./PlayerList";
@@ -94,7 +94,7 @@ const styles = (theme) => ({
         [theme.breakpoints.up('lg')]: {
             gridTemplateColumns: '4fr 1fr',
 
-            gridTemplateRows: '3fr 1fr 74px',
+            gridTemplateRows: '800px 1fr 74px',
             gridTemplateAreas: `
 
                                 'view1 view2'
@@ -107,12 +107,12 @@ const styles = (theme) => ({
 
     gridView1 : {
         gridArea: 'view1',
-        padding: '50px',
+        paddingTop: '50px',
     },
     gridView2    : {
         gridArea  : 'view2',
         padding   : '55px',
-        textAlign : 'center'
+        textAlign : 'center',
     },
     gridView3    : {
         gridArea  : 'view3',
@@ -281,20 +281,18 @@ class PublisherRoom extends React.Component {
                     <div className={classes.gridView1}>
                         <Box>
                             <div style={{textAlign: 'center', paddingTop: '20px'}}>
-                                <h2>PUBLISHER ROOM &nbsp; / &nbsp; Title : {this.props.roomStore.onRoom.title} &nbsp; / &nbsp; Master
-                                    : {this.props.roomStore.onRoom.name}</h2>
                                 <div className="call">
                                     <div style={{textAlign: 'center'}}>
                                         <div>
                                             <video
                                                 id="myVideoTag"
-                                                // poster={moonPicture}
+                                                poster={viewLogo}
                                                 controls
                                                 autoPlay
                                                 playsInline
                                                 style={{backgroundColor: 'black'}}
-                                                width={800}
-                                                // height={400}
+                                                width={900}
+                                                height={700}
                                             ></video>
                                         </div>
                                     </div>
@@ -305,6 +303,8 @@ class PublisherRoom extends React.Component {
                         </Box>
                     </div>
                     <div className={classes.gridView3}>
+                        <h2>PUBLISHER ROOM &nbsp; / &nbsp; Title : {this.props.roomStore.onRoom.title} &nbsp; / &nbsp; Master
+                            : {this.props.roomStore.onRoom.name}</h2>
                         <h3>참여자</h3>
                         <video
                                 id="friendFace1"
