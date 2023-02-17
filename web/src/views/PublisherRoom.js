@@ -73,36 +73,33 @@ const styles = (theme) => ({
     gridContainer: {
         display                     : 'grid',
         gridTemplateColumns         : '4fr 1fr',
-        gridTemplateRows            : '3fr 1fr 1fr 1fr',
+        gridTemplateRows            : '3fr 1fr 1fr',
         gridTemplateAreas           : `
                                 'view1 view2'
                                 'view3 view2'
-                                'view4 view2'
-                                'view5 view2'           
+                                'view4 view2'           
             `,
         [theme.breakpoints.up('xs')]: {
             gridTemplateColumns: '1fr',
 
-            gridTemplateRows: '600px 200px 200px 74px 1fr',
+            gridTemplateRows: '1fr 0.5fr 74px 1fr',
             gridTemplateAreas: `
 
                                 'view1'
                                 'view3'
                                 'view4'
-                                'view5'
                                 'view2'
             `,
         },
         [theme.breakpoints.up('lg')]: {
             gridTemplateColumns: '4fr 1fr',
 
-            gridTemplateRows: '3fr 0.5fr 1fr 74px',
+            gridTemplateRows: '3fr 1fr 74px',
             gridTemplateAreas: `
 
                                 'view1 view2'
                                 'view3 view2'
                                 'view4 view2'
-                                'view5 view2'
             `,
             height: '100vh'
         },
@@ -110,28 +107,19 @@ const styles = (theme) => ({
 
     gridView1 : {
         gridArea: 'view1',
-        background: 'red',
         padding: '50px',
     },
     gridView2    : {
         gridArea  : 'view2',
-        background: 'pink',
         padding   : '55px',
         textAlign : 'center'
     },
     gridView3    : {
         gridArea  : 'view3',
-        background: 'orange',
-        padding   : '50px'
+        padding   : '0 50px 10px 50px',
     },
     gridView4    : {
         gridArea  : 'view4',
-        background: 'blue',
-        padding   : '0 50px 10px 50px',
-    },
-    gridView5    : {
-        gridArea  : 'view5',
-        background: 'grey',
     }
 });
 
@@ -304,6 +292,7 @@ class PublisherRoom extends React.Component {
                                                 controls
                                                 autoPlay
                                                 playsInline
+                                                style={{backgroundColor: 'black'}}
                                                 width={800}
                                                 // height={400}
                                             ></video>
@@ -315,11 +304,7 @@ class PublisherRoom extends React.Component {
                         
                         </Box>
                     </div>
-                    
                     <div className={classes.gridView3}>
-                        <div>화면 구성</div>
-                    </div>
-                    <div className={classes.gridView4}>
                         <h3>참여자</h3>
                         <video
                                 id="friendFace1"
@@ -371,7 +356,7 @@ class PublisherRoom extends React.Component {
     
                         </video>
                     </div>
-                    <div className={classes.gridView5}>
+                    <div className={classes.gridView4}>
                         {/*<Box bgcolor='text.disabled' color="info.contrastText" style={{height: '43.8vh', textAlign:'center', verticalAlign:'middle'}}>*/}
                         <div style={{textAlign: 'center'}}>
                             

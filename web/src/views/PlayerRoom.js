@@ -53,7 +53,7 @@ const styles = theme => ({
             `,
         [theme.breakpoints.up('xs')]: {
             gridTemplateColumns: '1fr',
-            gridTemplateRows: '600px 200px 200px 74px 1fr',
+            gridTemplateRows: '1fr 0.5fr 74px 1fr',
             gridTemplateAreas: `
                                 'view1'
                                 'view3'
@@ -74,23 +74,19 @@ const styles = theme => ({
     },
     gridView1: {
         gridArea: 'view1',
-        background: 'red',
         padding: '50px',
     },
     gridView2: {
         gridArea: 'view2',
-        background: 'pink',
         padding: '55px',
         textAlign: 'center'
     },
     gridView3: {
         gridArea: 'view3',
-        background: 'blue',
-        // padding: '50px'
+        height: '100%',
     },
     gridView4: {
         gridArea: 'view4',
-        background: 'grey',
     }
 
 
@@ -206,13 +202,14 @@ class PlayerRoom extends React.Component {
                             <div style={{textAlign: 'center', paddingTop: '20px'}}>
                                 <h2>세미나 제목 : {onRoom.title}</h2>
                                 <div style={{textAlign: 'center'}}>
-                                    <div>
+                                    <div style={{overflowY: 'hidden'}}>
                                         {/*온트랙에서 getElementById와 맞춘 곳으로 비디오가 재생된다*/}
                                         <video
                                             id="peerFace"
                                             autoPlay
                                             controls
                                             playsInline
+                                            style={{backgroundColor: 'black'}}
                                             width={800}
                                             // height={400}
                                         >
