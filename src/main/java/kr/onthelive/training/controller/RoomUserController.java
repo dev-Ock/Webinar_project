@@ -59,5 +59,11 @@ public class RoomUserController {
         return roomUserStreamUrl;
     }
 
+    @GetMapping("/all")
+    public List<BaseRoomUser> getRoomUserList(HttpServletRequest httpRequest){
+        List<BaseRoomUser> allRoomUsers = roomUserService.readAllRoomUsers();
+        return allRoomUsers;
+    }
+
 
 }

@@ -20,15 +20,18 @@ export const RoomUserStateType = { // player의 스트리밍 상태
 
 export const EmptyRoomUserDetail ={
     id: '',
-    roomI: '',
+    roomId: '',
     publisherId: '',
     playerId: '',
     state: '',
     streamUrl: '',
 }
 
+export const EmptyRoomUserList = [];
+
 export default class RoomUserStore {
     streamUser = Object.assign({},EmptyRoomUserDetail) // EmptyRoomUserDetail가 { } 여서, target도 [ ] 에서 { } 로 바꿨습니다
+    roomUserList = Object.assign([], EmptyRoomUserList)
 
     constructor(props) {
         this.roomUserRepository = props.roomUserRepository;
@@ -42,6 +45,15 @@ export default class RoomUserStore {
         const result = yield this.roomUserRepository.onCreateRoomUser(param);
         return result;
     }
+
+    // 전체 룸 유저 정보 조회 (현재 세미나에 참여중인 룸유저)
+    * getAllRoomUsers() {
+        const allRoomUsersData = yield this.roomUserRepository.onSelectAllRoomUsers();
+        console.log("RoomUserStore ")
+        this.roomUserList = allRoomUsersData;
+        return this.roomUserList;
+    }
+
 
     // 세미나 참석 중인 player list 조회
     * getRoomUserList(roomId) {

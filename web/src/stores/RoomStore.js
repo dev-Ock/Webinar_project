@@ -612,7 +612,7 @@ export default class RoomStore {
         try {
             const roomList = yield this.roomRepository.getRoomUserNameList();
             this.roomList = roomList;
-            console.log('스토어에서 RoomStore selectRoomList roomList', roomList)
+            // console.log('스토어에서 RoomStore selectRoomList roomList', roomList)
             // this.roomListLength = toJS(roomList).length;
             // console.log('param확인', toJS(roomList).length);
             // return roomList;
