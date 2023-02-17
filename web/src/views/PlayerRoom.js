@@ -63,7 +63,7 @@ const styles = theme => ({
         },
         [theme.breakpoints.up('lg')]: {
             gridTemplateColumns: '4fr 1fr',
-            gridTemplateRows: '3fr 1fr 74px',
+            gridTemplateRows: '800px 1fr 74px',
             gridTemplateAreas: `
                                 'view1 view2'
                                 'view3 view2'
@@ -74,12 +74,10 @@ const styles = theme => ({
     },
     gridView1: {
         gridArea: 'view1',
-        background: 'red',
         padding: '50px',
     },
     gridView2: {
         gridArea: 'view2',
-        background: 'pink',
         padding: '55px',
         textAlign: 'center'
     },
@@ -89,7 +87,6 @@ const styles = theme => ({
     },
     gridView4: {
         gridArea: 'view4',
-        background: 'grey',
     }
 
 
@@ -256,8 +253,8 @@ class PlayerRoom extends React.Component {
                                             controls
                                             playsInline
                                             style={{backgroundColor: 'black'}}
-                                            width={800}
-                                            // height={400}
+                                            width={900}
+                                            height={600}
                                         >
                                         
                                         </video>
@@ -296,9 +293,6 @@ class PlayerRoom extends React.Component {
                                         onClick={this.onServerPlayerConnection.bind(this)}>
                                         방송 시청
                                     </Button>
-                                </ButtonGroup>
-                                <ButtonGroup variant="outlined" aria-label="outlined primary button group" size="large" color="inherit">
-                                   {/*발표자용*/}
                                     <Button style={{display: 'block'}}>
                                         <fieldset id="playerOptions"
                                                   style={{display: 'block', marginTop: '-8px', marginBottom: '-3px'}}>
