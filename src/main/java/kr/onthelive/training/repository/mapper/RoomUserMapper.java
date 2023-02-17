@@ -12,6 +12,9 @@ public interface RoomUserMapper {
     // 룸 유저 한 명 조회
     BaseRoomUser selectRoomUser(String id);
 
+    // 룸 유저 전체 조회
+    List<BaseRoomUser> selectAllRoomUsers();
+
     //
     List<BaseRoomUserWithUserName> selectRoomUserListByRoomId(String roomId);
 

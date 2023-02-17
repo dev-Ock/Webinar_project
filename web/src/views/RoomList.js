@@ -66,7 +66,8 @@ class RoomList extends React.Component {
             pending : true,
             limit   : 12,
             page    : 1,
-            length  : 0
+            length  : 0,
+            // allROOMUSER : [],
         };
         this.offset = (this.state.page - 1) * this.state.limit
     }
@@ -76,9 +77,14 @@ class RoomList extends React.Component {
         const roomList = this.props.roomStore.selectRoomList();
         roomList.then(rooms => {
                 this.state.length = rooms.length;
-                console.log("roomList", this.state.length)
+                // console.log("roomList", this.state.length)
             }
         )
+        this.props.roomUserStore.getAllRoomUsers();
+        // const data = this.props.roomUserStore.getAllRoomUsers();
+        // this.state.allROOMUSER.push(data);
+        // console.log("data나나 : ", toJS(data));
+        // console.log("allROOMUSER나나 : ", toJS(this.state.allROOMUSER));
     }
     
     componentDidUpdate(prevProps, prevState, snapshot) {
@@ -105,15 +111,20 @@ class RoomList extends React.Component {
         
         const {classes} = this.props
         const {roomList} = this.props.roomStore;
+        const {roomUserList} = this.props.roomUserStore;
 
         const userId = this.props.authStore.loginUser.id;
         const publisherRoomList = toJS(roomList).filter(room => room.publisherId === userId);
         const playerRoomList = toJS(roomList).filter(room => room.publisherId !== userId);
 
-        const totalRoomList = [...publisherRoomList, ...playerRoomList]
+        const totalRooms = [...publisherRoomList, ...playerRoomList]
 
-        // console.log("publisherRoomList : ", publisherRoomList)
-        // console.log("playerRoomList : ", playerRoomList)
+        const totalRoomList = totalRooms.map((obj) => {
+            let countParticipants = toJS(roomUserList).filter((user) =>  obj.id === user.roomId )
+            obj["participants"] = countParticipants.length
+            return obj
+        })
+        // console.log("totalRoomList : ", totalRoomList)
 
         return (
             <Container component="main" className={classes.mainContainer}>
@@ -159,7 +170,7 @@ class RoomList extends React.Component {
                                                 this.enterRoom(e, room)
                                             }}>
                                                 <CardHeader className={cardHeaderClasses.title} style={{color:'#455a64'}} title={room.title}
-                                                            subheader={room.name}/>
+                                                            subheader={room.name} />
                                                 <CardContent>
                                                     <Typography variant='body1' component='div' style={{color:'#78909c'}}>
                                                         {room.description ? room.description : '입력한 내용이 없습니다.'}
@@ -189,6 +200,9 @@ class RoomList extends React.Component {
                                                     </div>
                                                     :
                                                     ""
+                                                }
+                                                {
+                                                    <div style={{color: '#607d8b', marginLeft:'7px'}}><h3> {room.participants}/{room.maximum} </h3></div>
                                                 }
 
 

@@ -38,6 +38,12 @@ public class RoomUserService {
         return result;
     }
 
+    // 룸 유저 전체 조회
+    public List<BaseRoomUser> readAllRoomUsers() {
+        List<BaseRoomUser> allRoomUsers = roomUserRepository.readAllRoomUsers();
+        return allRoomUsers;
+    }
+
     //
     public List<BaseRoomUserWithUserName> getRoomUserListByRoomId(String roomId) {
         List<BaseRoomUserWithUserName> roomUserList = roomUserRepository.selectRoomUserListByRoomId(roomId);

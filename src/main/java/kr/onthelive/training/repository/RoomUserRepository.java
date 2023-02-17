@@ -25,6 +25,9 @@ public class RoomUserRepository {
         return mapper.selectRoomUser(id);
     }
 
+    // 룸 유저 전체 조회
+    public List<BaseRoomUser> readAllRoomUsers () { return mapper.selectAllRoomUsers();}
+
     //
     public List<BaseRoomUserWithUserName> selectRoomUserListByRoomId(String roomId){
         return mapper.selectRoomUserListByRoomId(roomId);
