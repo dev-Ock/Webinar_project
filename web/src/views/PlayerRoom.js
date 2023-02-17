@@ -86,7 +86,7 @@ const styles = theme => ({
     gridView3: {
         gridArea: 'view3',
         background: 'blue',
-        padding: '50px'
+        // padding: '50px'
     },
     gridView4: {
         gridArea: 'view4',
@@ -119,8 +119,9 @@ class PlayerRoom extends React.Component {
         this.props.handleDrawerToggle(); // SideMenu 최소화
         //발표참여
         const roomId = sessionStorage.getItem(RoomViewRoomID);
-        console.log('id확인',roomId)
+        console.log('room id확인',roomId)
         const playerId = this.props.authStore.loginUser.id;
+        console.log('user id 확인',playerId)
         this.state.playerurl = this.props.roomStore.getSelectedRoom(roomId);
         console.log('this.state.room : ', this.state.playerurl);
         //undefined 뜸
@@ -189,15 +190,6 @@ class PlayerRoom extends React.Component {
         this.state.roomUser = await this.props.roomUserStore.getRoomUserList(roomId);
     };
 
-    // onPause() { //필요없을 듯. 발표자는 일시정지가 필요없는거 같다
-    //     this.setState({pause: !this.state.pause});
-    //     const pauseBtn = document.getElementById('pause');
-    //     if (this.state.pause) {
-    //         pauseBtn.innerText = '방송 일시정지';
-    //     } else {
-    //         pauseBtn.innerText = '방송 다시 시작';
-    //     }
-    // };
     // 오른쪽 tab change
     handleChange = (e, value) => {
         this.setState({tabValue: value})
@@ -216,15 +208,6 @@ class PlayerRoom extends React.Component {
                                 <div style={{textAlign: 'center'}}>
                                     <div>
                                         {/*온트랙에서 getElementById와 맞춘 곳으로 비디오가 재생된다*/}
-                                        {/*<video*/}
-                                        {/*    id="myVideoTag"*/}
-                                        {/*    autoPlay*/}
-                                        {/*    playsInline*/}
-                                        {/*    width={400}*/}
-                                        {/*    height={400}*/}
-                                        {/*    style={{marginLeft: "20px"}}*/}
-                                        {/*>*/}
-                                        {/*</video>*/}
                                         <video
                                             id="peerFace"
                                             autoPlay
@@ -239,13 +222,6 @@ class PlayerRoom extends React.Component {
                         </Box>
                     </div>
                     <div className={classes.gridView3}>
-                        참여자
-                        {/*<video*/}
-                        {/*    id="peerFace"*/}
-                        {/*    autoPlay*/}
-                        {/*    playsInline*/}
-                        {/*    width={150}*/}
-                        {/*    height={100}></video>*/}
                         <video
                             id="myVideoTag"
                             autoPlay
