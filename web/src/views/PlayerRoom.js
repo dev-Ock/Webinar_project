@@ -162,11 +162,11 @@ class PlayerRoom extends React.Component {
         const streamUrl = handsUp.streamUrl;
         // console.log('같은지 테스트',streamUrl) 같음확인
         // SRS server-발표자 연결
-        await this.props.roomStore.serverPublisherConnection(streamUrl);
+        await this.props.roomStore.pServerPublisherConnection(streamUrl);
     }
 
 
-    // SRS server-Player 연결
+    // SRS server-Player 연결 방송시청
     onServerPlayerConnection() {
         const streamUrl = sessionStorage.getItem(Repository.RoomViewStreamUrl);
         this.props.roomStore.serverPlayerConnection(streamUrl);
