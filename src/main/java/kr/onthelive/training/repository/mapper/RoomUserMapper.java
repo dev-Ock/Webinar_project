@@ -27,6 +27,12 @@ public interface RoomUserMapper {
     // 새로운 룸 유저 추가
     int insertRoomUser(BaseRoomUser roomUser);
 
+    // room user state를 progress로 update
+    int updateStateProgress(String roomId);
+
+    // room user를 roomId로 삭제
+    int deleteStateProgress(String roomId);
+
     // 룸 유저 StreamUrl 추가
     int updateRoomUserStreamUrl(BaseRoomUser roomUser);
 

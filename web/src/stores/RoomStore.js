@@ -109,12 +109,12 @@ export default class RoomStore {
     onRoom = Object.assign({}, EmptyOnRoom);
     // roomListLength = toJS(this.roomList.length);
     onStream = Object.assign({}, EmptyStream);
-
+    
     onPannelList = Object.assign([], EmptyPannelList);
-
+    
     playerOnStream = Object.assign({}, EmptyPlayerStream);
     onPannelStream1 = Object.assign({}, EmptyPannelStream1);
-
+    
     
     constructor(props) {
         this.roomRepository = props.roomRepository;
@@ -157,12 +157,12 @@ export default class RoomStore {
     changeStream = (stream) => {
         this.onStream = stream;
     };
-
+    
     playerChangeStream = (playerStream) => {
         this.playerOnStream = playerStream;
     };
-
-
+    
+    
     // pannel stream
     setPannelList = (user) => {
         this.onPannelList.push(user);
@@ -290,13 +290,13 @@ export default class RoomStore {
                 width: {ideal: 320, max: 576},
             },
         };
-
+        
         playserStream = new MediaStream();
         playserStream = await navigator.mediaDevices.getUserMedia(playerConstraints);
-        console.log('test',playserStream.getTracks())
+        console.log('test', playserStream.getTracks())
         myVideo = document.getElementById("myVideoTag");
         myVideo.srcObject = playserStream;
-
+        
         // 비디오 장치들이 cameras 옵션에 달리도록 세팅
         const playerDevices = await navigator.mediaDevices.enumerateDevices();
         const playerCameras = playerDevices.filter((device) => device.kind === "videoinput");
@@ -313,7 +313,7 @@ export default class RoomStore {
             }
             camerasSelect.appendChild(playerOption);
         });
-
+        
         playserStream.getAudioTracks()
             .forEach((track) => (track.enabled = false));
         console.log('플레이어 송출용 stream', playserStream);
@@ -350,7 +350,7 @@ export default class RoomStore {
             
             // createOffer & setLocalDescription
             let offer = await pc.createOffer(); // addTransceiver와 addTrack을 거친 peer connection에서 offer를 만든다.
-            // console.log("offer", offer);
+            console.log("offer", offer);
             await pc.setLocalDescription(offer);
             
             // SRS server에 POST
@@ -378,12 +378,13 @@ export default class RoomStore {
         pc = new RTCPeerConnection();
         await publish(streamUrl);
     }
+    
     async pServerPublisherConnection(playerUrl) {
         const playerStreamUrl = playerUrl;
         const publish = async (playerStreamUrl) => {
             pc.addTransceiver("audio", {direction: "sendonly"});
             pc.addTransceiver("video", {direction: "sendonly"});
-
+            
             if (
                 !navigator.mediaDevices &&
                 window.location.protocol === "http:" &&
@@ -394,21 +395,21 @@ export default class RoomStore {
                 );
             }
             console.log('stream : ', this.playerOnStream);
-
+            
             let playerStream = this.playerOnStream;
-
+            
             // addTrack
             playerStream.getTracks().forEach((track) => {
                 pc.addTrack(track); // stream의 각 track을 peer connection에 track으로 추가한다.
                 // ontrack && ontrack({ track: track });
             });
-
-
+            
+            
             // createOffer & setLocalDescription
             let playerOffer = await pc.createOffer(); // addTransceiver와 addTrack을 거친 peer connection에서 offer를 만든다.
             // console.log("offer", offer);
             await pc.setLocalDescription(playerOffer);
-
+            
             // SRS server에 POST
             let playerData = {
                 api      : "http://haict.onthe.live:1985/rtc/v1/publish/",
@@ -416,12 +417,12 @@ export default class RoomStore {
                 sdp      : playerOffer.sdp,
             };
             console.log('playerData.streamurl', playerData.streamurl);
-
+            
             const onPublish = (playerData) => {
                 console.log("roomRepository onPublish 진입");
                 return this.setSRSserverPublisherConnection(playerData);
             };
-
+            
             onPublish(playerData).then(async (session) => {
                 console.log("player session", session);
                 console.log("player publishing session.sdp", session.sdp);
@@ -430,11 +431,11 @@ export default class RoomStore {
                 );
             });
         };
-
+        
         pc = new RTCPeerConnection();
         await publish(playerStreamUrl);
     }
-
+    
     // SRS server-publisher axios
     * setSRSserverPublisherConnection(data) {
         const result = yield this.roomRepository.onSRSserverPublisherConnection(data);
@@ -513,35 +514,35 @@ export default class RoomStore {
         this.changeStream(stream);
         await this.onChangeBroadcastingStream();
     }
-
+    
     async playerSetChangeVideoOption() {
         playerCamerasSelect = document.getElementById("playerCameras");
         console.log('RoomStore playerSetChangeVideoOption 진입');
         console.log(playerCamerasSelect.value);
         deviceId = playerCamerasSelect.value;
-
+        
         // 특정 device(camera 등) 설정값
         let playerCameraConstraints = {
             audio: true,
             video: {deviceId: {exact: deviceId}},
         };
-
+        
         let stream = this.onStream;
         const stream2 = await navigator.mediaDevices.getUserMedia(
             deviceId ? playerCameraConstraints : initialConstrains
         );
-
+        
         stream.removeTrack(stream.getVideoTracks()[0]);
         stream.addTrack(stream2.getVideoTracks()[0]);
-
+        
         myVideo = document.getElementById("myVideoTag");
         myVideo.srcObject = stream;
-
+        
         this.playerChangeStream(stream);
         await this.onChangeBroadcastingStream();
     }
-
-
+    
+    
     // 송출할 display 선택
     onSelectDisplayOption = async () => {
         // console.log("22: ",stream.getTracks())
@@ -586,7 +587,7 @@ export default class RoomStore {
             // } else if (displaySurface === 'camera'){
             //     // stream = await navigator.mediaDevices.getUserMedia(constraints);
             //     await this.setRoom();
-
+            
         } else {
             console.log("RoomStore onSelectDisplayOption display option error")
         }
@@ -610,10 +611,10 @@ export default class RoomStore {
             console.log('options', options)
             preferredDisplaySurface.value = displaySurface;
             preferredDisplaySurface.disabled = true;
-
+            
             await navigator.mediaDevices.getDisplayMedia(options)
                 .then(async (playerStreamData) => {
-
+                    
                     stream = playerStreamData; // 화면공유는 video track만 추가되는 것을 확인함 (즉, streamData에는 video track만 있음)
                     stream.addTrack(myAudioStream); // 내가 선택한 audio를 track에 추가함
                     console.log('stream : ', stream.getTracks()) // 화면공유 video와 내가 선택한 audio가 각각 하나씩 track으로 들어있음을 확인.
@@ -622,7 +623,7 @@ export default class RoomStore {
                     this.changeStream(stream);
                     // 송출 stream도 변경
                     await this.playerOnChangeBroadcastingStream();
-
+                    
                     // 화면공유 끝내면
                     stream.getVideoTracks()[0].onended = async () => {
                         this.changeStream(stream);
@@ -632,7 +633,7 @@ export default class RoomStore {
                 .catch(e => {
                     console.log(e)
                 })
-
+            
         } else {
             console.log("RoomStore onSelectDisplayOption display option error")
         }
@@ -693,7 +694,7 @@ export default class RoomStore {
         // 송출 stream도 변경
         await this.onChangeBroadcastingStream();
     }
-
+    
     //player 용
     async playerOnEndDisplaySharing() {
         // 화면공유 끝나면 다시 카메라로 세팅
@@ -702,13 +703,13 @@ export default class RoomStore {
         camerasSelect.hidden = false;
         preferredDisplaySurface.value = 'camera';
         preferredDisplaySurface.disabled = false;
-
+        
         // 특정 device(camera 등) 설정값
         let cameraConstraints = {
             audio: true,
             video: {deviceId: {exact: deviceId}},
         };
-
+        
         const stream2 = await navigator.mediaDevices.getUserMedia(
             deviceId ? cameraConstraints : initialConstrains
         );
@@ -719,11 +720,11 @@ export default class RoomStore {
         // console.log("stream22222 : ", stream.getTracks())
         myVideo.srcObject = stream;
         this.changeStream(stream);
-
+        
         // 송출 stream도 변경
         await this.playerOnChangeBroadcastingStream();
     }
-
+    
     /////////////////////////////////////////////////////////
     
     
@@ -779,9 +780,10 @@ export default class RoomStore {
         };
         await play(streamUrl);
     }
+    
     //srs player-server-player 연결
-
-
+    
+    
     // SRS server-player axios
     * setSRSserverPlayerConnection(data) {
         const result = yield this.roomRepository.onSRSserverPlayerConnection(data);
@@ -806,7 +808,7 @@ export default class RoomStore {
             .forEach((track) => (track.enabled = !track.enabled));
         // return !audioOff;
     }
-
+    
     //player 송출용 Audio & video turn on/off
     playerSetVideoOnOff() {
         console.log('player RoomStore setVideoOnOff 진입');
@@ -815,7 +817,7 @@ export default class RoomStore {
             .forEach((track) => (track.enabled = !track.enabled));
         // return !videoOn;
     };
-
+    
     // player용 Audio turn on/off
     playerSetAudioOnOff() {
         console.log('player RoomStore setAudioOnOff 진입');
@@ -824,7 +826,7 @@ export default class RoomStore {
             .forEach((track) => (track.enabled = !track.enabled));
         // return !audioOff;
     };
-
+    
     // 룸 전체 리스트 조회
     * selectRoomList() {
         // console.log("selectroomusername확인")
@@ -1020,16 +1022,16 @@ export default class RoomStore {
         return yield this.roomRepository.onUpdateRoom(data);
     }
     
-
+    
     // room state : Pending
     onPendingRoomState(data) {
         console.log('onPendingRoom data : ', data);
-        try{
+        try {
             data.state = RoomStateType.Pending;
             this.onUpdateRoomState(data)
                 .then(result => {
                     console.log("onPendingRoom", result);
-                    if(result === 1){
+                    if (result === 1) {
                         console.log("onPendingRoom 성공")
                     }
                     if (result !== 1) {
@@ -1037,7 +1039,7 @@ export default class RoomStore {
                         console.log("onPendingRoom 실패")
                     }
                 })
-        }catch(e){
+        } catch (e) {
             console.log(e);
         }
     }
@@ -1045,20 +1047,19 @@ export default class RoomStore {
     // room state : Progress
     onProgressRoomState(data) {
         console.log('onProgressRoom data : ', data);
-        try{
+        try {
             data.state = RoomStateType.Progress;
             this.onUpdateRoomState(data)
                 .then(result => {
                     console.log("onProgressRoom", result);
-                    if(result === 1){
+                    if (result === 1) {
                         console.log("onProgressRoom 성공")
-                    }
-                    if (result !== 1) {
+                    } else {
                         // this.onFailedRoomState(data); // roomData.state = RoomStateType.Failed;
                         console.log("onProgressRoom 실패")
                     }
                 })
-        }catch(e){
+        } catch (e) {
             console.log(e);
         }
     }
@@ -1066,24 +1067,14 @@ export default class RoomStore {
     // room state : Complete
     onCompleteRoomState(data) {
         console.log('onCompleteRoom data : ', data);
-        try{
+        try {
             data.state = RoomStateType.Complete;
-            this.onUpdateRoomState(data)
-                .then(result => {
-                    console.log("onCompleteRoom", result);
-                    if(result === 1){
-                        console.log("onCompleteRoom 성공")
-                        alert('세미나가 종료되었습니다.');
-                        window.location.replace('/room-list');
-                    }
-                    if (result !== 1) {
-                        // this.onFailedRoomState(roomData); // roomData.state = RoomStateType.Failed;
-                        console.log("onCompleteRoom 실패")
-                        alert('세미나가 종료되었습니다.');
-                        window.location.replace('/room-list');
-                    }
-                })
-        }catch(e){
+            return this.onUpdateRoomState(data)
+                // .then(result => {
+                //     console.log("onCompleteRoom", result);
+                //     return result;
+                // })
+        } catch (e) {
             console.log(e);
         }
     }
@@ -1091,7 +1082,7 @@ export default class RoomStore {
     // room state : Failed
     onFailedRoomState(data) {
         console.log('onFailedRoom data : ', data);
-        try{
+        try {
             data.state = RoomStateType.Failed;
             this.onUpdateRoomState(data)
                 .then(result => {
@@ -1100,7 +1091,7 @@ export default class RoomStore {
                         throw new Error("room state 'Failed' update error ");
                     }
                 })
-        }catch(e){
+        } catch (e) {
             console.log(e);
         }
     }

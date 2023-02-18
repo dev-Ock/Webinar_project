@@ -65,4 +65,13 @@ public class RoomUserRepository {
         return mapper.insertRoomUser(roomUser);
     }
 
+    // room user state를 progress로 update
+    public int updateStateProgress(String roomId){
+        return mapper.updateStateProgress(roomId);
+    }
+
+    // room user를 roomId로 삭제
+    public int deleteStateProgress(String roomId){
+        return mapper.deleteStateProgress(roomId);
+    }
 }

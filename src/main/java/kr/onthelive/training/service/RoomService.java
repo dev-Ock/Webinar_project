@@ -40,8 +40,9 @@ public class RoomService {
     public List<BaseRoomUserName> getRoomUserNameList(){
         BaseRoomState state1 = BaseRoomState.Wait;
         BaseRoomState state2 = BaseRoomState.Progress;
+        BaseRoomState state3 = BaseRoomState.Pending;
 
-        final List<BaseRoomUserName> baseRoomUserName =  roomUserNameRepository.selectRoomDetailList(state1,state2);
+        final List<BaseRoomUserName> baseRoomUserName =  roomUserNameRepository.selectRoomDetailList(state1,state2, state3);
         return baseRoomUserName;
     }
 
