@@ -17,6 +17,7 @@ import Home from "./views/Home";
 import SignIn from "./views/SignIn";
 import RoomMake from "./views/RoomMake";
 import RoomList from "./views/RoomList";
+import RoomListVer2 from "./views/RoomListVer2";
 import RoomHistory from "./views/RoomHistory";
 import Notfound from './views/Notfound'
 import PublisherRoom from "./views/PublisherRoom";
@@ -97,7 +98,8 @@ class App extends React.Component {
                                         <Route path="/home" component={Home}/>
                                         <Route exact path="/" component={Home}/>
                                         <Route path="/room-make" component={RoomMake}/>
-                                        <Route path="/room-list" component={RoomList}/>
+                                        {/*<Route path="/room-list" component={RoomList}/>*/}
+                                        <Route path="/room-list" component={RoomListVer2}/>
                                         <Route path="/room-history" component={RoomHistory}/>
                                         <Route path="/publisher-room" render={()=><PublisherRoom handleDrawerToggle={this.handleDrawerToggle}/>} />
                                         <Route path="/player-room" render={()=><PlayerRoom handleDrawerToggle={this.handleDrawerToggle}/>}/>
