@@ -5,9 +5,11 @@ import {withStyles} from "@material-ui/core/styles";
 import {inject, observer} from "mobx-react";
 import * as Repository from "../repositories/Repository";
 import * as Roomstore from "../stores/RoomStore"
+
 import moonPicture from '../assets/images/moon.jpg'
 import beforeStartImage from '../assets/images/notice.png'
 import waitImage from '../assets/images/wait.png'
+import viewLogo from '../assets/images/viewlogo.png'
 
 import {RoomMakeRoomID} from "../repositories/Repository";
 import {Box, Button, Paper, Table, TableBody, TableContainer, TableHead, TableRow} from "@mui/material";
@@ -76,74 +78,55 @@ const styles = (theme) => ({
     gridContainer: {
         display                     : 'grid',
         gridTemplateColumns         : '4fr 1fr',
-        gridTemplateRows            : '3fr 1fr 1fr 1fr',
+        gridTemplateRows            : '3fr 1fr 1fr',
         gridTemplateAreas           : `
                                 'view1 view2'
                                 'view3 view2'
-                                'view4 view2'
-                                'view5 view2'
+                                'view4 view2'           
             `,
         [theme.breakpoints.up('xs')]: {
             gridTemplateColumns: '1fr',
-            
-            gridTemplateRows : '600px 200px 200px 74px 1fr',
+
+            gridTemplateRows: '1fr 0.5fr 74px 1fr',
+
             gridTemplateAreas: `
 
                                 'view1'
                                 'view3'
                                 'view4'
-                                'view5'
                                 'view2'
             `,
         },
         [theme.breakpoints.up('lg')]: {
             gridTemplateColumns: '4fr 1fr',
-            
-            gridTemplateRows : '3fr 0.5fr 1fr 74px',
+
+            gridTemplateRows: '800px 1fr 74px',
+
             gridTemplateAreas: `
 
                                 'view1 view2'
                                 'view3 view2'
                                 'view4 view2'
-                                'view5 view2'
             `,
             height           : '100vh'
         },
     },
-    
-    myVideo: {
-        // width : '100%'
-        // '&[poster]': {
-        //     width : '100%'
-        //     // objectFit: 'fill'
-        // }
-    },
-    
-    
-    gridView1: {
-        gridArea  : 'view1',
-        background: 'red',
-        padding   : '50px',
+
+    gridView1 : {
+        gridArea: 'view1',
+        paddingTop: '50px',
     },
     gridView2: {
         gridArea  : 'view2',
-        background: 'pink',
         padding   : '55px',
-        textAlign : 'center'
+        textAlign : 'center',
     },
     gridView3: {
         gridArea  : 'view3',
-        background: 'orange',
-        padding   : '50px'
+        padding   : '0 50px 10px 50px',
     },
     gridView4: {
         gridArea  : 'view4',
-        background: 'blue',
-        padding   : '0 50px 10px 50px',
-    },
-    gridView5: {
-        gridArea  : 'view5',
-        background: 'grey',
     }
 });
 
@@ -315,23 +298,19 @@ class PublisherRoom extends React.Component {
                     <div className={classes.gridView1}>
                         <Box>
                             <div style={{textAlign: 'center', paddingTop: '20px'}}>
-                                <h2>PUBLISHER ROOM &nbsp; [ Title
-                                    : {this.props.roomStore.onRoom.title} &nbsp; / &nbsp; Publisher
-                                    : {this.props.roomStore.onRoom.name}  &nbsp; /  &nbsp; {this.props.roomStore.onRoom.name} 's
-                                    position : publisher ]</h2>
                                 <div className="call">
                                     <div style={{textAlign: 'center'}}>
                                         <div>
                                             <video
                                                 className={classes.myVideo}
                                                 id="myVideoTag"
-                                                poster={waitImage}
+                                                poster={viewLogo}
                                                 controls
                                                 autoPlay
                                                 playsInline
-                                                width={1000}
-                                                height={800}
                                                 style={{backgroundColor: 'black'}}
+                                                width={900}
+                                                height={700}
                                             ></video>
                                         </div>
                                     </div>
@@ -341,13 +320,10 @@ class PublisherRoom extends React.Component {
                         
                         </Box>
                     </div>
-                    
                     <div className={classes.gridView3}>
-                        <div>화면 구성</div>
-                    </div>
-                    <div className={classes.gridView4}
-                         id='pannelBox'
-                    >
+
+                        <h2>PUBLISHER ROOM &nbsp; / &nbsp; Title : {this.props.roomStore.onRoom.title} &nbsp; / &nbsp; Master
+                            : {this.props.roomStore.onRoom.name}</h2>
                         <h3>참여자</h3>
                         {
                             
@@ -377,7 +353,7 @@ class PublisherRoom extends React.Component {
                         {/*&nbsp;&nbsp;&nbsp;&nbsp;*/}
                     
                     </div>
-                    <div className={classes.gridView5}>
+                    <div className={classes.gridView4}>
                         {/*<Box bgcolor='text.disabled' color="info.contrastText" style={{height: '43.8vh', textAlign:'center', verticalAlign:'middle'}}>*/}
                         <div style={{textAlign: 'center'}}>
                             
