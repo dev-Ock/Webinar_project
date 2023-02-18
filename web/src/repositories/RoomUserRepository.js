@@ -86,7 +86,9 @@ export default class RoomUserRepository extends Repository {
                     reject(error);
                 });
         })
-    }
+    };
+
+
     
    
     

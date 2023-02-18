@@ -102,6 +102,13 @@ export default class RoomUserStore {
         this.streamUser = streamUser;
         return streamUser;
     }
+    //create room user history
+    * onCreateRoomUserHistory(data){
+        console.log("RoomUserStore onCreateRoomUser param : ",data)
+        // console.log('this',this)
+        const result = yield this.roomUserHistoryRepository.onCreateHistory(data);
+        return result;
+    };
     
     // roomUser state change DB Update
     * onUpdateRoomUserState(data) {

@@ -143,7 +143,19 @@ class PlayerRoom extends React.Component {
 
         }
     }
-
+    async handelComplete() {
+        // window.confirm("방송에서 나가시겠습니까?");
+        const data = {
+            playerId: this.props.authStore.loginUser.id,
+            roomId: sessionStorage.getItem(RoomViewRoomID),
+            state : 'Complete'
+        }
+        console.log('나가기 테스트',data)
+        await this.props.roomUserStore.onCreateRoomUserHistory(data)
+        // await this.props.roomStore.onDeleteRoomUser()
+        // await this.props.roomUserStore.playerOut()
+        window.location.replace('/room-list');
+    };
 
     handleSubmitHandsUp = async (e) => {
         e.preventDefault()
@@ -337,7 +349,7 @@ class PlayerRoom extends React.Component {
                                     </Button>
                                     {this.state.audioOff ? <Button onClick={this.pOnAudioOnOff.bind(this)} style={{display: 'block'}}><div><MicIcon></MicIcon></div><span>Mute</span></Button>:<Button style={{display: 'block'}} onClick={this.pOnAudioOnOff.bind(this)}><div><MicOffIcon></MicOffIcon></div><span>Unmute</span></Button>}
                                     {this.state.videoOn ? <Button onClick={this.pOnVideoOnOff.bind(this)} style={{display: 'block'}}><div><VideocamIcon></VideocamIcon></div><span>Start cam</span></Button>:<Button style={{display: 'block'}} onClick={this.pOnVideoOnOff.bind(this)}><div><VideocamOffIcon></VideocamOffIcon></div><span>Stop cam</span></Button>}
-
+                                    <Button onClick={this.handelComplete.bind(this)}>나가기</Button>
 
                                 </ButtonGroup>
 

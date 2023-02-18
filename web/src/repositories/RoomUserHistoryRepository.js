@@ -56,6 +56,20 @@ export default class RoomUserHistoryRepository extends Repository {
                     reject(error);
                 });
         })
-    }
+    };
+    //player가 나가기 버튼을 눌렀을 때 room user history insert(현재는 나가기 할때 그냥 insert 되는 걸로
+    onCreateHistory = (data) =>{
+        return new Promise((resolve, reject)=>{
+            this.getRequestPromise('post', this.requestPrefix + '/insert' , data)
+                .then(data => {
+                    console.log('RoomUserRepository createRoomUserHistory result : ',data)
+                    resolve(data);
+                })
+                .catch(error => {
+                    console.log('RoomUserRepository createRoomUserHistory error : ',error)
+                    reject(error);
+                });
+        })
+    };
     
 }
