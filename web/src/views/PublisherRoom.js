@@ -6,7 +6,9 @@ import {inject, observer} from "mobx-react";
 import * as Repository from "../repositories/Repository";
 import * as Roomstore from "../stores/RoomStore"
 import moonPicture from '../assets/images/moon.jpg'
-import notice from '../assets/images/notice.png'
+import beforeStartImage from '../assets/images/notice.png'
+import waitImage from '../assets/images/wait.png'
+
 import {RoomMakeRoomID} from "../repositories/Repository";
 import {Box, Button, Paper, Table, TableBody, TableContainer, TableHead, TableRow} from "@mui/material";
 import PlayerList from "./PlayerList";
@@ -172,11 +174,6 @@ class PublisherRoom extends React.Component {
         // SideMenu 최소화
         this.props.handleDrawerToggle();
         
-        
-        
-        const myvideo = document.getElementById("myVideoTag");
-        myvideo.poster = notice;
-        
         // room 데이터 조회
         const roomId = sessionStorage.getItem(RoomMakeRoomID);
         this.state.room = this.props.roomStore.getSelectedRoom(roomId);
@@ -197,9 +194,10 @@ class PublisherRoom extends React.Component {
         }
     }
     
-    // 방송 준비
+    // '방송 준비 완료' 버튼 누르면 -> '방송 시작' 버튼 으로 변경
     onStandBy() {
         this.setState({standBy: false});
+        
     }
     
     // SRS server-Publisher 연결
@@ -211,7 +209,10 @@ class PublisherRoom extends React.Component {
         await this.props.roomStore.serverPublisherConnection(streamUrl);
         // room state : progress
         await this.props.roomStore.onProgressRoomState(this.props.roomStore.onRoom);
-        this.setState({view: false});
+        if (this.props.roomStore.onRoom.state === Roomstore.RoomStateType.Progress) {
+            alert("방송이 시작되었습니다.")
+            this.setState({view: false});
+        }
     }
     
     // Camera on/off
@@ -288,17 +289,15 @@ class PublisherRoom extends React.Component {
     // 패널 추가
     addPannel = async (e, roomUser) => {
         e.preventDefault();
-        console.log("333", this.state.pannelAddition)
-        await this.props.roomStore.onAddPannel(roomUser, this.state.pannelAddition, this.pannelAdditionStateTrue.bind(this), this.pannelAdditionStateFalse.bind(this));
+        await this.props.roomStore.onAddPannel(roomUser);
+        console.log("222111",this.props.roomStore.onPannelList);
+        // pannel video에 stream 추가
+        this.props.roomStore.onPannelList.map(user => {
+            const videoTag = document.getElementById(`pannelVideo-${user.streamUrl}`);
+            videoTag.srcObject = user.stream;
+        })
     }
-    
-    pannelAdditionStateTrue() {
-        this.setState({pannelAddition: true})
-    }
-    
-    pannelAdditionStateFalse() {
-        this.setState({pannelAddition: false})
-    }
+
 
 // if ((navigator.mediaDevices && 'getDisplayMedia' in navigator.mediaDevices)) {
 //     startButton.disabled = false;
@@ -318,14 +317,15 @@ class PublisherRoom extends React.Component {
                             <div style={{textAlign: 'center', paddingTop: '20px'}}>
                                 <h2>PUBLISHER ROOM &nbsp; [ Title
                                     : {this.props.roomStore.onRoom.title} &nbsp; / &nbsp; Publisher
-                                    : {this.props.roomStore.onRoom.name}  &nbsp; /  &nbsp; {this.props.roomStore.onRoom.name} 's position : publisher ]</h2>
+                                    : {this.props.roomStore.onRoom.name}  &nbsp; /  &nbsp; {this.props.roomStore.onRoom.name} 's
+                                    position : publisher ]</h2>
                                 <div className="call">
                                     <div style={{textAlign: 'center'}}>
                                         <div>
                                             <video
                                                 className={classes.myVideo}
                                                 id="myVideoTag"
-                                                // poster={moonPicture}
+                                                poster={waitImage}
                                                 controls
                                                 autoPlay
                                                 playsInline
@@ -349,55 +349,33 @@ class PublisherRoom extends React.Component {
                          id='pannelBox'
                     >
                         <h3>참여자</h3>
-                        {/*<video*/}
-                        {/*        id="friendFace1"*/}
-                        {/*        controls*/}
-                        {/*        autoPlay*/}
-                        {/*        playsInline*/}
-                        {/*        width={200}*/}
-                        {/*        height={200}>*/}
-                        {/*    */}
-                        {/*</video>*/}
-                        {/*&nbsp;&nbsp;&nbsp;&nbsp;*/}
-                        {/*<video*/}
-                        {/*    id="friendFace2"*/}
-                        {/*    controls*/}
-                        {/*    autoPlay*/}
-                        {/*    playsInline*/}
-                        {/*    width={200}*/}
-                        {/*    height={200}>*/}
+                        {
+                            
+                            this.props.roomStore.onPannelList === undefined
+                                ?
+                                ""
+                                :
+                                this.props.roomStore.onPannelList.map((user, i) => {
+
+                                    return (
+                                        <video
+                                            key={`pannelVideo-${i}`}
+                                            id={`pannelVideo-${user.streamUrl}`}
+                                            controls
+                                            autoPlay
+                                            playsInline
+                                            width={200}
+                                            height={160}
+                                            style={{backgroundColor: 'black'}}
+                                            // src ={user.stream}
+                                        >
+                                        </video>
+                                    )
+                                })
+                        }
                         
-                        {/*</video>*/}
                         {/*&nbsp;&nbsp;&nbsp;&nbsp;*/}
-                        {/*<video*/}
-                        {/*    id="friendFace3"*/}
-                        {/*    controls*/}
-                        {/*    autoPlay*/}
-                        {/*    playsInline*/}
-                        {/*    width={200}*/}
-                        {/*    height={200}>*/}
-                        
-                        {/*</video>*/}
-                        {/*&nbsp;&nbsp;&nbsp;&nbsp;*/}
-                        {/*<video*/}
-                        {/*    id="friendFace4"*/}
-                        {/*    controls*/}
-                        {/*    autoPlay*/}
-                        {/*    playsInline*/}
-                        {/*    width={200}*/}
-                        {/*    height={200}>*/}
-                        
-                        {/*</video>*/}
-                        {/*&nbsp;&nbsp;&nbsp;&nbsp;*/}
-                        {/*<video*/}
-                        {/*    id="friendFace5"*/}
-                        {/*    controls*/}
-                        {/*    autoPlay*/}
-                        {/*    playsInline*/}
-                        {/*    width={200}*/}
-                        {/*    height={200}>*/}
-                        
-                        {/*</video>*/}
+                    
                     </div>
                     <div className={classes.gridView5}>
                         {/*<Box bgcolor='text.disabled' color="info.contrastText" style={{height: '43.8vh', textAlign:'center', verticalAlign:'middle'}}>*/}
@@ -549,7 +527,7 @@ class PublisherRoom extends React.Component {
         );
     }
     
-    
+
 }
 
 
