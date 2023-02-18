@@ -74,7 +74,9 @@ let EmptyStream = {};
 const EmptyPannelList = [];
 
 let EmptyPlayerStream = {};
-let EmptyPannelStream1 = {}
+let EmptyPannelStream1 = {};
+
+let EmptyPC = {};
 
 
 let pc = '';
@@ -99,7 +101,6 @@ let stream = {};
 let playserStream = {};
 let deviceId = "";
 
-
 export default class RoomStore {
     
     publishedRoomList = Object.assign([], EmptyRoomList);
@@ -115,6 +116,7 @@ export default class RoomStore {
     playerOnStream = Object.assign({}, EmptyPlayerStream);
     onPannelStream1 = Object.assign({}, EmptyPannelStream1);
     
+    onPc = Object.assign({}, EmptyPC);
     
     constructor(props) {
         this.roomRepository = props.roomRepository;
@@ -168,6 +170,9 @@ export default class RoomStore {
         this.onPannelList.push(user);
     }
     
+    setPc = (pc) => {
+        this.onPc = pc;
+    }
     
     // 세미나 만들기 정보 서버로 보내기
     * doMakeRoom(userId) {
@@ -373,6 +378,7 @@ export default class RoomStore {
                     new RTCSessionDescription({type: "answer", sdp: session.sdp})
                 );
             });
+            this.setPc(pc);
         };
         
         pc = new RTCPeerConnection();
@@ -641,6 +647,7 @@ export default class RoomStore {
     
     // SRS server로 송출할 stream 변경
     async onChangeBroadcastingStream() {
+        console.log('onChangeBroadcastingStream pc',pc)
         if (pc) {
             let stream = this.onStream;
             console.log('pc videosender', pc.getSenders())
@@ -1013,6 +1020,65 @@ export default class RoomStore {
         //
         //     console.log("2222", video.id)
         // }
+    }
+    
+    // pannel stream으로 송출 stream을 세팅
+    async setPannelStreamSelection(user) {
+        console.log("RoomStore setPannelStreamSelection : ", user);
+        myVideo = document.getElementById("myVideoTag");
+        myVideo.srcObject = user.stream;
+        console.log("RoomStore setPannelStreamSelection... the end")
+        // this.changeStream(user.stream);
+        // await this.onChangeBroadcastingStream();
+        console.log('setPannelStreamSelection pc',pc)
+        const pc2 = this.onPc;
+        console.log('setPannelStreamSelection pc2',pc2)
+        if (pc2) {
+            let stream = user.stream;
+            const videoTrack = stream.getVideoTracks()[0];
+            const audioTrack = stream.getAudioTracks()[0];
+            console.log('videoTrack', videoTrack);
+            console.log('audioTrack', audioTrack);
+            console.log('pc2.getSenders',pc2.getSenders());
+            const videoSender = await pc2
+                .getSenders()
+                .find((sender) => sender.track.kind === "video");
+            const audioSender = pc2
+                .getSenders()
+                .find((sender) => sender.track.kind === "audio");
+            await videoSender.replaceTrack(videoTrack);
+            await audioSender.replaceTrack(audioTrack);
+        }
+
+    }
+    
+    // publisher stream으로 송출 stream을 세팅
+    async setPublisherStreamSelection() {
+        myVideo = document.getElementById("myVideoTag");
+        myVideo.srcObject = this.onStream;
+        console.log("RoomStore setPublisherStreamSelection... the end")
+        // this.changeStream(user.stream);
+        // await this.onChangeBroadcastingStream();
+        console.log('setPublisherStreamSelection pc',pc)
+        const pc2 = this.onPc;
+        console.log('setPublisherStreamSelection pc2',pc2)
+        if (pc2) {
+            let stream = this.onStream;
+            const videoTrack = stream.getVideoTracks()[0];
+            const audioTrack = stream.getAudioTracks()[0];
+            console.log('videoTrack', videoTrack);
+            console.log('audioTrack', audioTrack);
+            console.log('pc2.getSenders',pc2.getSenders());
+            const videoSender = await pc2
+                .getSenders()
+                .find((sender) => sender.track.kind === "video");
+            const audioSender = pc2
+                .getSenders()
+                .find((sender) => sender.track.kind === "audio");
+            await videoSender.replaceTrack(videoTrack);
+            await audioSender.replaceTrack(audioTrack);
+        }
+        
     }
     
     /////////////////////////////////////////////////////////

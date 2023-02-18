@@ -82,7 +82,7 @@ const styles = (theme) => ({
         gridTemplateAreas           : `
                                 'view1 view2'
                                 'view3 view2'
-                                'view4 view2'           
+                                'view4 view2'
             `,
         [theme.breakpoints.up('xs')]: {
             gridTemplateColumns: '1fr',
@@ -192,7 +192,10 @@ class PublisherRoom extends React.Component {
         await this.props.roomStore.serverPublisherConnection(streamUrl);
         // room state : progress & roomUser state : progress
         await this.props.roomStore.onProgressRoomState(this.props.roomStore.onRoom);
-        await this.props.roomUserStore.onProgressRoomUserAndHistoryByPublisher(this.props.roomStore.onRoom.id, this.state.roomPlayerList);
+        if (this.state.roomPlayerList.length !== 0) {
+            console.log("roomPlayerList : ", this.state.roomPlayerList)
+            await this.props.roomUserStore.onProgressRoomUserAndHistoryByPublisher(this.props.roomStore.onRoom.id, this.state.roomPlayerList);
+        }
         if (this.props.roomStore.onRoom.state === Roomstore.RoomStateType.Progress) {
             alert("방송이 시작되었습니다.")
             console.log("playerList : ", this.state.roomPlayerList);
@@ -245,7 +248,9 @@ class PublisherRoom extends React.Component {
         console.log('onRoom', this.props.roomStore.onRoom);
         this.props.roomStore.onCompleteRoomState(this.props.roomStore.onRoom);
         // room state : complete & roomUser state : complete
-        await this.props.roomUserStore.onCompleteRoomUserAndHistoryByPublisher(this.props.roomStore.onRoom.id, this.state.roomPlayerList);
+        if (this.state.roomPlayerList !== []) {
+            await this.props.roomUserStore.onCompleteRoomUserAndHistoryByPublisher(this.props.roomStore.onRoom.id, this.state.roomPlayerList);
+        }
         await this.props.roomStore.onCompleteRoomState(this.props.roomStore.onRoom)
             .then(result => {
                 if (result === 1) {
@@ -298,8 +303,18 @@ class PublisherRoom extends React.Component {
             videoTag.srcObject = user.stream;
         })
     }
+    
+    // pannel stream으로 송출 stream을 세팅
+    onPannelSelection = async (e, user) => {
+        e.preventDefault();
+        await this.props.roomStore.setPannelStreamSelection(user);
+    }
 
-
+    // publisher stream으로 송출 stream을 세팅
+    onPublisherSelection = async (e) => {
+        e.preventDefault();
+        await this.props.roomStore.setPublisherStreamSelection();
+    }
 // if ((navigator.mediaDevices && 'getDisplayMedia' in navigator.mediaDevices)) {
 //     startButton.disabled = false;
 // } else {
@@ -321,8 +336,9 @@ class PublisherRoom extends React.Component {
                                         <div>
                                             <video
                                                 className={classes.myVideo}
+                                                key={"myVideoTag"}
                                                 id="myVideoTag"
-                                                // poster={waitImage}
+                                                poster={waitImage}
                                                 controls
                                                 autoPlay
                                                 playsInline
@@ -331,6 +347,9 @@ class PublisherRoom extends React.Component {
                                                 height={700}
                                             >
                                             </video>
+                                            <button
+                                                onClick={(e) => this.onPublisherSelection(e)}
+                                            >publisher 영상으로 복귀</button>
                                         </div>
                                     </div>
                                 </div>
@@ -357,18 +376,27 @@ class PublisherRoom extends React.Component {
                                 this.props.roomStore.onPannelList.map((user, i) => {
                                     
                                     return (
-                                        <video
-                                            key={`pannelVideo-${i}`}
-                                            id={`pannelVideo-${user.streamUrl}`}
-                                            controls
-                                            autoPlay
-                                            playsInline
-                                            width={200}
-                                            height={160}
-                                            style={{backgroundColor: 'black'}}
-                                            // src ={user.stream}
-                                        >
-                                        </video>
+                                        <div>
+                                            <video
+                                                key={`pannelVideo-${i}`}
+                                                id={`pannelVideo-${user.streamUrl}`}
+                                                controls
+                                                autoPlay
+                                                playsInline
+                                                width={200}
+                                                height={160}
+                                                style={{backgroundColor: 'black'}}
+                                            >
+                                            </video>
+                                            <div> {user.name} </div>
+                                            <button
+                                                key={`pannelVideoButton-${i}`}
+                                                id={`pannelVideoButton-${user.streamUrl}`}
+                                                onClick={(e) => this.onPannelSelection(e, user)}
+                                            >
+                                                {user.name} 선택
+                                            </button>
+                                        </div>
                                     )
                                 })
                         }
@@ -535,14 +563,14 @@ class PublisherRoom extends React.Component {
     }
     
     
-}
-
-
-export default withSnackbar(withRouter(
-        withStyles(styles)(
-            inject('roomStore', 'roomUserStore', 'authStore')(
-                observer(PublisherRoom)
-            )
-        )
+    }
+    
+    
+    export default withSnackbar(withRouter(
+    withStyles(styles)(
+    inject('roomStore', 'roomUserStore', 'authStore')(
+    observer(PublisherRoom)
     )
-);
+    )
+    )
+    );
