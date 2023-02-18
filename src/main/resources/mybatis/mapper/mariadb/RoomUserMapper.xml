@@ -66,9 +66,8 @@
         WHERE stream_url = #{value}
     </select>
 
-    <insert id="insertRoomUser" parameterType="BaseRoomUser" >
+    <insert id="insertRoomUser" parameterType="BaseRoomUser" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO room_users (
-            id,
             room_id,
             publisher_id,
             player_id,
@@ -77,7 +76,6 @@
             created_datetime,
             updated_datetime
         ) VALUES (
-                     #{id},
                      #{roomId},
                      #{publisherId},
                      #{playerId},
@@ -88,13 +86,19 @@
                  )
     </insert>
 
+    <update id="updateStateProgress" parameterType="String">
+        update room_users
+            set state = "Progress"
+        WHERE room_id = #{roomId}
+    </update>
+    
     <update id="updateRoomUserStreamUrl" parameterType="BaseRoomUser" >
         update room_users
             set stream_url = #{streamUrl}
         WHERE room_id = #{roomId}
           AND player_id = #{playerId}
     </update>
-
+    
     <select id="selectRoomUserWithUrl" parameterType="BaseRoomUser" resultMap="BaseRoomUserResultMap">
         SELECT id,
                room_id,
@@ -107,4 +111,9 @@
         FROM room_users
         WHERE room_id = #{roomId} AND player_id = #{playerId}
     </select>
+    
+    <delete id="deleteStateProgress" parameterType="String">
+        DELETE FROM room_users
+        WHERE room_id = #{roomId}
+    </delete>
 </mapper>

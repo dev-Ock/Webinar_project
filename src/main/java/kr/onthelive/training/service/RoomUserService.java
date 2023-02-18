@@ -44,7 +44,7 @@ public class RoomUserService {
         return allRoomUsers;
     }
 
-    //
+    // roomId로 룸 유저 목록 조회
     public List<BaseRoomUserWithUserName> getRoomUserListByRoomId(String roomId) {
         List<BaseRoomUserWithUserName> roomUserList = roomUserRepository.selectRoomUserListByRoomId(roomId);
         return roomUserList;
@@ -75,6 +75,17 @@ public class RoomUserService {
         return result; // result가 1이면 insert 성공, -1이면 중복으로 실패, 0이면 에러로 실패
     }
 
+    // room user state를 progress로 update
+    public int modifyStateProgress(String roomId){
+        int result = roomUserRepository.updateStateProgress(roomId);
+        return result;
+    }
+
+    // room user를 roomId로 삭제
+    public int deleteStateProgress(String roomId){
+        int result = roomUserRepository.deleteStateProgress(roomId);
+        return result;
+    }
 
     // streamUrl 만들기
     public String createStreamUrl(){

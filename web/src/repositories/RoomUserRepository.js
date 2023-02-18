@@ -71,6 +71,24 @@ export default class RoomUserRepository extends Repository {
                 });
         })
     }
-
+    
+    // roomUser state update
+    onUpdateRoomUser = (param) => {
+        console.log('param', param)
+        return new Promise((resolve, reject) => {
+            this.getRequestPromise('put', this.requestPrefix + '/update', param)
+                .then(data => {
+                    console.log('RoomUserRepository onUpdateRoomUser result : ', data)
+                    resolve(data);
+                })
+                .catch(error => {
+                    console.log('RoomUserRepository onUpdateRoomUser error : ', error)
+                    reject(error);
+                });
+        })
+    }
+    
+   
+    
     
 }

@@ -192,9 +192,10 @@ class PublisherRoom extends React.Component {
         await this.props.roomStore.serverPublisherConnection(streamUrl);
         // room state : progress & roomUser state : progress
         await this.props.roomStore.onProgressRoomState(this.props.roomStore.onRoom);
-        // await this.props.roomUserStore.onProgressRoomUserStateByRoomId(this.props.roomStore.onRoom.id);
+        await this.props.roomUserStore.onProgressRoomUserAndHistoryByPublisher(this.props.roomStore.onRoom.id, this.state.roomPlayerList);
         if (this.props.roomStore.onRoom.state === Roomstore.RoomStateType.Progress) {
             alert("방송이 시작되었습니다.")
+            console.log("playerList : ", this.state.roomPlayerList);
             this.setState({view: false});
         }
     }
@@ -244,8 +245,20 @@ class PublisherRoom extends React.Component {
         console.log('onRoom', this.props.roomStore.onRoom);
         this.props.roomStore.onCompleteRoomState(this.props.roomStore.onRoom);
         // room state : complete & roomUser state : complete
-        await this.props.roomStore.onCompleteRoomState(this.props.roomStore.onRoom);
-        // await this.props.roomUserStore.onCompleteRoomUserStateByRoomId(this.props.roomStore.onRoom.id);
+        await this.props.roomUserStore.onCompleteRoomUserAndHistoryByPublisher(this.props.roomStore.onRoom.id, this.state.roomPlayerList);
+        await this.props.roomStore.onCompleteRoomState(this.props.roomStore.onRoom)
+            .then(result => {
+                if (result === 1) {
+                    console.log("onCompleteRoom 성공")
+                    alert('세미나가 종료되었습니다.');
+                    window.location.replace('/room-list');
+                } else {
+                    // this.onFailedRoomState(roomData); // roomData.state = RoomStateType.Failed;
+                    console.log("onCompleteRoom 실패")
+                    alert('세미나가 종료되었습니다.');
+                    window.location.replace('/room-list');
+                }
+            })
     }
     
     // 오른쪽 tab change
@@ -450,7 +463,7 @@ class PublisherRoom extends React.Component {
                                         this.state.view
                                             ?
                                             <Button
-                                                style={{backgroundColor:'orange'}}
+                                                style={{backgroundColor: 'orange'}}
                                                 onClick={this.onServerPublisherConnection.bind(this)}>
                                                 방송 시작
                                             </Button>

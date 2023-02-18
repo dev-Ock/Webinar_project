@@ -8,6 +8,7 @@ import {
     RoomViewStreamUrl,
     UserId
 } from "../repositories/Repository";
+import {RoomStateType} from "./RoomStore";
 
 export const RoomUserStateType = { // player의 스트리밍 상태
     Wait      : "Wait",
@@ -35,6 +36,7 @@ export default class RoomUserStore {
 
     constructor(props) {
         this.roomUserRepository = props.roomUserRepository;
+        this.roomUserHistoryRepository = props.roomUserHistoryRepository;
         makeAutoObservable(this);
     }
 
@@ -100,7 +102,119 @@ export default class RoomUserStore {
         this.streamUser = streamUser;
         return streamUser;
     }
-
-
-
+    
+    // roomUser state change DB Update
+    * onUpdateRoomUserState(data) {
+        return yield this.roomUserRepository.onUpdateRoomUser(data);
+    }
+    
+    // roomUser state : Pending
+    onPendingRoomUserState(data) {
+        console.log('onPendingRoomUser data : ', data);
+        try{
+            data.state = RoomUserStateType.Pending;
+            this.onUpdateRoomUserState(data)
+                .then(result => {
+                    console.log("onPendingUserRoom", result);
+                    if(result === 1){
+                        console.log("onPendingUserRoom 성공")
+                    }
+                    if (result !== 1) {
+                        // this.onFailedRoomUserState(data);
+                        console.log("onPendingUserRoom 실패")
+                    }
+                })
+        }catch(e){
+            console.log(e);
+        }
+    }
+    
+    // roomUser state : Progress
+    onProgressRoomUserState(data) {
+        console.log('onProgressRoomUser data : ', data);
+        try{
+            data.state = RoomUserStateType.Progress;
+            this.onUpdateRoomUserState(data)
+                .then(result => {
+                    console.log("onProgressRoomUser", result);
+                    if(result === 1){
+                        console.log("onProgressRoomUser 성공")
+                    }
+                    if (result !== 1) {
+                        // this.onFailedRoomUserState(data); // roomData.state = RoomStateType.Failed;
+                        console.log("onProgressRoomUser 실패")
+                    }
+                })
+        }catch(e){
+            console.log(e);
+        }
+    }
+    
+    // roomUser state : Complete
+    onCompleteRoomUserState(data) {
+        console.log('onCompleteRoomUser data : ', data);
+        try{
+            data.state = RoomUserStateType.Complete;
+            this.onUpdateRoomUserState(data)
+                .then(result => {
+                    console.log("onCompleteRoomUser", result);
+                    if(result === 1){
+                        console.log("onCompleteRoomUser 성공")
+                        alert('세미나가 종료되었습니다.');
+                    }
+                    if (result !== 1) {
+                        // this.onFailedRoomUserState(data); // roomData.state = RoomStateType.Failed;
+                        console.log("onCompleteRoomUser 실패")
+                        alert('세미나가 종료되었습니다.');
+                    }
+                })
+        }catch(e){
+            console.log(e);
+        }
+    }
+    
+    // roomUser state : Failed
+    onFailedRoomUserState(data) {
+        console.log('onFailedRoomUser data : ', data);
+        try{
+            data.state = RoomUserStateType.Failed;
+            this.onUpdateRoomUserState(data)
+                .then(result => {
+                    console.log("onFailedRoomUser 성공");
+                    if (result !== 1) {
+                        throw new Error("onFailedRoomUser 실패");
+                    }
+                })
+        }catch(e){
+            console.log(e);
+        }
+    }
+    
+    
+    // (publisherRoom에서 제어하는 경우) create RoomUserHistory & update RoomUser [State Progress]
+    onProgressRoomUserAndHistoryByPublisher(roomId, roomPlayerList){
+        console.log('onProgressRoomUserStateByRoomId roomId : ', roomId, roomPlayerList);
+        try{
+            this.roomUserHistoryRepository.onProgressRoomUserAndHistoryByPublisher(roomId, roomPlayerList)
+                .then(result => {
+                    console.log("onProgressRoomUserStateByRoomId", result);
+                })
+        }catch(e){
+            console.log(e);
+        }
+    }
+    
+    // (publisherRoom에서 제어하는 경우) create RoomUserHistory & update RoomUser [State Complete]
+    onCompleteRoomUserAndHistoryByPublisher(roomId, roomPlayerList){
+        console.log('onCompleteRoomUserStateByRoomId roomId : ', roomId, roomPlayerList);
+        try{
+            this.roomUserHistoryRepository.onCompleteRoomUserAndHistoryByPublisher(roomId, roomPlayerList)
+                .then(result => {
+                    console.log("onCompleteRoomUserStateByRoomId", result);
+                })
+        }catch(e){
+            console.log(e);
+        }
+    }
+    
 }
