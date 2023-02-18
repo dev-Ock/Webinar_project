@@ -86,9 +86,9 @@ const styles = (theme) => ({
             `,
         [theme.breakpoints.up('xs')]: {
             gridTemplateColumns: '1fr',
-
+            
             gridTemplateRows: '1fr 0.5fr 74px 1fr',
-
+            
             gridTemplateAreas: `
 
                                 'view1'
@@ -99,9 +99,9 @@ const styles = (theme) => ({
         },
         [theme.breakpoints.up('lg')]: {
             gridTemplateColumns: '4fr 1fr',
-
+            
             gridTemplateRows: '800px 1fr 74px',
-
+            
             gridTemplateAreas: `
 
                                 'view1 view2'
@@ -111,22 +111,22 @@ const styles = (theme) => ({
             height           : '100vh'
         },
     },
-
-    gridView1 : {
-        gridArea: 'view1',
+    
+    gridView1: {
+        gridArea  : 'view1',
         paddingTop: '50px',
     },
     gridView2: {
-        gridArea  : 'view2',
-        padding   : '55px',
-        textAlign : 'center',
+        gridArea : 'view2',
+        padding  : '55px',
+        textAlign: 'center',
     },
     gridView3: {
-        gridArea  : 'view3',
-        padding   : '0 50px 10px 50px',
+        gridArea: 'view3',
+        padding : '0 50px 10px 50px',
     },
     gridView4: {
-        gridArea  : 'view4',
+        gridArea: 'view4',
     }
 });
 
@@ -183,15 +183,16 @@ class PublisherRoom extends React.Component {
         
     }
     
-    // SRS server-Publisher 연결
+    // 방송시작 : SRS server-Publisher 연결
     async onServerPublisherConnection() {
         // room state : pending
         await this.props.roomStore.onPendingRoomState(this.props.roomStore.onRoom);
         // SRS server-Publisher 연결
         const streamUrl = sessionStorage.getItem(Repository.RoomMakeStreamUrl);
         await this.props.roomStore.serverPublisherConnection(streamUrl);
-        // room state : progress
+        // room state : progress & roomUser state : progress
         await this.props.roomStore.onProgressRoomState(this.props.roomStore.onRoom);
+        // await this.props.roomUserStore.onProgressRoomUserStateByRoomId(this.props.roomStore.onRoom.id);
         if (this.props.roomStore.onRoom.state === Roomstore.RoomStateType.Progress) {
             alert("방송이 시작되었습니다.")
             this.setState({view: false});
@@ -238,14 +239,18 @@ class PublisherRoom extends React.Component {
     }
     
     // 방송 종료
-    onComplete() {
-        console.log('onRoom', this.props.roomStore.onRoom)
+    async onComplete() {
+        window.confirm("방송을 종료하시겠습니까?");
+        console.log('onRoom', this.props.roomStore.onRoom);
         this.props.roomStore.onCompleteRoomState(this.props.roomStore.onRoom);
+        // room state : complete & roomUser state : complete
+        await this.props.roomStore.onCompleteRoomState(this.props.roomStore.onRoom);
+        // await this.props.roomUserStore.onCompleteRoomUserStateByRoomId(this.props.roomStore.onRoom.id);
     }
     
     // 오른쪽 tab change
     handleChange = (e, value) => {
-        this.setState({tabValue: value})
+        this.setState({tabValue: value});
     };
     
     // display test
@@ -273,7 +278,7 @@ class PublisherRoom extends React.Component {
     addPannel = async (e, roomUser) => {
         e.preventDefault();
         await this.props.roomStore.onAddPannel(roomUser);
-        console.log("222111",this.props.roomStore.onPannelList);
+        console.log("222111", this.props.roomStore.onPannelList);
         // pannel video에 stream 추가
         this.props.roomStore.onPannelList.map(user => {
             const videoTag = document.getElementById(`pannelVideo-${user.streamUrl}`);
@@ -304,14 +309,15 @@ class PublisherRoom extends React.Component {
                                             <video
                                                 className={classes.myVideo}
                                                 id="myVideoTag"
-                                                poster={viewLogo}
+                                                // poster={waitImage}
                                                 controls
                                                 autoPlay
                                                 playsInline
                                                 style={{backgroundColor: 'black'}}
                                                 width={900}
                                                 height={700}
-                                            ></video>
+                                            >
+                                            </video>
                                         </div>
                                     </div>
                                 </div>
@@ -321,10 +327,14 @@ class PublisherRoom extends React.Component {
                         </Box>
                     </div>
                     <div className={classes.gridView3}>
-
-                        <h2>PUBLISHER ROOM &nbsp; / &nbsp; Title : {this.props.roomStore.onRoom.title} &nbsp; / &nbsp; Master
-                            : {this.props.roomStore.onRoom.name}</h2>
-                        <h3>참여자</h3>
+                        
+                        <h2>
+                            [PUBLISHER ROOM] &nbsp;
+                            Title : {this.props.roomStore.onRoom.title} &nbsp; / &nbsp;
+                            Master : {this.props.roomStore.onRoom.name} &nbsp; / &nbsp;
+                            State : {this.props.roomStore.onRoom.state}
+                        </h2>
+                        <h3>패널 대기 리스트</h3>
                         {
                             
                             this.props.roomStore.onPannelList === undefined
@@ -332,7 +342,7 @@ class PublisherRoom extends React.Component {
                                 ""
                                 :
                                 this.props.roomStore.onPannelList.map((user, i) => {
-
+                                    
                                     return (
                                         <video
                                             key={`pannelVideo-${i}`}
@@ -440,17 +450,25 @@ class PublisherRoom extends React.Component {
                                         this.state.view
                                             ?
                                             <Button
+                                                style={{backgroundColor:'orange'}}
                                                 onClick={this.onServerPublisherConnection.bind(this)}>
                                                 방송 시작
                                             </Button>
                                             :
-                                            <Button
-                                                id={'pause'}
-                                                onClick={this.onPause.bind(this)}
-                                            >
-                                                방송 일시 정지
-                                            </Button>
-                                        
+                                            <>
+                                                <Button
+                                                    id={'pause'}
+                                                    onClick={this.onPause.bind(this)}
+                                                >
+                                                    방송 일시 정지
+                                                </Button>
+                                                <Button
+                                                    id={'complete'}
+                                                    onClick={this.onComplete.bind(this)}
+                                                >
+                                                    방송 종료
+                                                </Button>
+                                            </>
                                     }
                                 </ButtonGroup>
                             </div>
@@ -503,7 +521,7 @@ class PublisherRoom extends React.Component {
         );
     }
     
-
+    
 }
 
 

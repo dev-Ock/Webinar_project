@@ -1020,61 +1020,88 @@ export default class RoomStore {
         return yield this.roomRepository.onUpdateRoom(data);
     }
     
+
     // room state : Pending
     onPendingRoomState(data) {
         console.log('onPendingRoom data : ', data);
-        data.state = RoomStateType.Pending;
-        this.onUpdateRoomState(data)
-            .then(result => {
-                console.log("onPendingRoom", result);
-                if (result !== 1) {
-                    this.onFailedRoomState(data);
-                }
-            })
+        try{
+            data.state = RoomStateType.Pending;
+            this.onUpdateRoomState(data)
+                .then(result => {
+                    console.log("onPendingRoom", result);
+                    if(result === 1){
+                        console.log("onPendingRoom 성공")
+                    }
+                    if (result !== 1) {
+                        // this.onFailedRoomState(data);
+                        console.log("onPendingRoom 실패")
+                    }
+                })
+        }catch(e){
+            console.log(e);
+        }
     }
     
     // room state : Progress
     onProgressRoomState(data) {
         console.log('onProgressRoom data : ', data);
-        data.state = RoomStateType.Progress;
-        this.onUpdateRoomState(data)
-            .then(result => {
-                console.log("onProgressRoom", result);
-                if (result !== 1) {
-                    this.onFailedRoomState(data);
-                }
-            })
+        try{
+            data.state = RoomStateType.Progress;
+            this.onUpdateRoomState(data)
+                .then(result => {
+                    console.log("onProgressRoom", result);
+                    if(result === 1){
+                        console.log("onProgressRoom 성공")
+                    }
+                    if (result !== 1) {
+                        // this.onFailedRoomState(data); // roomData.state = RoomStateType.Failed;
+                        console.log("onProgressRoom 실패")
+                    }
+                })
+        }catch(e){
+            console.log(e);
+        }
     }
     
     // room state : Complete
     onCompleteRoomState(data) {
         console.log('onCompleteRoom data : ', data);
-        data.state = RoomStateType.Complete;
-        this.onUpdateRoomState(data)
-            .then(result => {
-                console.log("onCompleteRoom", result);
-                alert('세미나가 종료되었습니다.');
-                if (result !== 1) {
-                    this.onFailedRoomState(data);
-                    window.location.replace("/room-list");
-                }
-                sessionStorage.removeItem(Repository.RoomMakeRoomID);
-                sessionStorage.removeItem(Repository.RoomMakePublisherId);
-                sessionStorage.removeItem(Repository.RoomMakeStreamUrl);
-                window.location.replace("/room-list");
-            })
+        try{
+            data.state = RoomStateType.Complete;
+            this.onUpdateRoomState(data)
+                .then(result => {
+                    console.log("onCompleteRoom", result);
+                    if(result === 1){
+                        console.log("onCompleteRoom 성공")
+                        alert('세미나가 종료되었습니다.');
+                        window.location.replace('/room-list');
+                    }
+                    if (result !== 1) {
+                        // this.onFailedRoomState(roomData); // roomData.state = RoomStateType.Failed;
+                        console.log("onCompleteRoom 실패")
+                        alert('세미나가 종료되었습니다.');
+                        window.location.replace('/room-list');
+                    }
+                })
+        }catch(e){
+            console.log(e);
+        }
     }
     
     // room state : Failed
     onFailedRoomState(data) {
         console.log('onFailedRoom data : ', data);
-        data.state = RoomStateType.Failed;
-        this.onUpdateRoomState(data)
-            .then(result => {
-                console.log("room state 'Failed' update success")
-                if (result !== 1) {
-                    throw new Error("room state 'Failed' update error ")
-                }
-            })
+        try{
+            data.state = RoomStateType.Failed;
+            this.onUpdateRoomState(data)
+                .then(result => {
+                    console.log("room state 'Failed' update success");
+                    if (result !== 1) {
+                        throw new Error("room state 'Failed' update error ");
+                    }
+                })
+        }catch(e){
+            console.log(e);
+        }
     }
 }
