@@ -70,36 +70,44 @@ const EmptyOnRoom = {
 
 const EmptyRoomList = [];
 let EmptyStream = {};
+let EmptyPlayerPublishingStream = {};
+let EmptyPlayerPlayingStream = {};
 
 const EmptyPannelList = [];
 
-let EmptyPlayerStream = {};
-let EmptyPannelStream1 = {};
-
 let EmptyPC = {};
-
+let EmptyPlayerPublishingPc = {};
+let EmptyPlayerPlayingPc = {};
 
 let pc = '';
+let playerPublishingPc = '';
+let playerPlayingPc = '';
 let myVideo = '';
-let videoOn = true; // 처음에는 카메리가 켜져 있음 (cameraOn : true)
-let muteOn = false; // 처음에는 소리가 켜져 있음 (muteOn : false)
+let playerVideo = '';
+let playingVideo = '';
+
 let camerasSelect = '';
 let playerCamerasSelect = '';
 let option = '';
+let playerOption = '';
 
 let pannelBoxTag = '';
 let pannelVideo = '';
 
-let playerOption = '';
 
 let constraints = "";
 let playerConstraints = "";
 let preferredDisplaySurface = "";
+let preferredPlayerDisplaySurface = '';
 let endSharingTag = "";
-let initialStream = {};
+let endPlayerSharingTag = "";
+
 let stream = {};
-let playserStream = {};
+let playerStream = {};
+let playerPlayingStream = {};
+
 let deviceId = "";
+let playerDeviceId = "";
 
 export default class RoomStore {
     
@@ -108,15 +116,17 @@ export default class RoomStore {
     roomMakeState = RoomMakeState.Empty;
     roomMake = Object.assign({}, EmptyRoom);
     onRoom = Object.assign({}, EmptyOnRoom);
-    // roomListLength = toJS(this.roomList.length);
     onStream = Object.assign({}, EmptyStream);
     
     onPannelList = Object.assign([], EmptyPannelList);
     
-    playerOnStream = Object.assign({}, EmptyPlayerStream);
-    onPannelStream1 = Object.assign({}, EmptyPannelStream1);
+    onPlayerPublishingStream = Object.assign({}, EmptyPlayerPublishingStream);
+    onPlayerPlayingStream = Object.assign({}, EmptyPlayerPlayingStream);
     
     onPc = Object.assign({}, EmptyPC);
+    onPlayerPublishingPc = Object.assign({}, EmptyPlayerPublishingPc);
+    onPlayerPlayingPc = Object.assign({}, EmptyPlayerPlayingPc);
+    
     
     constructor(props) {
         this.roomRepository = props.roomRepository;
@@ -155,24 +165,42 @@ export default class RoomStore {
         return this.onRoom;
     }
     
-    // stream 변경
+    // (publisherRoom) publishing stream 변경
     changeStream = (stream) => {
         this.onStream = stream;
     };
     
-    playerChangeStream = (playerStream) => {
-        this.playerOnStream = playerStream;
+    // (publisherRoom) publishing stream 변경
+    changePlayerPublishingStream = (playerPublishingStream) => {
+        this.onPlayerPublishingStream = playerPublishingStream;
     };
     
+    // (publisherRoom) playing stream 변경
+    changePlayerPlayingStream = (playerPlayingStream) => {
+        this.onPlayerPlayingStream = playerPlayingStream;
+    }
     
-    // pannel stream
+    
+    // pannel list 추가
     setPannelList = (user) => {
         this.onPannelList.push(user);
     }
     
+    // (publisherRoom) peer connection 변경
     setPc = (pc) => {
         this.onPc = pc;
     }
+    
+    // (plyaerRoom) publishing peer connection 변경
+    setPlayerPublishingPc = (pc) => {
+        this.onPlayerPublishingPc = pc;
+    }
+    
+    //
+    setPlayerPlayingPc = (pc) => {
+        this.onPlayerPlayingPc = pc;
+    }
+    
     
     // 세미나 만들기 정보 서버로 보내기
     * doMakeRoom(userId) {
@@ -246,7 +274,9 @@ export default class RoomStore {
         }
     }
     
-    // 방 기본 세팅
+    /////////////////////////// publisherRoom publishing //////////////////////////////
+    
+    // (publisherRoom) 방 기본 세팅
     async setRoom() {
         constraints = {
             audio: true,
@@ -255,11 +285,9 @@ export default class RoomStore {
             },
         };
         
-        // initialStream = new MediaStream();
-        // let stream = initialStream;
         let stream = new MediaStream();
         stream = await navigator.mediaDevices.getUserMedia(constraints);
-        console.log('11', navigator.mediaDevices.getSupportedConstraints())
+        // console.log('11', navigator.mediaDevices.getSupportedConstraints())
         myVideo = document.getElementById("myVideoTag");
         myVideo.srcObject = stream;
         
@@ -287,46 +315,7 @@ export default class RoomStore {
         // return stream;
     }
     
-    //player용 비디오, 오디오 셋팅 테스트
-    async playerSetRoom() {
-        const playerConstraints = {
-            audio: true,
-            video: {
-                width: {ideal: 320, max: 576},
-            },
-        };
-        
-        playserStream = new MediaStream();
-        playserStream = await navigator.mediaDevices.getUserMedia(playerConstraints);
-        console.log('test', playserStream.getTracks())
-        myVideo = document.getElementById("myVideoTag");
-        myVideo.srcObject = playserStream;
-        
-        // 비디오 장치들이 cameras 옵션에 달리도록 세팅
-        const playerDevices = await navigator.mediaDevices.enumerateDevices();
-        const playerCameras = playerDevices.filter((device) => device.kind === "videoinput");
-        console.log("devices", playerCameras);
-        camerasSelect = document.getElementById("playerCameras");
-        const currentCamera = playserStream.getVideoTracks()[0]; // 현재 선택되어 있는 카메라
-        playerCameras.forEach((playerCameras) => {
-            playerOption = document.createElement("playerOptions");
-            playerOption.value = playerCameras.deviceId;
-            playerOption.innerText = playerCameras.label;
-            playerOption.style.textAlign = 'center';
-            if (currentCamera.label === playerCameras.label) {
-                playerOption.selected = true; // 현재 선택되어 있는 카메라가 보기의 main으로 보여지도록
-            }
-            camerasSelect.appendChild(playerOption);
-        });
-        
-        playserStream.getAudioTracks()
-            .forEach((track) => (track.enabled = false));
-        console.log('플레이어 송출용 stream', playserStream);
-        this.playerChangeStream(playserStream);
-        // return stream;
-    }
-    
-    // SRS server-publisher 연결
+    // (publisherRoom) SRS server-publisher 연결
     async serverPublisherConnection(url) {
         const streamUrl = url;
         const publish = async (streamUrl) => {
@@ -385,70 +374,14 @@ export default class RoomStore {
         await publish(streamUrl);
     }
     
-    async pServerPublisherConnection(playerUrl) {
-        const playerStreamUrl = playerUrl;
-        const publish = async (playerStreamUrl) => {
-            pc.addTransceiver("audio", {direction: "sendonly"});
-            pc.addTransceiver("video", {direction: "sendonly"});
-            
-            if (
-                !navigator.mediaDevices &&
-                window.location.protocol === "http:" &&
-                window.location.hostname !== "localhost"
-            ) {
-                console.log(
-                    "HttpsRequiredError : Please use HTTPS or localhost to publish"
-                );
-            }
-            console.log('stream : ', this.playerOnStream);
-            
-            let playerStream = this.playerOnStream;
-            
-            // addTrack
-            playerStream.getTracks().forEach((track) => {
-                pc.addTrack(track); // stream의 각 track을 peer connection에 track으로 추가한다.
-                // ontrack && ontrack({ track: track });
-            });
-            
-            
-            // createOffer & setLocalDescription
-            let playerOffer = await pc.createOffer(); // addTransceiver와 addTrack을 거친 peer connection에서 offer를 만든다.
-            // console.log("offer", offer);
-            await pc.setLocalDescription(playerOffer);
-            
-            // SRS server에 POST
-            let playerData = {
-                api      : "http://haict.onthe.live:1985/rtc/v1/publish/",
-                streamurl: `webrtc://haict.onthe.live/live/${playerStreamUrl}`,
-                sdp      : playerOffer.sdp,
-            };
-            console.log('playerData.streamurl', playerData.streamurl);
-            
-            const onPublish = (playerData) => {
-                console.log("roomRepository onPublish 진입");
-                return this.setSRSserverPublisherConnection(playerData);
-            };
-            
-            onPublish(playerData).then(async (session) => {
-                console.log("player session", session);
-                console.log("player publishing session.sdp", session.sdp);
-                await pc.setRemoteDescription(
-                    new RTCSessionDescription({type: "answer", sdp: session.sdp})
-                );
-            });
-        };
-        
-        pc = new RTCPeerConnection();
-        await publish(playerStreamUrl);
-    }
-    
-    // SRS server-publisher axios
+    // (publisherRoom, playerRoom 공용) SRS server-publisher axios
     * setSRSserverPublisherConnection(data) {
         const result = yield this.roomRepository.onSRSserverPublisherConnection(data);
         return result;
     }
     
-    // publisher용 Video turn on/off
+    
+    // (publisherRoom) publishing Video turn on/off
     setVideoOnOff(videoOn) {
         console.log('RoomStore setVideoOnOff 진입');
         let stream = this.onStream;
@@ -458,7 +391,7 @@ export default class RoomStore {
         return !videoOn;
     }
     
-    // publisher용 Audio turn on/off
+    // (publisherRoom) publishing Audio turn on/off
     setAudioOnOff(audioOff) {
         console.log('RoomStore setAudioOnOff 진입');
         let stream = this.onStream;
@@ -468,7 +401,7 @@ export default class RoomStore {
         return !audioOff;
     }
     
-    // Change Camera option
+    // (publisherRoom) publishing Change Camera option
     async setChangeVideoOption() {
         camerasSelect = document.getElementById("cameras");
         console.log('RoomStore setChangeVideoOption 진입');
@@ -521,35 +454,7 @@ export default class RoomStore {
         await this.onChangeBroadcastingStream();
     }
     
-    async playerSetChangeVideoOption() {
-        playerCamerasSelect = document.getElementById("playerCameras");
-        console.log('RoomStore playerSetChangeVideoOption 진입');
-        console.log(playerCamerasSelect.value);
-        deviceId = playerCamerasSelect.value;
-        
-        // 특정 device(camera 등) 설정값
-        let playerCameraConstraints = {
-            audio: true,
-            video: {deviceId: {exact: deviceId}},
-        };
-        
-        let stream = this.onStream;
-        const stream2 = await navigator.mediaDevices.getUserMedia(
-            deviceId ? playerCameraConstraints : initialConstrains
-        );
-        
-        stream.removeTrack(stream.getVideoTracks()[0]);
-        stream.addTrack(stream2.getVideoTracks()[0]);
-        
-        myVideo = document.getElementById("myVideoTag");
-        myVideo.srcObject = stream;
-        
-        this.playerChangeStream(stream);
-        await this.onChangeBroadcastingStream();
-    }
-    
-    
-    // 송출할 display 선택
+    // (publisherRoom) 송출할 display 선택
     onSelectDisplayOption = async () => {
         // console.log("22: ",stream.getTracks())
         let stream = this.onStream;
@@ -599,55 +504,10 @@ export default class RoomStore {
         }
     }
     
-    // playerRoom 송출할 display 선택
-    playerOnSelectDisplayOption = async () => {
-        // console.log("22: ",stream.getTracks())
-        let stream = this.playerOnStream;
-        const myAudioStream = stream.getAudioTracks()[0]; // 화면공유에서는 audio가 없으므로 기존의 audio를 사용하기 위해.
-        console.log('myVideoAudioStream : ', myAudioStream)
-        preferredDisplaySurface = document.getElementById('displaySurface');
-        const displaySurface = await preferredDisplaySurface.options[preferredDisplaySurface.selectedIndex].value;
-        const options = {audio: true, video: true};
-        if (displaySurface === 'browser') {
-            endSharingTag = document.getElementById("endSharing");
-            camerasSelect = document.getElementById("playerCameras");
-            endSharingTag.hidden = false;
-            camerasSelect.hidden = true;
-            options.video = {displaySurface};
-            console.log('options', options)
-            preferredDisplaySurface.value = displaySurface;
-            preferredDisplaySurface.disabled = true;
-            
-            await navigator.mediaDevices.getDisplayMedia(options)
-                .then(async (playerStreamData) => {
-                    
-                    stream = playerStreamData; // 화면공유는 video track만 추가되는 것을 확인함 (즉, streamData에는 video track만 있음)
-                    stream.addTrack(myAudioStream); // 내가 선택한 audio를 track에 추가함
-                    console.log('stream : ', stream.getTracks()) // 화면공유 video와 내가 선택한 audio가 각각 하나씩 track으로 들어있음을 확인.
-                    myVideo = document.getElementById("myVideoTag");
-                    myVideo.srcObject = stream;
-                    this.changeStream(stream);
-                    // 송출 stream도 변경
-                    await this.playerOnChangeBroadcastingStream();
-                    
-                    // 화면공유 끝내면
-                    stream.getVideoTracks()[0].onended = async () => {
-                        this.changeStream(stream);
-                        await this.playerOnEndDisplaySharing();
-                    };
-                })
-                .catch(e => {
-                    console.log(e)
-                })
-            
-        } else {
-            console.log("RoomStore onSelectDisplayOption display option error")
-        }
-    }
     
-    // SRS server로 송출할 stream 변경
+    // (publisherRoom) SRS server로 송출할 stream 변경
     async onChangeBroadcastingStream() {
-        console.log('onChangeBroadcastingStream pc',pc)
+        console.log('onChangeBroadcastingStream pc', pc)
         if (pc) {
             let stream = this.onStream;
             console.log('pc videosender', pc.getSenders())
@@ -659,23 +519,10 @@ export default class RoomStore {
         }
     }
     
-    //player용
-    async playerOnChangeBroadcastingStream() {
-        if (pc) {
-            let stream = this.onStream;
-            console.log('pc videosender', pc.getSenders())
-            const videoTrack = stream.getVideoTracks()[0];
-            const videoSender = pc
-                .getSenders()
-                .find((sender) => sender.track.kind === "video");
-            await videoSender.replaceTrack(videoTrack);
-        }
-    }
-    
-    // '공유 종료' 버튼을 눌러서 화면공유를 끝냈을 때, 다시 카메라로 stream 세팅
+    // (publisherRoom) '공유 종료' 버튼을 눌러서 화면공유를 끝냈을 때, 다시 카메라로 stream 세팅
     async onEndDisplaySharing() {
         // 화면공유 끝나면 다시 카메라로 세팅
-        console.log("end sharing");
+        console.log("end sharing on publisherRoom");
         endSharingTag.hidden = true;
         camerasSelect.hidden = false;
         preferredDisplaySurface.value = 'camera';
@@ -702,38 +549,392 @@ export default class RoomStore {
         await this.onChangeBroadcastingStream();
     }
     
-    //player 용
+    /////////////////////////// publisherRoom playing ////////////////////
+    
+    // add pannel
+    async onAddPannel(roomUser) {
+        const streamUrl = roomUser.streamUrl;
+        const play = async (streamUrl) => {
+            pc.addTransceiver("audio", {direction: "recvonly"});
+            pc.addTransceiver("video", {direction: "recvonly"});
+            
+            let offer = await pc.createOffer();
+            await pc.setLocalDescription(offer);
+            
+            // SRS server에 POST
+            let data = {
+                api      : "http://haict.onthe.live:1985/rtc/v1/play/",
+                streamurl: `webrtc://haict.onthe.live/live/${streamUrl}`,
+                sdp      : offer.sdp,
+            };
+            console.log('pannel.streamurl', data.streamurl);
+            
+            const onPlay = (data) => {
+                console.log("roomRepository onAddPannel onPlay 진입");
+                return this.setSRSserverPlayerConnection(data);
+            };
+            
+            onPlay(data).then(async (session) => {
+                console.log("roomRepository onAddPannel session", session);
+                console.log("roomRepository onAddPannel session.sdp", session.sdp);
+                await pc.setRemoteDescription(
+                    new RTCSessionDescription({type: "answer", sdp: session.sdp})
+                );
+            });
+        };
+        
+        const ontrack = (event) => {
+            pannelStream.addTrack(event.track);
+            
+            // const friendFace1 = document.getElementById("friendFace1"); // peerFace
+            // friendFace1.srcObject = pannelStream;
+        };
+        
+        // console.log("111")
+        
+        pc = new RTCPeerConnection();
+        let pannelStream = new MediaStream();
+        
+        pc.ontrack = function (event) {
+            
+            if (ontrack) {
+                ontrack(event);
+            }
+        };
+        await play(streamUrl);
+        
+        roomUser.stream = pannelStream;
+        console.log("pannelStream", pannelStream)
+        this.setPannelList(roomUser);
+        // if(!document.getElementById(streamUrl)){
+        //     pannelBoxTag = document.getElementById("pannelBox");
+        //     const video = document.createElement("video");
+        //
+        //     video.id = streamUrl;
+        //     video.controls = true;
+        //     video.muted = true;
+        //     video.autoplay = true;
+        //     video.playsinline = true;
+        //     video.width = 200;
+        //     video.width = 250;
+        //     video.srcObject = pannelStream;
+        //
+        //     pannelBoxTag.appendChild(video);
+        //
+        //     console.log("2222", video.id)
+        // }
+    }
+    
+    // pannel stream으로 송출 stream을 세팅
+    async setPannelStreamSelection(user) {
+        console.log("RoomStore setPannelStreamSelection : ", user);
+        myVideo = document.getElementById("myVideoTag");
+        myVideo.srcObject = user.stream;
+        console.log("RoomStore setPannelStreamSelection... the end")
+        // this.changeStream(user.stream);
+        // await this.onChangeBroadcastingStream();
+        console.log('setPannelStreamSelection pc', pc)
+        const pc2 = this.onPc;
+        console.log('setPannelStreamSelection pc2', pc2)
+        if (pc2) {
+            let stream = user.stream;
+            const videoTrack = stream.getVideoTracks()[0];
+            const audioTrack = stream.getAudioTracks()[0];
+            console.log('videoTrack', videoTrack);
+            console.log('audioTrack', audioTrack);
+            console.log('pc2.getSenders', pc2.getSenders());
+            const videoSender = await pc2
+                .getSenders()
+                .find((sender) => sender.track.kind === "video");
+            const audioSender = pc2
+                .getSenders()
+                .find((sender) => sender.track.kind === "audio");
+            await videoSender.replaceTrack(videoTrack);
+            await audioSender.replaceTrack(audioTrack);
+        }
+        
+    }
+    
+    // publisher stream으로 송출 stream을 세팅
+    async setPublisherStreamSelection() {
+        myVideo = document.getElementById("myVideoTag");
+        myVideo.srcObject = this.onStream;
+        console.log("RoomStore setPublisherStreamSelection... the end")
+        // this.changeStream(user.stream);
+        // await this.onChangeBroadcastingStream();
+        console.log('setPublisherStreamSelection pc', pc)
+        const pc2 = this.onPc;
+        console.log('setPublisherStreamSelection pc2', pc2)
+        if (pc2) {
+            let stream = this.onStream;
+            const videoTrack = stream.getVideoTracks()[0];
+            const audioTrack = stream.getAudioTracks()[0];
+            console.log('videoTrack', videoTrack);
+            console.log('audioTrack', audioTrack);
+            console.log('pc2.getSenders', pc2.getSenders());
+            const videoSender = await pc2
+                .getSenders()
+                .find((sender) => sender.track.kind === "video");
+            const audioSender = pc2
+                .getSenders()
+                .find((sender) => sender.track.kind === "audio");
+            await videoSender.replaceTrack(videoTrack);
+            await audioSender.replaceTrack(audioTrack);
+        }
+        
+    }
+    
+    /////////////////////////// publisherRoom, playerRoom playing ////////////////////
+    
+    // (publisherRoom, playerRoom 공용)  SRS server-player axios
+    * setSRSserverPlayerConnection(data) {
+        const result = yield this.roomRepository.onSRSserverPlayerConnection(data);
+        console.log('data check', result)
+        return result;
+    }
+    
+    /////////////////////////// playerRoom publishing //////////////////////////////
+    
+    // (playerRoom) 방 기본 세팅
+    async playerSetRoom() {
+        const playerConstraints = {
+            audio: true,
+            video: {
+                width: {ideal: 320, max: 576},
+            },
+        };
+        
+        let playerStream = new MediaStream();
+        playerStream = await navigator.mediaDevices.getUserMedia(playerConstraints);
+        // console.log('test', playerStream.getTracks())
+        playerVideo = document.getElementById("playerVideoTag");
+        playerVideo.srcObject = playerStream;
+        
+        // 비디오 장치들이 cameras 옵션에 달리도록 세팅
+        const playerDevices = await navigator.mediaDevices.enumerateDevices();
+        const playerCameras = playerDevices.filter((device) => device.kind === "videoinput");
+        console.log("devices", playerCameras);
+        playerCamerasSelect = document.getElementById("playerCameras");
+        const currentCamera = playerStream.getVideoTracks()[0]; // 현재 선택되어 있는 카메라
+        playerCameras.forEach((playerCameras) => {
+            playerOption = document.createElement("playerOptions");
+            playerOption.value = playerCameras.deviceId;
+            playerOption.innerText = playerCameras.label;
+            playerOption.style.textAlign = 'center';
+            if (currentCamera.label === playerCameras.label) {
+                playerOption.selected = true; // 현재 선택되어 있는 카메라가 보기의 main으로 보여지도록
+            }
+            playerCamerasSelect.appendChild(playerOption);
+        });
+        
+        playerStream.getAudioTracks()
+            .forEach((track) => (track.enabled = false));
+        console.log('플레이어 송출용 stream', playerStream);
+        this.changePlayerPublishingStream(playerStream);
+        // return stream;
+    }
+    
+    // (playerRoom) SRS server-publisher 연결
+    async pServerPublisherConnection(playerUrl) {
+        const playerStreamUrl = playerUrl;
+        const pPublish = async (playerStreamUrl) => {
+            playerPublishingPc.addTransceiver("audio", {direction: "sendonly"});
+            playerPublishingPc.addTransceiver("video", {direction: "sendonly"});
+            
+            if (
+                !navigator.mediaDevices &&
+                window.location.protocol === "http:" &&
+                window.location.hostname !== "localhost"
+            ) {
+                console.log(
+                    "HttpsRequiredError : Please use HTTPS or localhost to publish"
+                );
+            }
+            console.log('stream : ', this.onPlayerPublishingStream);
+            
+            let playerStream = this.onPlayerPublishingStream;
+            
+            // addTrack
+            playerStream.getTracks().forEach((track) => {
+                playerPublishingPc.addTrack(track); // stream의 각 track을 peer connection에 track으로 추가한다.
+                // ontrack && ontrack({ track: track });
+            });
+            
+            
+            // createOffer & setLocalDescription
+            let playerOffer = await playerPublishingPc.createOffer(); // addTransceiver와 addTrack을 거친 peer connection에서 offer를 만든다.
+            // console.log("offer", offer);
+            await playerPublishingPc.setLocalDescription(playerOffer);
+            
+            // SRS server에 POST
+            let playerData = {
+                api      : "http://haict.onthe.live:1985/rtc/v1/publish/",
+                streamurl: `webrtc://haict.onthe.live/live/${playerStreamUrl}`,
+                sdp      : playerOffer.sdp,
+            };
+            console.log('playerData.streamurl', playerData.streamurl);
+            
+            const onPublish = (playerData) => {
+                console.log("roomRepository onPublish 진입");
+                return this.setSRSserverPublisherConnection(playerData);
+            };
+            
+            onPublish(playerData).then(async (session) => {
+                console.log("player session", session);
+                console.log("player publishing session.sdp", session.sdp);
+                await pc.setRemoteDescription(
+                    new RTCSessionDescription({type: "answer", sdp: session.sdp})
+                );
+            });
+            this.setPlayerPublishingPc(playerPublishingPc);
+        };
+        
+        playerPublishingPc = new RTCPeerConnection();
+        await pPublish(playerStreamUrl);
+    }
+    
+    // (playerRoom) publishing Video turn on/off
+    setPublishingVideoOnOffInPlayerRoom(publishingVideoOn) {
+        console.log('RoomStore setPublishingVideoOnOffInPlayerRoom 진입');
+        let playerStream = this.onPlayerPublishingStream;
+        playerStream.getVideoTracks()
+            .forEach((track) => (track.enabled = !track.enabled));
+        this.changePlayerPublishingStream(playerStream);
+        return !publishingVideoOn;
+    }
+    
+    // (playerRoom) publishing Audio turn on/off
+    setPublishingAudioOnOffInPlayerRoom(publishingAudioOff) {
+        console.log('RoomStore setPublishingAudioOnOffInPlayerRoom 진입');
+        let playerStream = this.onPlayerPublishingStream;
+        playerStream.getAudioTracks()
+            .forEach((track) => (track.enabled = !track.enabled));
+        this.changePlayerPublishingStream(playerStream);
+        return !publishingAudioOff;
+    }
+    
+    
+    // (playerRoom) publishing Change Camera option
+    async playerSetChangeVideoOption() {
+        playerCamerasSelect = document.getElementById("playerCameras");
+        console.log('RoomStore playerSetChangeVideoOption 진입');
+        console.log(playerCamerasSelect.value);
+        playerDeviceId = playerCamerasSelect.value;
+        
+        // 특정 device(camera 등) 설정값
+        let playerCameraConstraints = {
+            audio: true,
+            video: {deviceId: {exact: playerDeviceId}},
+        };
+        
+        let playerStream = this.onPlayerPublishingStream;
+        const playerStream2 = await navigator.mediaDevices.getUserMedia(
+            playerDeviceId ? playerCameraConstraints : initialConstrains
+        );
+        
+        playerStream.removeTrack(playerStream.getVideoTracks()[0]);
+        playerStream.addTrack(playerStream2.getVideoTracks()[0]);
+        
+        playerVideo = document.getElementById("playerVideoTag");
+        playerVideo.srcObject = playerStream;
+        
+        this.changePlayerPublishingStream(playerStream);
+        await this.playerOnChangeBroadcastingStream();
+    }
+    
+    
+    // (playerRoom) 송출할 display 선택
+    playerOnSelectDisplayOption = async () => {
+        // console.log("22: ",stream.getTracks())
+        let playerStream = this.onPlayerPublishingStream;
+        const myAudioPlayerStream = playerStream.getAudioTracks()[0]; // 화면공유에서는 audio가 없으므로 기존의 audio를 사용하기 위해.
+        console.log('myVideoAudioStream : ', myAudioPlayerStream)
+        preferredPlayerDisplaySurface = document.getElementById('playerDisplaySurface');
+        const playerDisplaySurface = await preferredPlayerDisplaySurface.options[preferredPlayerDisplaySurface.selectedIndex].value;
+        const options = {audio: true, video: true};
+        if (playerDisplaySurface === 'browser') {
+            endPlayerSharingTag = document.getElementById("endPlayerSharing");
+            playerCamerasSelect = document.getElementById("playerCameras");
+            endPlayerSharingTag.hidden = false;
+            playerCamerasSelect.hidden = true;
+            options.video = {playerDisplaySurface};
+            console.log('options', options)
+            preferredPlayerDisplaySurface.value = playerDisplaySurface;
+            preferredPlayerDisplaySurface.disabled = true;
+            
+            await navigator.mediaDevices.getDisplayMedia(options)
+                .then(async (playerStreamData) => {
+                    
+                    playerStream = playerStreamData; // 화면공유는 video track만 추가되는 것을 확인함 (즉, streamData에는 video track만 있음)
+                    playerStream.addTrack(myAudioPlayerStream); // 내가 선택한 audio를 track에 추가함
+                    console.log('playerStream : ', playerStream.getTracks()) // 화면공유 video와 내가 선택한 audio가 각각 하나씩 track으로 들어있음을 확인.
+                    playerVideo = document.getElementById("playerVideoTag");
+                    playerVideo.srcObject = playerStream;
+                    this.changePlayerPublishingStream(playerStream);
+                    // 송출 playerStream도 변경
+                    await this.playerOnChangeBroadcastingStream();
+                    
+                    // 화면공유 끝내면
+                    playerStream.getVideoTracks()[0].onended = async () => {
+                        this.changePlayerPublishingStream(playerStream);
+                        await this.playerOnEndDisplaySharing();
+                    };
+                })
+                .catch(e => {
+                    console.log(e)
+                })
+            
+        } else {
+            console.log("RoomStore playerOnSelectDisplayOption display option error")
+        }
+    }
+    
+    // (playerRoom) SRS server로 송출할 stream 변경
+    async playerOnChangeBroadcastingStream() {
+        if (playerPublishingPc) {
+            let playerStream = this.onPlayerPublishingStream;
+            console.log('pc videosender', playerPublishingPc.getSenders())
+            const videoTrack = playerStream.getVideoTracks()[0];
+            const videoSender = playerPublishingPc
+                .getSenders()
+                .find((sender) => sender.track.kind === "video");
+            await videoSender.replaceTrack(videoTrack);
+        }
+    }
+    
+    
+    // (playerRoom) '공유 종료' 버튼을 눌러서 화면공유를 끝냈을 때, 다시 카메라로 stream 세팅
     async playerOnEndDisplaySharing() {
         // 화면공유 끝나면 다시 카메라로 세팅
-        console.log("end sharing");
-        endSharingTag.hidden = true;
-        camerasSelect.hidden = false;
-        preferredDisplaySurface.value = 'camera';
-        preferredDisplaySurface.disabled = false;
+        console.log("end sharing on playerRoom");
+        endPlayerSharingTag.hidden = true;
+        playerCamerasSelect.hidden = false;
+        preferredPlayerDisplaySurface.value = 'camera';
+        preferredPlayerDisplaySurface.disabled = false;
         
         // 특정 device(camera 등) 설정값
         let cameraConstraints = {
             audio: true,
-            video: {deviceId: {exact: deviceId}},
+            video: {deviceId: {exact: playerDeviceId}},
         };
         
         const stream2 = await navigator.mediaDevices.getUserMedia(
-            deviceId ? cameraConstraints : initialConstrains
+            playerDeviceId ? cameraConstraints : initialConstrains
         );
-        let stream = this.onStream;
+        let stream = this.onPlayerPublishingStream;
         stream.removeTrack(stream.getVideoTracks()[0])
         // console.log("22222s", stream.getTracks())
         stream.addTrack(stream2.getVideoTracks()[0])
         // console.log("stream22222 : ", stream.getTracks())
-        myVideo.srcObject = stream;
-        this.changeStream(stream);
+        playerVideo.srcObject = stream;
+        this.changePlayerPublishingStream(playerVideo);
         
         // 송출 stream도 변경
         await this.playerOnChangeBroadcastingStream();
     }
     
-    /////////////////////////////////////////////////////////
     
+    /////////////////////////// playerRoom playing //////////////////////////////
     
     // SRS server-player 연결
     async serverPlayerConnection(url) {
@@ -741,11 +942,11 @@ export default class RoomStore {
         // const streamUrl = "3abd9f34";
         
         const play = async (streamUrl) => {
-            pc.addTransceiver("audio", {direction: "recvonly"});
-            pc.addTransceiver("video", {direction: "recvonly"});
+            playerPlayingPc.addTransceiver("audio", {direction: "recvonly"});
+            playerPlayingPc.addTransceiver("video", {direction: "recvonly"});
             
-            let offer = await pc.createOffer();
-            await pc.setLocalDescription(offer);
+            let offer = await playerPlayingPc.createOffer();
+            await playerPlayingPc.setLocalDescription(offer);
             
             // SRS server에 POST
             let data = {
@@ -757,82 +958,62 @@ export default class RoomStore {
             console.log('data.streamurl', data.streamurl);
             
             const onPlay = (data) => {
-                console.log("roomRepository onPlay 진입");
+                console.log("roomRepository serverPlayerConnection onPlay 진입");
                 return this.setSRSserverPlayerConnection(data);
             };
             
             onPlay(data).then(async (session) => {
-                console.log("player session", session);
-                console.log("player session.sdp", session.sdp);
-                await pc.setRemoteDescription(
+                console.log("roomRepository serverPlayerConnection session", session);
+                console.log("roomRepository serverPlayerConnection session.sdp", session.sdp);
+                await playerPlayingPc.setRemoteDescription(
                     new RTCSessionDescription({type: "answer", sdp: session.sdp})
                 );
             });
         };
         
         const ontrack = (event) => {
-            stream.addTrack(event.track);
-            console.log('playertest', stream.getTracks())
-            myVideo = document.getElementById("peerFace"); // peerFace myVideoTag
-            myVideo.srcObject = stream;
+            playerPlayingStream.addTrack(event.track);
+            // console.log('playertest', playerPlayingStream.getTracks())
+            playingVideo = document.getElementById("playingVideoTag"); // peerFace myVideoTag
+            playingVideo.srcObject = playerPlayingStream;
         };
         
-        pc = new RTCPeerConnection();
-        stream = new MediaStream();
+        playerPlayingPc = new RTCPeerConnection();
+        playerPlayingStream = new MediaStream();
         
-        pc.ontrack = function (event) {
+        playerPlayingPc.ontrack = function (event) {
             if (ontrack) {
                 ontrack(event);
             }
         };
         await play(streamUrl);
+        this.setPlayerPlayingPc(playerPlayingPc);
+        this.changePlayerPlayingStream(playerPlayingStream);
     }
     
-    //srs player-server-player 연결
     
-    
-    // SRS server-player axios
-    * setSRSserverPlayerConnection(data) {
-        const result = yield this.roomRepository.onSRSserverPlayerConnection(data);
-        console.log('data check', result)
-        return result;
-    }
-    
-    // player용 Video turn on/off
-    setVideoOnOff2() {
-        console.log('RoomStore setVideoOnOff 진입');
-        // let videoBtn = document.getElementById("videoBtnTag");
-        stream.getVideoTracks()
+    // (playerRoom) playing Video turn on/off
+    setPlayingVideoOnOffInPlayerRoom(playingVideoOn) {
+        console.log('RoomStore setPlayingVideoOnOffInPlayerRoom 진입');
+        let playerPlayingStream = this.onPlayerPlayingStream;
+        playerPlayingStream.getVideoTracks()
             .forEach((track) => (track.enabled = !track.enabled));
-        // return !videoOn;
-    }
-    
-    // player용 Audio turn on/off
-    setAudioOnOff2() {
-        console.log('RoomStore setAudioOnOff 진입');
-        // let muteBtn = document.getElementById("muteBtnTag");
-        playserStream.getAudioTracks()
-            .forEach((track) => (track.enabled = !track.enabled));
-        // return !audioOff;
-    }
-    
-    //player 송출용 Audio & video turn on/off
-    playerSetVideoOnOff() {
-        console.log('player RoomStore setVideoOnOff 진입');
-        // let videoBtn = document.getElementById("videoBtnTag");
-        playserStream.getVideoTracks()
-            .forEach((track) => (track.enabled = !track.enabled));
-        // return !videoOn;
+        this.changePlayerPlayingStream(playerPlayingStream);
+        return !playingVideoOn;
     };
     
-    // player용 Audio turn on/off
-    playerSetAudioOnOff() {
-        console.log('player RoomStore setAudioOnOff 진입');
-        // let muteBtn = document.getElementById("muteBtnTag");
-        stream.getAudioTracks()
+    // (playerRoom) playing Audio turn on/off
+    setPlayingAudioOnOffInPlayerRoom(playingAudioOff) {
+        console.log('RoomStore setPlayingAudioOnOffInPlayerRoom 진입');
+        let playerPlayingStream = this.onPlayerPlayingStream;
+        playerPlayingStream.getAudioTracks()
             .forEach((track) => (track.enabled = !track.enabled));
-        // return !audioOff;
+        this.changePlayerPlayingStream(playerPlayingStream);
+        return !playingAudioOff;
     };
+    
+    
+    /////////////////////////////////////////////////////////////////
     
     // 룸 전체 리스트 조회
     * selectRoomList() {
@@ -949,139 +1130,7 @@ export default class RoomStore {
     }
     
     
-    /////////////////////////////////////////////////////////
-    
-    // add pannel
-    async onAddPannel(roomUser) {
-        const streamUrl = roomUser.streamUrl;
-        const play = async (streamUrl) => {
-            pc.addTransceiver("audio", {direction: "recvonly"});
-            pc.addTransceiver("video", {direction: "recvonly"});
-            
-            let offer = await pc.createOffer();
-            await pc.setLocalDescription(offer);
-            
-            // SRS server에 POST
-            let data = {
-                api      : "http://haict.onthe.live:1985/rtc/v1/play/",
-                streamurl: `webrtc://haict.onthe.live/live/${streamUrl}`,
-                sdp      : offer.sdp,
-            };
-            console.log('pannel.streamurl', data.streamurl);
-            
-            const onPlay = (data) => {
-                console.log("roomRepository onPlay 진입");
-                return this.setSRSserverPlayerConnection(data);
-            };
-            
-            onPlay(data).then(async (session) => {
-                console.log("player session", session);
-                console.log("player session.sdp", session.sdp);
-                await pc.setRemoteDescription(
-                    new RTCSessionDescription({type: "answer", sdp: session.sdp})
-                );
-            });
-        };
-        
-        const ontrack = (event) => {
-            pannelStream.addTrack(event.track);
-            
-            // const friendFace1 = document.getElementById("friendFace1"); // peerFace
-            // friendFace1.srcObject = pannelStream;
-        };
-        console.log("111")
-        pc = new RTCPeerConnection();
-        let pannelStream = new MediaStream();
-        pc.ontrack = function (event) {
-            
-            if (ontrack) {
-                ontrack(event);
-            }
-        };
-        await play(streamUrl);
-        
-        roomUser.stream = pannelStream;
-        console.log("pannelStream", pannelStream)
-        this.setPannelList(roomUser);
-        // if(!document.getElementById(streamUrl)){
-        //     pannelBoxTag = document.getElementById("pannelBox");
-        //     const video = document.createElement("video");
-        //
-        //     video.id = streamUrl;
-        //     video.controls = true;
-        //     video.muted = true;
-        //     video.autoplay = true;
-        //     video.playsinline = true;
-        //     video.width = 200;
-        //     video.width = 250;
-        //     video.srcObject = pannelStream;
-        //
-        //     pannelBoxTag.appendChild(video);
-        //
-        //     console.log("2222", video.id)
-        // }
-    }
-    
-    // pannel stream으로 송출 stream을 세팅
-    async setPannelStreamSelection(user) {
-        console.log("RoomStore setPannelStreamSelection : ", user);
-        myVideo = document.getElementById("myVideoTag");
-        myVideo.srcObject = user.stream;
-        console.log("RoomStore setPannelStreamSelection... the end")
-        // this.changeStream(user.stream);
-        // await this.onChangeBroadcastingStream();
-        console.log('setPannelStreamSelection pc',pc)
-        const pc2 = this.onPc;
-        console.log('setPannelStreamSelection pc2',pc2)
-        if (pc2) {
-            let stream = user.stream;
-            const videoTrack = stream.getVideoTracks()[0];
-            const audioTrack = stream.getAudioTracks()[0];
-            console.log('videoTrack', videoTrack);
-            console.log('audioTrack', audioTrack);
-            console.log('pc2.getSenders',pc2.getSenders());
-            const videoSender = await pc2
-                .getSenders()
-                .find((sender) => sender.track.kind === "video");
-            const audioSender = pc2
-                .getSenders()
-                .find((sender) => sender.track.kind === "audio");
-            await videoSender.replaceTrack(videoTrack);
-            await audioSender.replaceTrack(audioTrack);
-        }
-
-    }
-    
-    // publisher stream으로 송출 stream을 세팅
-    async setPublisherStreamSelection() {
-        myVideo = document.getElementById("myVideoTag");
-        myVideo.srcObject = this.onStream;
-        console.log("RoomStore setPublisherStreamSelection... the end")
-        // this.changeStream(user.stream);
-        // await this.onChangeBroadcastingStream();
-        console.log('setPublisherStreamSelection pc',pc)
-        const pc2 = this.onPc;
-        console.log('setPublisherStreamSelection pc2',pc2)
-        if (pc2) {
-            let stream = this.onStream;
-            const videoTrack = stream.getVideoTracks()[0];
-            const audioTrack = stream.getAudioTracks()[0];
-            console.log('videoTrack', videoTrack);
-            console.log('audioTrack', audioTrack);
-            console.log('pc2.getSenders',pc2.getSenders());
-            const videoSender = await pc2
-                .getSenders()
-                .find((sender) => sender.track.kind === "video");
-            const audioSender = pc2
-                .getSenders()
-                .find((sender) => sender.track.kind === "audio");
-            await videoSender.replaceTrack(videoTrack);
-            await audioSender.replaceTrack(audioTrack);
-        }
-        
-    }
-    
-    /////////////////////////////////////////////////////////
+    ////////////////////////////// room state ///////////////////////////
     
     // room state change DB Update
     * onUpdateRoomState(data) {
@@ -1136,10 +1185,10 @@ export default class RoomStore {
         try {
             data.state = RoomStateType.Complete;
             return this.onUpdateRoomState(data)
-                // .then(result => {
-                //     console.log("onCompleteRoom", result);
-                //     return result;
-                // })
+            // .then(result => {
+            //     console.log("onCompleteRoom", result);
+            //     return result;
+            // })
         } catch (e) {
             console.log(e);
         }

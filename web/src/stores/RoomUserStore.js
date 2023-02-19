@@ -94,7 +94,7 @@ export default class RoomUserStore {
     }
     
 
-    //handsupuser streamurl 추가
+    //pannel 요청 : roomUser DB player 데이터에 streamUrl 추가
     * handsUpUser(data) {
         console.log('여기오나')
         const streamUser = yield this.roomUserRepository.onHandsUpRoomUser(data)
@@ -102,6 +102,7 @@ export default class RoomUserStore {
         this.streamUser = streamUser;
         return streamUser;
     }
+    
     //create room user history
     * onCreateRoomUserHistory(data){
         console.log("RoomUserStore onCreateRoomUser param : ",data)

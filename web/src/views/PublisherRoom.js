@@ -162,7 +162,6 @@ class PublisherRoom extends React.Component {
         this.state.room = this.props.roomStore.getSelectedRoom(roomId);
         console.log('this.state.room : ', this.state.room);
         // 방송 기본 세팅
-        
         this.props.roomStore.setRoom();
         // const stream = this.props.roomStore.setRoom();
         // stream.then(data => this.setState({stream: data}));
@@ -244,26 +243,27 @@ class PublisherRoom extends React.Component {
     
     // 방송 종료
     async onComplete() {
-        window.confirm("방송을 종료하시겠습니까?");
-        console.log('onRoom', this.props.roomStore.onRoom);
-        this.props.roomStore.onCompleteRoomState(this.props.roomStore.onRoom);
-        // room state : complete & roomUser state : complete
-        if (this.state.roomPlayerList !== []) {
-            await this.props.roomUserStore.onCompleteRoomUserAndHistoryByPublisher(this.props.roomStore.onRoom.id, this.state.roomPlayerList);
+        if (window.confirm("방송을 종료하시겠습니까?")) {
+            console.log('onRoom', this.props.roomStore.onRoom);
+            this.props.roomStore.onCompleteRoomState(this.props.roomStore.onRoom);
+            // room state : complete & roomUser state : complete
+            if (this.state.roomPlayerList !== []) {
+                await this.props.roomUserStore.onCompleteRoomUserAndHistoryByPublisher(this.props.roomStore.onRoom.id, this.state.roomPlayerList);
+            }
+            await this.props.roomStore.onCompleteRoomState(this.props.roomStore.onRoom)
+                .then(result => {
+                    if (result === 1) {
+                        console.log("onCompleteRoom 성공")
+                        alert('세미나가 종료되었습니다.');
+                        window.location.replace('/room-list');
+                    } else {
+                        // this.onFailedRoomState(roomData); // roomData.state = RoomStateType.Failed;
+                        console.log("onCompleteRoom 실패")
+                        alert('세미나가 종료되었습니다.');
+                        window.location.replace('/room-list');
+                    }
+                })
         }
-        await this.props.roomStore.onCompleteRoomState(this.props.roomStore.onRoom)
-            .then(result => {
-                if (result === 1) {
-                    console.log("onCompleteRoom 성공")
-                    alert('세미나가 종료되었습니다.');
-                    window.location.replace('/room-list');
-                } else {
-                    // this.onFailedRoomState(roomData); // roomData.state = RoomStateType.Failed;
-                    console.log("onCompleteRoom 실패")
-                    alert('세미나가 종료되었습니다.');
-                    window.location.replace('/room-list');
-                }
-            })
     }
     
     // 오른쪽 tab change
@@ -309,7 +309,7 @@ class PublisherRoom extends React.Component {
         e.preventDefault();
         await this.props.roomStore.setPannelStreamSelection(user);
     }
-
+    
     // publisher stream으로 송출 stream을 세팅
     onPublisherSelection = async (e) => {
         e.preventDefault();
@@ -349,7 +349,8 @@ class PublisherRoom extends React.Component {
                                             </video>
                                             <button
                                                 onClick={(e) => this.onPublisherSelection(e)}
-                                            >publisher 영상으로 복귀</button>
+                                            >publisher 영상으로 복귀
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
@@ -376,9 +377,8 @@ class PublisherRoom extends React.Component {
                                 this.props.roomStore.onPannelList.map((user, i) => {
                                     
                                     return (
-                                        <div>
+                                        <div key={`pannelVideo-${i}`}>
                                             <video
-                                                key={`pannelVideo-${i}`}
                                                 id={`pannelVideo-${user.streamUrl}`}
                                                 controls
                                                 autoPlay
@@ -468,18 +468,6 @@ class PublisherRoom extends React.Component {
                                         </fieldset>
                                     </Button>
                                     
-                                    
-                                    {/*<ButtonGroup variant="outlined" aria-label="outlined primary button group" size="large" color="inherit">*/}
-                                    {/*     {this.state.audioOff ? <Button onClick={this.onAudioOnOff.bind(this)} style={{display: 'block'}}><div><MicIcon></MicIcon></div><span>Mute</span></Button>:<Button style={{display: 'block'}} onClick={this.onAudioOnOff.bind(this)}><div><MicOffIcon></MicOffIcon></div><span>Unmute</span></Button>}*/}
-                                    {/*     {this.state.videoOn ? <Button onClick={this.onVideoOnOff.bind(this)} style={{display: 'block'}}><div><VideocamIcon></VideocamIcon></div><span>Start cam</span></Button>:<Button style={{display: 'block'}} onClick={this.onVideoOnOff.bind(this)}><div><VideocamOffIcon></VideocamOffIcon></div><span>Stop cam</span></Button>}*/}
-                                    {/*     <Button startIcon={<SettingsIcon />} style={{display: 'block', cursor: 'auto'}} disableTouchRipple disableRipple focusRipple>*/}
-                                    {/*         <select*/}
-                                    {/*             id="cameras"*/}
-                                    {/*             style={{fontSize: "16px", color: '#37474f', width:'200px'}}*/}
-                                    {/*             onInput={this.onChangeVideoOption.bind(this)}*/}
-                                    {/*         ></select></Button>    */}
-                                    
-                                    
                                     {this.state.standBy
                                         ?
                                         <Button
@@ -503,14 +491,15 @@ class PublisherRoom extends React.Component {
                                                 >
                                                     방송 일시 정지
                                                 </Button>
-                                                <Button
-                                                    id={'complete'}
-                                                    onClick={this.onComplete.bind(this)}
-                                                >
-                                                    방송 종료
-                                                </Button>
+                                            
                                             </>
                                     }
+                                    <Button
+                                        id={'complete'}
+                                        onClick={this.onComplete.bind(this)}
+                                    >
+                                        방송 종료
+                                    </Button>
                                 </ButtonGroup>
                             </div>
                         </div>
@@ -563,14 +552,14 @@ class PublisherRoom extends React.Component {
     }
     
     
-    }
-    
-    
-    export default withSnackbar(withRouter(
-    withStyles(styles)(
-    inject('roomStore', 'roomUserStore', 'authStore')(
-    observer(PublisherRoom)
+}
+
+
+export default withSnackbar(withRouter(
+        withStyles(styles)(
+            inject('roomStore', 'roomUserStore', 'authStore')(
+                observer(PublisherRoom)
+            )
+        )
     )
-    )
-    )
-    );
+);
