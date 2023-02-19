@@ -69,14 +69,14 @@ class RoomMake extends React.Component {
 
         const inputTitle = e.target.value.trim().length;
         // console.log("입력값 확인",e.target.value, inputTitle)
-        if(inputTitle >= 3 && inputTitle <= 120 ){
+        if(inputTitle >= 3 && inputTitle <= 50 ){
             this.props.roomStore.changeTitle(e.target.value.trim());
             this.setState({
                 titleMessage : ""
             })
         } else {
             this.setState({
-                titleMessage : "세미나 제목은 3자이상 120자 이하로 작성해주세요."
+                titleMessage : "세미나 제목은 3자이상 50자 이하로 작성해주세요."
             })
         }
     };
@@ -127,7 +127,7 @@ class RoomMake extends React.Component {
         const inputCheck = ((id) => { return document.getElementById(id).value.trim().length});
         // 필수항목 체크 (세미나 제목, 최대인원수, 세미나 설정)
         if(inputCheck("title")<3){
-            return alert("세미나 제목은 3자이상 120자 이하로 작성해주세요!")
+            return alert("세미나 제목은 3자이상 50자 이하로 작성해주세요!")
         }else if(!inputCheck("maximum")){
             return alert("최대 참여인원 수를 입력해 주세요! (숫자만 입력)")
         }else if(this.state.private){
@@ -184,7 +184,7 @@ class RoomMake extends React.Component {
                     onChange={this.handleChangeTitle}
                     inputProps={{
                         min: 5,
-                        maxLength: 120
+                        maxLength: 50
                     }}
                     fullWidth
                     required
