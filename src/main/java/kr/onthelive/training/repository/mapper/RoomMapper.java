@@ -23,4 +23,7 @@ public interface RoomMapper {
         BaseRoomUserName selectRoomById(String id);
     // room state update
     int updateRoomState(String id, BaseRoomState state);
+
+    // selectRoomMaximumByRoomId
+    String selectRoomMaximum(String roomId);
 }

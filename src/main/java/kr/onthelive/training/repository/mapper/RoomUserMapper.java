@@ -21,6 +21,9 @@ public interface RoomUserMapper {
     // 룸 유저 중복 검사
     int countRoomUserByRoomIdAndPlayerId(String roomId, String playerId);
 
+    // 룸 유저 인원수 count
+    int countRoomUserByRoomId(String roomId);
+
     // streamUrl 중복검사
     int selectRoomUserByStreamUrl(String streamUrl);
 

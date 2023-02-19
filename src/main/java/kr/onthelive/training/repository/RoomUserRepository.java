@@ -7,7 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.util.HashMap;
 import java.util.List;
 
 @Repository
@@ -25,8 +24,11 @@ public class RoomUserRepository {
         return mapper.selectRoomUser(id);
     }
 
-    // 룸 유저 전체 조회
+    // 모든 룸의 모든 유저 전체 조회
     public List<BaseRoomUser> readAllRoomUsers () { return mapper.selectAllRoomUsers();}
+
+    // 특정 룸의 전체 유저 count
+    public int countRoomUserByRoomId(String roomId) {return mapper.countRoomUserByRoomId(roomId);}
 
     //
     public List<BaseRoomUserWithUserName> selectRoomUserListByRoomId(String roomId){

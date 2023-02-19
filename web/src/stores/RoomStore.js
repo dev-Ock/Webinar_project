@@ -899,7 +899,10 @@ export default class RoomStore {
                 alert('참여중이었던 세미나에 재입장합니다.');
                 await window.location.replace('/player-room');
                 
-            } else {
+            } else if (result === 555) {
+                alert("세미나의 정원이 초과되었습니다.")
+                return window.location.replace("/room-list")
+            }else{
                 console.log('room user DB 저장 성공');
                 await window.location.replace('/player-room');
             }

@@ -141,6 +141,7 @@ class RoomList extends React.Component {
         e.preventDefault();
         const {roomStore, authStore, roomUserStore} = this.props;
         await roomStore.playerOrPublisherChoice(room, authStore.loginUser.id, () => authStore.checkLogin(), (param) => roomUserStore.onCreateRoomUser(param));
+
     }
 
 
