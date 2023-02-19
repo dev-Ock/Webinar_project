@@ -1,6 +1,7 @@
 package kr.onthelive.training.repository;
 
 import kr.onthelive.training.model.BaseRoomUserHistory;
+import kr.onthelive.training.model.BaseRoomUserWithUserName;
 import kr.onthelive.training.repository.mapper.RoomUserHistoryMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,4 +31,17 @@ public class RoomUserHistoryRepository {
         return mapper.insertRoomUserHistory(roomUserHistory);
     }
 
+    // roomUserHistory create [State Progress]
+    public int insertRoomUserHistoryOnProgressByPublisher(List<BaseRoomUserWithUserName> roomUserList) {
+        log.trace("repository.insertRoomUserHistoryOnProgressByPublisher... {}", roomUserList);
+        int result = mapper.insertRoomUserHistoryOnProgressByPublisher(roomUserList);
+        return result;
+    }
+
+    // roomUserHistory create [State Complete]
+    public int insertRoomUserHistoryOnCompleteByPublisher(List<BaseRoomUserWithUserName> roomUserList) {
+        log.trace("repository.insertRoomUserHistoryOnCompleteByPublisher... {}", roomUserList);
+        int result = mapper.insertRoomUserHistoryOnCompleteByPublisher(roomUserList);
+        return result;
+    }
 }

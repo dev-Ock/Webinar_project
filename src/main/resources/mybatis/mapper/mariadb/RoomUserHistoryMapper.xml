@@ -20,19 +20,47 @@
     </select>
 
     <!-- insert -->
-    <insert id="insertRoomUserHistory" parameterType="BaseRoomUserHistory" >
+    <insert id="insertRoomUserHistory" parameterType="BaseRoomUserHistory" useGeneratedKeys="true" keyProperty="id" >
         INSERT INTO room_user_histories (
-            id,
             room_id,
             player_id,
             state,
             created_datetime
         ) VALUES (
-                     #{id},
                      #{roomId},
                      #{playerId},
                      #{state},
                      NOW()
                  )
     </insert>
+    
+    
+    <insert id="insertRoomUserHistoryOnProgressByPublisher" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO room_user_histories (
+            room_id,
+            player_id,
+            state,
+            created_datetime
+        ) VALUES
+              <foreach collection="list" item="item" separator=",">
+                    (#{item.roomId}, #{item.playerId}, 'Progress', #{item.createdDatetime})
+              </foreach>
+    </insert>
+
+    <insert id="insertRoomUserHistoryOnCompleteByPublisher" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO room_user_histories (
+            room_id,
+            player_id,
+            state,
+            created_datetime
+        ) VALUES
+            <foreach collection="list" item="item" separator=",">
+                (#{item.roomId}, #{item.playerId}, 'Complete', #{item.createdDatetime})
+            </foreach>
+    </insert>
+
+
+
+
+    
 </mapper>

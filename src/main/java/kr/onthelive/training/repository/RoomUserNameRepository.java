@@ -19,8 +19,8 @@ public class RoomUserNameRepository {
     }
 
     // 룸 목록 전체 조회
-    public List<BaseRoomUserName> selectRoomDetailList(BaseRoomState state1, BaseRoomState state2) {
-        return mapper.selectRoomDetailList(state1, state2);
+    public List<BaseRoomUserName> selectRoomDetailList(BaseRoomState state1, BaseRoomState state2, BaseRoomState state3) {
+        return mapper.selectRoomDetailList(state1, state2, state3);
     }
 
     // 새로운 룸 추가

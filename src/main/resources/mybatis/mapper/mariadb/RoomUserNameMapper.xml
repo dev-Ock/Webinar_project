@@ -78,6 +78,7 @@
                       ON rooms.publisher_id = users.id
         WHERE rooms.state = #{state1}
                 OR rooms.state = #{state2}
+                OR rooms.state = #{state3}
         ORDER BY rooms.id DESC;
     </select>
 
