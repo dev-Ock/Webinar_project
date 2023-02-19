@@ -123,10 +123,10 @@ const styles = (theme) => ({
     },
     gridView3: {
         gridArea: 'view3',
-        padding : '0 50px 10px 50px',
+        padding : '0 50px 10px 50px'
     },
     gridView4: {
-        gridArea: 'view4',
+        gridArea: 'view4'
     }
 });
 
@@ -147,7 +147,8 @@ class PublisherRoom extends React.Component {
             tabValue            : '1',
             pannelRequestList   : [],
             pannelRequestListBar: false,
-            pannelAddition      : false
+            pannelAddition      : false,
+            pannelStreaming : false
         }
         
     }
@@ -162,7 +163,6 @@ class PublisherRoom extends React.Component {
         this.state.room = this.props.roomStore.getSelectedRoom(roomId);
         console.log('this.state.room : ', this.state.room);
         // 방송 기본 세팅
-        
         this.props.roomStore.setRoom();
         // const stream = this.props.roomStore.setRoom();
         // stream.then(data => this.setState({stream: data}));
@@ -244,26 +244,27 @@ class PublisherRoom extends React.Component {
     
     // 방송 종료
     async onComplete() {
-        window.confirm("방송을 종료하시겠습니까?");
-        console.log('onRoom', this.props.roomStore.onRoom);
-        this.props.roomStore.onCompleteRoomState(this.props.roomStore.onRoom);
-        // room state : complete & roomUser state : complete
-        if (this.state.roomPlayerList !== []) {
-            await this.props.roomUserStore.onCompleteRoomUserAndHistoryByPublisher(this.props.roomStore.onRoom.id, this.state.roomPlayerList);
+        if (window.confirm("방송을 종료하시겠습니까?")) {
+            console.log('onRoom', this.props.roomStore.onRoom);
+            this.props.roomStore.onCompleteRoomState(this.props.roomStore.onRoom);
+            // room state : complete & roomUser state : complete
+            if (this.state.roomPlayerList !== []) {
+                await this.props.roomUserStore.onCompleteRoomUserAndHistoryByPublisher(this.props.roomStore.onRoom.id, this.state.roomPlayerList);
+            }
+            await this.props.roomStore.onCompleteRoomState(this.props.roomStore.onRoom)
+                .then(result => {
+                    if (result === 1) {
+                        console.log("onCompleteRoom 성공")
+                        alert('세미나가 종료되었습니다.');
+                        window.location.replace('/room-list');
+                    } else {
+                        // this.onFailedRoomState(roomData); // roomData.state = RoomStateType.Failed;
+                        console.log("onCompleteRoom 실패")
+                        alert('세미나가 종료되었습니다.');
+                        window.location.replace('/room-list');
+                    }
+                })
         }
-        await this.props.roomStore.onCompleteRoomState(this.props.roomStore.onRoom)
-            .then(result => {
-                if (result === 1) {
-                    console.log("onCompleteRoom 성공")
-                    alert('세미나가 종료되었습니다.');
-                    window.location.replace('/room-list');
-                } else {
-                    // this.onFailedRoomState(roomData); // roomData.state = RoomStateType.Failed;
-                    console.log("onCompleteRoom 실패")
-                    alert('세미나가 종료되었습니다.');
-                    window.location.replace('/room-list');
-                }
-            })
     }
     
     // 오른쪽 tab change
@@ -308,12 +309,14 @@ class PublisherRoom extends React.Component {
     onPannelSelection = async (e, user) => {
         e.preventDefault();
         await this.props.roomStore.setPannelStreamSelection(user);
+        this.setState({pannelStreaming : true});
     }
-
+    
     // publisher stream으로 송출 stream을 세팅
     onPublisherSelection = async (e) => {
         e.preventDefault();
         await this.props.roomStore.setPublisherStreamSelection();
+        this.setState({pannelStreaming : false});
     }
 // if ((navigator.mediaDevices && 'getDisplayMedia' in navigator.mediaDevices)) {
 //     startButton.disabled = false;
@@ -343,13 +346,13 @@ class PublisherRoom extends React.Component {
                                                 autoPlay
                                                 playsInline
                                                 style={{backgroundColor: 'black'}}
-                                                width={900}
-                                                height={700}
+                                                width={960}
+                                                height={720}
                                             >
                                             </video>
-                                            <button
-                                                onClick={(e) => this.onPublisherSelection(e)}
-                                            >publisher 영상으로 복귀</button>
+                                 
+                                          
+                                    
                                         </div>
                                     </div>
                                 </div>
@@ -366,42 +369,62 @@ class PublisherRoom extends React.Component {
                             Master : {this.props.roomStore.onRoom.name} &nbsp; / &nbsp;
                             State : {this.props.roomStore.onRoom.state}
                         </h2>
-                        <h3>패널 대기 리스트</h3>
-                        {
-                            
-                            this.props.roomStore.onPannelList === undefined
-                                ?
-                                ""
-                                :
-                                this.props.roomStore.onPannelList.map((user, i) => {
-                                    
-                                    return (
-                                        <div>
-                                            <video
-                                                key={`pannelVideo-${i}`}
-                                                id={`pannelVideo-${user.streamUrl}`}
-                                                controls
-                                                autoPlay
-                                                playsInline
-                                                width={200}
-                                                height={160}
-                                                style={{backgroundColor: 'black'}}
-                                            >
-                                            </video>
-                                            <div> {user.name} </div>
-                                            <button
-                                                key={`pannelVideoButton-${i}`}
-                                                id={`pannelVideoButton-${user.streamUrl}`}
-                                                onClick={(e) => this.onPannelSelection(e, user)}
-                                            >
-                                                {user.name} 선택
-                                            </button>
-                                        </div>
-                                    )
-                                })
-                        }
                         
-                        {/*&nbsp;&nbsp;&nbsp;&nbsp;*/}
+                        <div style={{border:'solid', height:'320px', overflow:'auto', whiteSpace:'nowrap'}}>
+                            <div>
+                                <h3>&nbsp;&nbsp;패널 대기 리스트</h3>
+                            </div>
+                           
+                      
+                            {
+                                
+                                this.props.roomStore.onPannelList === undefined
+                                    ?
+                                    ""
+                                    :
+                                    this.props.roomStore.onPannelList.map((user, i) => {
+                                        
+                                        return (
+                                            
+                                            <div key={`pannelVideo-${i}`} style={{width:'250px', height:'250px', float:'left', textAlign:'center', margin : '0 20px 0 20px'}}>
+                                                <video
+                                                    id={`pannelVideo-${user.streamUrl}`}
+                                                    controls
+                                                    autoPlay
+                                                    playsInline
+                                                    width={250}
+                                                    height={200}
+                                                    style={{backgroundColor: 'black'}}
+                                                >
+                                                </video>
+                                                <br/>
+                                                <Button
+                                                    key={`pannelVideoButton-${i}`}
+                                                    id={`pannelVideoButton-${user.streamUrl}`}
+                                                    variant={"outlined"}
+                                                    style={{height:'30px',fontSize:'18px',color:'#455a64'}}
+                                                    onClick={(e) => this.onPannelSelection(e, user)}
+                                                >
+                                                    <h3> [{user.name}]</h3> 님을 패널로 선택
+                                                </Button>
+                                            </div>
+                                        )
+                                    })
+                            }
+                        
+                     </div>
+                        <br/>
+                        {
+                            this.state.pannelStreaming ?
+                                <Button
+                                    variant={"outlined"}
+                                    style={{height:'30px',fontSize:'30px', color:'#455a64'}}
+                                    onClick={(e) => this.onPublisherSelection(e)}
+                                >
+                                    publisher 영상으로 복귀
+                                </Button> :
+                                ""
+                        }
                     
                     </div>
                     <div className={classes.gridView4}>
@@ -468,18 +491,6 @@ class PublisherRoom extends React.Component {
                                         </fieldset>
                                     </Button>
                                     
-                                    
-                                    {/*<ButtonGroup variant="outlined" aria-label="outlined primary button group" size="large" color="inherit">*/}
-                                    {/*     {this.state.audioOff ? <Button onClick={this.onAudioOnOff.bind(this)} style={{display: 'block'}}><div><MicIcon></MicIcon></div><span>Mute</span></Button>:<Button style={{display: 'block'}} onClick={this.onAudioOnOff.bind(this)}><div><MicOffIcon></MicOffIcon></div><span>Unmute</span></Button>}*/}
-                                    {/*     {this.state.videoOn ? <Button onClick={this.onVideoOnOff.bind(this)} style={{display: 'block'}}><div><VideocamIcon></VideocamIcon></div><span>Start cam</span></Button>:<Button style={{display: 'block'}} onClick={this.onVideoOnOff.bind(this)}><div><VideocamOffIcon></VideocamOffIcon></div><span>Stop cam</span></Button>}*/}
-                                    {/*     <Button startIcon={<SettingsIcon />} style={{display: 'block', cursor: 'auto'}} disableTouchRipple disableRipple focusRipple>*/}
-                                    {/*         <select*/}
-                                    {/*             id="cameras"*/}
-                                    {/*             style={{fontSize: "16px", color: '#37474f', width:'200px'}}*/}
-                                    {/*             onInput={this.onChangeVideoOption.bind(this)}*/}
-                                    {/*         ></select></Button>    */}
-                                    
-                                    
                                     {this.state.standBy
                                         ?
                                         <Button
@@ -503,14 +514,15 @@ class PublisherRoom extends React.Component {
                                                 >
                                                     방송 일시 정지
                                                 </Button>
-                                                <Button
-                                                    id={'complete'}
-                                                    onClick={this.onComplete.bind(this)}
-                                                >
-                                                    방송 종료
-                                                </Button>
+                                            
                                             </>
                                     }
+                                    <Button
+                                        id={'complete'}
+                                        onClick={this.onComplete.bind(this)}
+                                    >
+                                        방송 종료
+                                    </Button>
                                 </ButtonGroup>
                             </div>
                         </div>
@@ -563,14 +575,14 @@ class PublisherRoom extends React.Component {
     }
     
     
-    }
-    
-    
-    export default withSnackbar(withRouter(
-    withStyles(styles)(
-    inject('roomStore', 'roomUserStore', 'authStore')(
-    observer(PublisherRoom)
+}
+
+
+export default withSnackbar(withRouter(
+        withStyles(styles)(
+            inject('roomStore', 'roomUserStore', 'authStore')(
+                observer(PublisherRoom)
+            )
+        )
     )
-    )
-    )
-    );
+);
