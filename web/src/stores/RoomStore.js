@@ -1163,40 +1163,43 @@ export default class RoomStore {
     
     // publisher or player check
     async checkPublisherOrPlayer(room, userId, onCreateRoomUser) {
-        console.log('room.id', room.id);
-        if (room.publisherId === userId) {
-            console.log('publisher');
-            await this.setRoomData(room); // sessionStorage에 publisher 정보 세팅
-            await window.location.replace('/publisher-room');
-        } else {
-            console.log('player')
-            await this.beforePlayerRoom(room.id, room.streamUrl); // sessionStorage에 player 정보 세팅
+        try{
+            console.log('room.id', room.id);
+            if (room.publisherId === userId) {
+                console.log('publisher');
+                await this.setRoomData(room); // sessionStorage에 publisher 정보 세팅
+                await window.location.replace('/publisher-room');
+            } else {
+                console.log('player')
+                await this.beforePlayerRoom(room.id, room.streamUrl); // sessionStorage에 player 정보 세팅
+        
+                const param = {
+                    roomId     : room.id,
+                    publisherId: room.publisherId,
+                    playerId   : userId,
+                    state      : RoomUserStateType.Wait
+                };
+                console.log('param', param);
+                const result = await onCreateRoomUser(param);
+                console.log('RoomStore onCreateRoomUser result', result);
+                if (result === 0) {
+                    throw Error('room user DB 저장 실패');
+                } else if (result === -1) {
+                    alert('참여중이었던 세미나에 재입장합니다.');
+                    await window.location.replace('/player-room');
             
-            const param = {
-                roomId     : room.id,
-                publisherId: room.publisherId,
-                playerId   : userId,
-                state      : RoomUserStateType.Wait
-            };
-            console.log('param', param);
-            const result = await onCreateRoomUser(param);
-            console.log('RoomStore onCreateRoomUser result', result);
-            if (result === 0) {
-                throw Error('room user DB 저장 실패');
-            } else if (result === -1) {
-                alert('참여중이었던 세미나에 재입장합니다.');
-                await window.location.replace('/player-room');
-                
-            } else if (result === 555) {
-                alert("세미나의 정원이 초과되었습니다.")
-                return window.location.replace("/room-list")
-            }else{
-                console.log('room user DB 저장 성공');
-                await window.location.replace('/player-room');
+                } else if (result === 555) {
+                    alert("세미나의 정원이 초과되었습니다.")
+                    return window.location.replace("/room-list")
+                }else{
+                    console.log('room user DB 저장 성공');
+                    await window.location.replace('/player-room');
+                }
             }
         }catch(e){
             console.log(e);
         }
+     
     
     }
     
