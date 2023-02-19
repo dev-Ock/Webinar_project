@@ -113,7 +113,8 @@ class PlayerRoom extends React.Component {
             pannelRequestListBar: false,
             view                : true,//필요없음
             pause               : false, //일시정지라서 필요없을 듯,
-            playingStream       : false
+            playingStream       : false,
+            pannelRequest       : false
         }
     }
     
@@ -184,6 +185,7 @@ class PlayerRoom extends React.Component {
         // console.log('같은지 테스트',streamUrl) 같음확인
         // SRS server-발표자 연결
         await this.props.roomStore.serverPlayerPublishingConnection(streamUrl);
+        this.setState({pannelRequest: true})
     }
     
     
@@ -359,51 +361,65 @@ class PlayerRoom extends React.Component {
                                             </div>
                                         </fieldset>
                                     </Button>
-                                    <Button
-                                        style={{fontSize: "25px"}}
-                                        onClick={(e) => this.handleSubmitHandsUp(e)}
-                                    > 패널 요청
-                                    </Button>
-                                    <Button disableRipple={true} style={{backgroundColor: 'lightgrey'}}></Button>
+                                    
+                                    {/*<Button disableRipple={true} style={{backgroundColor: 'lightgrey'}}></Button>*/}
                                     {
-                                        this.state.playingStream ?
-                                            <>
-                                                {this.state.playingAudioOff ?
-                                                    <Button
-                                                        onClick={this.onPlayingAudioOnOffInPlayerRoom.bind(this)}
-                                                        style={{display: 'block'}}>
-                                                        <div><MicIcon></MicIcon></div>
-                                                        <span>시청용</span>
-                                                    </Button>
-                                                    :
-                                                    <Button
-                                                        style={{display: 'block'}}
-                                                        onClick={this.onPlayingAudioOnOffInPlayerRoom.bind(this)}>
-                                                        <div><MicOffIcon></MicOffIcon></div>
-                                                        <span>시청용</span>
-                                                    </Button>}
-                                                
-                                                {this.state.playingVideoOn ?
-                                                    <Button
-                                                        onClick={this.onPlayingVideoOnOffInPlayerRoom.bind(this)}
-                                                        style={{display: 'block'}}>
-                                                        <div><VideocamIcon></VideocamIcon></div>
-                                                        <span>시청용</span>
-                                                    </Button>
-                                                    :
-                                                    <Button
-                                                        style={{display: 'block'}}
-                                                        onClick={this.onPlayingVideoOnOffInPlayerRoom.bind(this)}>
-                                                        <div><VideocamOffIcon></VideocamOffIcon></div>
-                                                        <span>시청용</span>
-                                                    </Button>}
-                                            </>
-                                            :
+                                        !this.state.playingStream ?
+                                            
+                                            
                                             <Button
                                                 style={{fontSize: "25px"}}
                                                 onClick={this.onServerPlayerConnection.bind(this)}>
                                                 방송 시청
                                             </Button>
+                                            
+                                            : !this.state.pannelRequest ?
+                                                
+                                                
+                                                <Button
+                                                    style={{fontSize: "25px"}}
+                                                    onClick={(e) => this.handleSubmitHandsUp(e)}
+                                                > 패널 요청
+                                                </Button>
+                                                
+                                                :
+                                                <Button disabled={true} style={{fontSize: "25px"}}> 요청
+                                                    완료 </Button>
+                                        
+                                        
+                                        // <>
+                                        //     {this.state.playingAudioOff ?
+                                        //         <Button
+                                        //             onClick={this.onPlayingAudioOnOffInPlayerRoom.bind(this)}
+                                        //             style={{display: 'block'}}>
+                                        //             <div><MicIcon></MicIcon></div>
+                                        //             <span>시청용</span>
+                                        //         </Button>
+                                        //         :
+                                        //         <Button
+                                        //             style={{display: 'block'}}
+                                        //             onClick={this.onPlayingAudioOnOffInPlayerRoom.bind(this)}>
+                                        //             <div><MicOffIcon></MicOffIcon></div>
+                                        //             <span>시청용</span>
+                                        //         </Button>}
+                                        //
+                                        //     {this.state.playingVideoOn ?
+                                        //         <Button
+                                        //             onClick={this.onPlayingVideoOnOffInPlayerRoom.bind(this)}
+                                        //             style={{display: 'block'}}>
+                                        //             <div><VideocamIcon></VideocamIcon></div>
+                                        //             <span>시청용</span>
+                                        //         </Button>
+                                        //         :
+                                        //         <Button
+                                        //             style={{display: 'block'}}
+                                        //             onClick={this.onPlayingVideoOnOffInPlayerRoom.bind(this)}>
+                                        //             <div><VideocamOffIcon></VideocamOffIcon></div>
+                                        //             <span>시청용</span>
+                                        //         </Button>}
+                                        // </>
+                                        
+                                        
                                     }
                                     <Button
                                         style={{fontSize: "25px"}}

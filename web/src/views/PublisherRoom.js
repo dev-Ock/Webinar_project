@@ -145,10 +145,11 @@ class PublisherRoom extends React.Component {
             videoOn             : true,
             audioOff            : false,
             tabValue            : '1',
+            publisherStreaming  : false,
             pannelRequestList   : [],
             pannelRequestListBar: false,
             pannelAddition      : false,
-            pannelStreaming : false
+            pannelStreaming     : false
         }
         
     }
@@ -201,6 +202,7 @@ class PublisherRoom extends React.Component {
             console.log("playerList : ", this.state.roomPlayerList);
             this.setState({view: false});
         }
+        this.setState({publisherStreaming: true})
     }
     
     // Camera on/off
@@ -295,28 +297,32 @@ class PublisherRoom extends React.Component {
     
     // 패널 추가
     addPannel = async (e, roomUser) => {
-        e.preventDefault();
-        await this.props.roomStore.onAddPannel(roomUser);
-        console.log("222111", this.props.roomStore.onPannelList);
-        // pannel video에 stream 추가
-        this.props.roomStore.onPannelList.map(user => {
-            const videoTag = document.getElementById(`pannelVideo-${user.streamUrl}`);
-            videoTag.srcObject = user.stream;
-        })
+        if (!this.state.publisherStreaming) {
+            alert("아직 방송 시작 전입니다.")
+        } else {
+            e.preventDefault();
+            await this.props.roomStore.onAddPannel(roomUser);
+            console.log("222111", this.props.roomStore.onPannelList);
+            // pannel video에 stream 추가
+            this.props.roomStore.onPannelList.map(user => {
+                const videoTag = document.getElementById(`pannelVideo-${user.streamUrl}`);
+                videoTag.srcObject = user.stream;
+            })
+        }
     }
     
     // pannel stream으로 송출 stream을 세팅
     onPannelSelection = async (e, user) => {
         e.preventDefault();
         await this.props.roomStore.setPannelStreamSelection(user);
-        this.setState({pannelStreaming : true});
+        this.setState({pannelStreaming: true});
     }
     
     // publisher stream으로 송출 stream을 세팅
     onPublisherSelection = async (e) => {
         e.preventDefault();
         await this.props.roomStore.setPublisherStreamSelection();
-        this.setState({pannelStreaming : false});
+        this.setState({pannelStreaming: false});
     }
 // if ((navigator.mediaDevices && 'getDisplayMedia' in navigator.mediaDevices)) {
 //     startButton.disabled = false;
@@ -350,9 +356,8 @@ class PublisherRoom extends React.Component {
                                                 height={720}
                                             >
                                             </video>
-                                 
-                                          
-                                    
+                                        
+                                        
                                         </div>
                                     </div>
                                 </div>
@@ -370,12 +375,12 @@ class PublisherRoom extends React.Component {
                             State : {this.props.roomStore.onRoom.state}
                         </h2>
                         
-                        <div style={{border:'solid', height:'320px', overflow:'auto', whiteSpace:'nowrap'}}>
+                        <div style={{border: 'solid', height: '320px', overflow: 'auto', whiteSpace: 'nowrap'}}>
                             <div>
                                 <h3>&nbsp;&nbsp;패널 대기 리스트</h3>
                             </div>
-                           
-                      
+                            
+                            
                             {
                                 
                                 this.props.roomStore.onPannelList === undefined
@@ -386,7 +391,13 @@ class PublisherRoom extends React.Component {
                                         
                                         return (
                                             
-                                            <div key={`pannelVideo-${i}`} style={{width:'250px', height:'250px', float:'left', textAlign:'center', margin : '0 20px 0 20px'}}>
+                                            <div key={`pannelVideo-${i}`} style={{
+                                                width: '250px',
+                                                height: '250px',
+                                                float: 'left',
+                                                textAlign: 'center',
+                                                margin: '0 20px 0 20px'
+                                            }}>
                                                 <video
                                                     id={`pannelVideo-${user.streamUrl}`}
                                                     controls
@@ -402,7 +413,7 @@ class PublisherRoom extends React.Component {
                                                     key={`pannelVideoButton-${i}`}
                                                     id={`pannelVideoButton-${user.streamUrl}`}
                                                     variant={"outlined"}
-                                                    style={{height:'30px',fontSize:'18px',color:'#455a64'}}
+                                                    style={{height: '30px', fontSize: '18px', color: '#455a64'}}
                                                     onClick={(e) => this.onPannelSelection(e, user)}
                                                 >
                                                     <h3> [{user.name}]</h3> 님을 패널로 선택
@@ -412,13 +423,13 @@ class PublisherRoom extends React.Component {
                                     })
                             }
                         
-                     </div>
+                        </div>
                         <br/>
                         {
                             this.state.pannelStreaming ?
                                 <Button
                                     variant={"outlined"}
-                                    style={{height:'30px',fontSize:'30px', color:'#455a64'}}
+                                    style={{height: '30px', fontSize: '30px', color: '#455a64'}}
                                     onClick={(e) => this.onPublisherSelection(e)}
                                 >
                                     publisher 영상으로 복귀
