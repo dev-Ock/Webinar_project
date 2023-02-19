@@ -1,22 +1,12 @@
 package kr.onthelive.training.service;
 
-import kr.onthelive.training.model.BaseRoom;
 import kr.onthelive.training.model.BaseRoomUser;
 import kr.onthelive.training.model.BaseRoomUserWithUserName;
-import kr.onthelive.training.model.BaseSimpleUser;
-import kr.onthelive.training.model.support.BaseRoomUserState;
 import kr.onthelive.training.repository.RoomUserRepository;
-import kr.onthelive.training.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Objects;
 import java.util.List;
 
 
@@ -38,10 +28,16 @@ public class RoomUserService {
         return result;
     }
 
-    // 룸 유저 전체 조회
+    // 모든 룸의 모든 유저 전체 조회
     public List<BaseRoomUser> readAllRoomUsers() {
         List<BaseRoomUser> allRoomUsers = roomUserRepository.readAllRoomUsers();
         return allRoomUsers;
+    }
+
+    // roomId로 해당 룸의 인원수 체크
+    public int countRoomUserByRoomId(String roomId) {
+        int roomUsers = roomUserRepository.countRoomUserByRoomId(roomId);
+        return roomUsers;
     }
 
     // roomId로 룸 유저 목록 조회

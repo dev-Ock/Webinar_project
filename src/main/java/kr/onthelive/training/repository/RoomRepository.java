@@ -53,6 +53,8 @@ public class RoomRepository {
         return mapper.updateRoomState(id, state);
     }
 
+    // selectRoomMaximum
+    public String selectRoomMaximum(String roomId){ return mapper.selectRoomMaximum(roomId); }
 
 }
 

@@ -25,6 +25,7 @@
                created_datetime
         FROM room_histories
             WHERE publisher_id=#{publisherId}
+        ORDER BY id DESC
     </select>
 
     <!-- insert -->

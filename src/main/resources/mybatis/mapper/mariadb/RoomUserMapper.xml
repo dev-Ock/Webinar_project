@@ -60,6 +60,12 @@
         AND player_id = #{playerId}
     </select>
 
+    <select id="countRoomUserByRoomId" parameterType="String" resultType="int">
+        SELECT count(*)
+        FROM room_users
+        WHERE room_id = #{value}
+    </select>
+
     <select id="selectRoomUserByStreamUrl" parameterType="String" resultType="int">
         SELECT count(*)
         FROM room_users
