@@ -75,7 +75,7 @@ const styles = theme => ({
     },
     gridView1    : {
         gridArea: 'view1',
-        padding : '50px',
+        padding : '10px',
     },
     gridView2    : {
         gridArea : 'view2',
@@ -98,21 +98,22 @@ class PlayerRoom extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            connection          : true,
-            stream              : "",
-            publishingVideoOn             : true,
-            publishingAudioOff            : false,
-            playingVideoOn            : true,
-            playingAudioOff           : false,
-            tabValue            : '1',
-            playerList          : false,
-            room                : {},
-            roomPlayerList      : {},
-            // playerUrl           : '',
-            pannelRequestList   : [], //명단 용
+            connection        : true,
+            stream            : "",
+            publishingVideoOn : true,
+            publishingAudioOff: false,
+            playingVideoOn    : true,
+            playingAudioOff   : true,
+            tabValue          : '1',
+            playerList        : false,
+            room              : {},
+            roomPlayerList    : {},
+            // playerUrl        : '',
+            pannelRequestList   : [], //명단용
             pannelRequestListBar: false,
             view                : true,//필요없음
-            pause               : false //일시정지라서 필요없을 듯
+            pause               : false, //일시정지라서 필요없을 듯,
+            playingStream       : false
         }
     }
     
@@ -140,30 +141,30 @@ class PlayerRoom extends React.Component {
     }
     
     // self Camera on/off
-    onVideoOnOff = () => {
-        this.state.videoOn = this.props.roomStore.setVideoOnOff(this.state.videoOn);
+    onPublishingVideoOnOff = () => {
+        this.state.publishingVideoOn = this.props.roomStore.setPublishingVideoOnOffInPlayerRoom(this.state.publishingVideoOn);
     }
     
     // self Audio on/off
-    onAudioOnOff = () => {
-        this.state.audioOff = this.props.roomStore.setAudioOnOff(this.state.audioOff);
+    onPublishingAudioOnOff = () => {
+        this.state.publishingAudioOff = this.props.roomStore.setPublishingAudioOnOffInPlayerRoom(this.state.publishingAudioOff);
     }
     
     // self camera change
     async onChangeVideoOption() {
-        await this.props.roomStore.setChangeVideoOption();
+        await this.props.roomStore.setPlayerChangeVideoOption();
     }
     
     // self 송출할 display 선택
     selectDisplayOption = async (e) => {
         e.preventDefault();
-        await this.props.roomStore.onSelectDisplayOption();
+        await this.props.roomStore.onPlayerSelectDisplayOption();
     }
     
     // self 화면 공유 정지
     endDisplaySharing = async (e) => {
         e.preventDefault();
-        await this.props.roomStore.onEndDisplaySharing();
+        await this.props.roomStore.onEndPlayerDisplaySharing();
     }
     
     // 발표 요청
@@ -174,7 +175,7 @@ class PlayerRoom extends React.Component {
             roomId  : sessionStorage.getItem(RoomViewRoomID)
         }
         console.log('data check hands', data)
-    
+        
         //pannel 요청 : roomUser DB player 데이터에 streamUrl 추가
         const handsUp = await this.props.roomUserStore.handsUpUser(data)
         // this.setState({playerUrl: handsUp.streamUrl})
@@ -182,76 +183,43 @@ class PlayerRoom extends React.Component {
         const streamUrl = handsUp.streamUrl;
         // console.log('같은지 테스트',streamUrl) 같음확인
         // SRS server-발표자 연결
-        await this.props.roomStore.pServerPublisherConnection(streamUrl);
+        await this.props.roomStore.serverPlayerPublishingConnection(streamUrl);
     }
     
     
+    // 방송 시청
+    onServerPlayerConnection() {
+        const streamUrl = sessionStorage.getItem(Repository.RoomViewStreamUrl);
+        this.props.roomStore.serverPlayerConnection(streamUrl);
+        this.setState({playingStream: true});
+    }
     
-    // handleSubmitHandsUp = async (e) => {
-    //     e.preventDefault()
-    //     const data = {
-    //         playerId: this.props.authStore.loginUser.id,
-    //         roomId  : sessionStorage.getItem(RoomViewRoomID)
-    //     }
-    //     console.log('data check hands', data)
-    //
-    //     //pannel 요청 : roomUser DB player 데이터에 streamUrl 추가
-    //     const handsUp = await this.props.roomUserStore.handsUpUser(data)
-    //     // this.setState({playerUrl: handsUp.streamUrl})
-    //     // console.log('data check hands', handsUp.streamUrl)
-    //     const streamUrl = handsUp.streamUrl;
-    //     // console.log('같은지 테스트',streamUrl) 같음확인
-    //     // SRS server-발표자 연결
-    //     await this.props.roomStore.pServerPublisherConnection(streamUrl);
-    // }
-    //
-    //
-    //
-    //
-    // // 방송 종료
-    // async handelComplete() {
-    //     // window.confirm("방송에서 나가시겠습니까?");
-    //     const data = {
-    //         playerId: this.props.authStore.loginUser.id,
-    //         roomId  : sessionStorage.getItem(RoomViewRoomID),
-    //         state   : 'Complete'
-    //     }
-    //     console.log('나가기 테스트', data)
-    //     await this.props.roomUserStore.onCreateRoomUserHistory(data)
-    //     // await this.props.roomStore.onDeleteRoomUser()
-    //     // await this.props.roomUserStore.playerOut()
-    //     window.location.replace('/room-list');
-    // };
-
-    //
-    //
-    // // SRS server-Player 연결 방송시청
-    // onServerPlayerConnection() {
-    //     const streamUrl = sessionStorage.getItem(Repository.RoomViewStreamUrl);
-    //     this.props.roomStore.serverPlayerConnection(streamUrl);
-    //     this.setState({connection: false});
-    // }
-    //
-    //
-    // onVideoOnOff2 = () => {
-    //     this.props.roomStore.setVideoOnOff2();
-    // }
-    // onAudioOnOff2 = () => {
-    //     this.props.roomStore.setAudioOnOff2();
-    // };
-    // //송출용
-    // pOnVideoOnOff = () => {
-    //     // this.props.roomStore.playerSetVideoOnOff();
-    //     this.state.pVideoOn = this.props.roomStore.playerSetVideoOnOff(this.state.pVideoOn);
-    // }
-    // pOnAudioOnOff = () => {
-    //     // this.props.roomStore.playerSetAudioOnOff2();
-    //     this.state.pAudioOff = this.props.roomStore.playerSetAudioOnOff(this.state.pAudioOff)
-    // };
+    // playing Camera on/off
+    onPlayingVideoOnOffInPlayerRoom = () => {
+        this.state.playingVideoOn = this.props.roomStore.setPlayingVideoOnOffInPlayerRoom(this.state.playingVideoOn);
+    }
     
-    // async onChangeVideoOption() {
-    //     await this.props.roomStore.playerSetChangeVideoOption();
-    // };
+    // playing Audio on/off
+    onPlayingAudioOnOffInPlayerRoom = () => {
+        this.state.playingAudioOff = this.props.roomStore.setPlayingAudioOnOffInPlayerRoom(this.state.playingAudioOff);
+    };
+    
+    // 방송 종료
+    async handelComplete() {
+        if (window.confirm("방송에서 나가시겠습니까?")) {
+            const data = {
+                playerId: this.props.authStore.loginUser.id,
+                roomId  : sessionStorage.getItem(RoomViewRoomID),
+                state   : 'Complete'
+            }
+            console.log('나가기 테스트', data)
+            await this.props.roomUserStore.onCreateRoomUserHistory(data)
+            // await this.props.roomStore.onDeleteRoomUser()
+            // await this.props.roomUserStore.playerOut()
+            window.location.replace('/room-list');
+        }
+        
+    };
     
     // player List 조회 새로고침
     async onRefreshPlayerList() {
@@ -272,26 +240,6 @@ class PlayerRoom extends React.Component {
         this.setState({tabValue: value})
     };
     
-    // 플레이어가 송출할 display 선택
-    // selectDisplayOption = async (e) => {
-    //     e.preventDefault();
-    //     await this.props.roomStore.playerOnSelectDisplayOption();
-    // }
-    
-    // camera change
-    // async onChangeVideoOption() {
-    //     await this.props.roomStore.playerSetChangeVideoOption();
-    // };
-    
-    pSelectDislayOption = async (e) => {
-        e.preventDefault();
-        await this.props.roomStore.playerOnSelectDisplayOption()
-    };
-    pEndDeisplaySharing = async (e) => {
-        e.preventDefault();
-        await this.props.roomStroe.playerOnEndDisplaySharing();
-    };
-    
     
     render() {
         const {classes} = this.props;
@@ -302,8 +250,6 @@ class PlayerRoom extends React.Component {
                     <div className={classes.gridView1}>
                         <Box>
                             <div style={{textAlign: 'center', paddingTop: '20px'}}>
-                                <h2>PLAYER ROOM &nbsp; / &nbsp; Title
-                                    : {onRoom.title} &nbsp; / &nbsp; Master: {onRoom.name}</h2>
                                 <div style={{textAlign: 'center'}}>
                                     <div style={{overflowY: 'hidden'}}>
                                         {/*온트랙에서 getElementById와 맞춘 곳으로 비디오가 재생된다*/}
@@ -313,8 +259,8 @@ class PlayerRoom extends React.Component {
                                             controls
                                             playsInline
                                             style={{backgroundColor: 'black'}}
-                                            width={900}
-                                            height={600}
+                                            width={1000}
+                                            height={750}
                                         >
                                         
                                         </video>
@@ -326,6 +272,8 @@ class PlayerRoom extends React.Component {
                         </Box>
                     </div>
                     <div className={classes.gridView3}>
+                        <h2>PLAYER ROOM &nbsp; / &nbsp; Title
+                            : {onRoom.title} &nbsp; / &nbsp; Master: {onRoom.name}</h2>
                         <video
                             key={"playerVideoTag"}
                             id="playerVideoTag"
@@ -350,20 +298,28 @@ class PlayerRoom extends React.Component {
                                 <br/>
                                 <ButtonGroup variant="outlined" aria-label="outlined primary button group" size="large"
                                              color="inherit">
-                                    {this.state.audioOff ?
-                                        <Button onClick={this.onAudioOnOff.bind(this)} style={{display: 'block'}}>
-                                            <div><MicIcon></MicIcon></div>
-                                            <span></span></Button> :
-                                        <Button style={{display: 'block'}} onClick={this.onAudioOnOff.bind(this)}>
+                                    {this.state.publishingAudioOff ?
+                                        <Button
+                                            style={{display: 'block'}}
+                                            onClick={this.onPublishingAudioOnOff.bind(this)}>
+                                            <div><MicIcon>mine</MicIcon></div>
+                                            <span>mine</span></Button> :
+                                        <Button
+                                            style={{display: 'block'}}
+                                            onClick={this.onPublishingAudioOnOff.bind(this)}>
                                             <div><MicOffIcon></MicOffIcon></div>
-                                            <span></span></Button>}
-                                    {this.state.videoOn ?
-                                        <Button onClick={this.onVideoOnOff.bind(this)} style={{display: 'block'}}>
+                                            <span>mine</span></Button>}
+                                    {this.state.publishingVideoOn ?
+                                        <Button
+                                            style={{display: 'block'}}
+                                            onClick={this.onPublishingVideoOnOff.bind(this)}>
                                             <div><VideocamIcon></VideocamIcon></div>
-                                            <span></span></Button> :
-                                        <Button style={{display: 'block'}} onClick={this.onVideoOnOff.bind(this)}>
+                                            <span>mine</span></Button> :
+                                        <Button
+                                            style={{display: 'block'}}
+                                            onClick={this.onPublishingVideoOnOff.bind(this)}>
                                             <div><VideocamOffIcon></VideocamOffIcon></div>
-                                            <span></span></Button>}
+                                            <span>mine</span></Button>}
                                     {/*<Button startIcon={<SettingsIcon/>} style={{display: 'block'}}>*/}
                                     <Button style={{display: 'block'}}>
                                         <fieldset id="options"
@@ -406,178 +362,71 @@ class PlayerRoom extends React.Component {
                                     <Button
                                         style={{fontSize: "25px"}}
                                         onClick={(e) => this.handleSubmitHandsUp(e)}
-                                    > 발표요청
+                                    > 패널 요청
                                     </Button>
-                                    {/*{this.state.standBy*/}
-                                    {/*    ?*/}
-                                    {/*    <Button*/}
-                                    {/*        onClick={this.onStandBy.bind(this)}>*/}
-                                    {/*        방송 준비 완료*/}
-                                    {/*    </Button>*/}
-                                    
-                                    {/*    :*/}
-                                    {/*    this.state.view*/}
-                                    {/*        ?*/}
-                                    {/*        <Button*/}
-                                    {/*            style={{backgroundColor: 'orange'}}*/}
-                                    {/*            onClick={this.onServerPublisherConnection.bind(this)}>*/}
-                                    {/*            방송 시작*/}
-                                    {/*        </Button>*/}
-                                    {/*        :*/}
-                                    {/*        <>*/}
-                                    {/*            <Button*/}
-                                    {/*                id={'pause'}*/}
-                                    {/*                onClick={this.onPause.bind(this)}*/}
-                                    {/*            >*/}
-                                    {/*                방송 일시 정지*/}
-                                    {/*            </Button>*/}
-                                    
-                                    {/*        </>*/}
-                                    {/*}*/}
-                                    {/*<Button*/}
-                                    {/*    id={'complete'}*/}
-                                    {/*    onClick={this.onComplete.bind(this)}*/}
-                                    {/*>*/}
-                                    {/*    방송 종료*/}
-                                    {/*</Button>*/}
+                                    <Button disableRipple={true} style={{backgroundColor: 'lightgrey'}}></Button>
+                                    {
+                                        this.state.playingStream ?
+                                            <>
+                                                {this.state.playingAudioOff ?
+                                                    <Button
+                                                        onClick={this.onPlayingAudioOnOffInPlayerRoom.bind(this)}
+                                                        style={{display: 'block'}}>
+                                                        <div><MicIcon></MicIcon></div>
+                                                        <span>시청용</span>
+                                                    </Button>
+                                                    :
+                                                    <Button
+                                                        style={{display: 'block'}}
+                                                        onClick={this.onPlayingAudioOnOffInPlayerRoom.bind(this)}>
+                                                        <div><MicOffIcon></MicOffIcon></div>
+                                                        <span>시청용</span>
+                                                    </Button>}
+                                                
+                                                {this.state.playingVideoOn ?
+                                                    <Button
+                                                        onClick={this.onPlayingVideoOnOffInPlayerRoom.bind(this)}
+                                                        style={{display: 'block'}}>
+                                                        <div><VideocamIcon></VideocamIcon></div>
+                                                        <span>시청용</span>
+                                                    </Button>
+                                                    :
+                                                    <Button
+                                                        style={{display: 'block'}}
+                                                        onClick={this.onPlayingVideoOnOffInPlayerRoom.bind(this)}>
+                                                        <div><VideocamOffIcon></VideocamOffIcon></div>
+                                                        <span>시청용</span>
+                                                    </Button>}
+                                            </>
+                                            :
+                                            <Button
+                                                style={{fontSize: "25px"}}
+                                                onClick={this.onServerPlayerConnection.bind(this)}>
+                                                방송 시청
+                                            </Button>
+                                    }
+                                    <Button
+                                        style={{fontSize: "25px"}}
+                                        id={'complete'}
+                                        onClick={this.handelComplete.bind(this)}
+                                    >
+                                        방송 종료
+                                    </Button>
                                 </ButtonGroup>
                             </div>
                             
                             
-                            {/*<div*/}
-                            {/*    id="BtnOptionBox"*/}
-                            {/*>*/}
-                            {/*    <ButtonGroup variant="outlined" aria-label="outlined primary button group" size="large"*/}
-                            {/*                 color="inherit">*/}
-                            {/*        {this.state.audioOff ?*/}
-                            {/*            <Button*/}
-                            {/*                onClick={this.onAudioOnOff2.bind(this)}*/}
-                            {/*                style={{display: 'block'}}>*/}
-                            {/*                <div><MicIcon></MicIcon></div>*/}
-                            {/*                <span>Mute</span>*/}
-                            {/*            </Button>*/}
-                            {/*            :*/}
-                            {/*            <Button*/}
-                            {/*                style={{display: 'block'}}*/}
-                            {/*                onClick={this.onAudioOnOff2.bind(this)}>*/}
-                            {/*                <div><MicOffIcon></MicOffIcon></div>*/}
-                            {/*                <span>Unmute</span>*/}
-                            {/*            </Button>}*/}
-                            {/*        */}
-                            {/*        {this.state.videoOn ?*/}
-                            {/*            <Button*/}
-                            {/*                onClick={this.onVideoOnOff2.bind(this)}*/}
-                            {/*                style={{display: 'block'}}>*/}
-                            {/*                <div><VideocamIcon></VideocamIcon></div>*/}
-                            {/*                <span>Start cam</span>*/}
-                            {/*            </Button>*/}
-                            {/*            :*/}
-                            {/*            <Button*/}
-                            {/*                style={{display: 'block'}}*/}
-                            {/*                onClick={this.onVideoOnOff2.bind(this)}>*/}
-                            {/*                <div><VideocamOffIcon></VideocamOffIcon></div>*/}
-                            {/*                <span>Stop cam</span>*/}
-                            {/*            </Button>}*/}
-                            {/*        */}
-                            {/*        <Button*/}
-                            {/*            style={{fontSize: "25px"}}*/}
-                            {/*            onClick={this.onServerPlayerConnection.bind(this)}>*/}
-                            {/*            방송 시청*/}
-                            {/*        </Button>*/}
-                            {/*        */}
-                            {/*        <Button*/}
-                            {/*            style={{display: 'block'}}>*/}
-                            {/*            <fieldset*/}
-                            {/*                id="playerOptions"*/}
-                            {/*                style={{display: 'block', marginTop: '-8px', marginBottom: '-3px'}}>*/}
-                            {/*                <legend>송출할 화면 선택</legend>*/}
-                            {/*                <div style={{marginTop: "-12px", marginBottom: "-12px"}}>*/}
-                            {/*                    <select*/}
-                            {/*                        id="displaySurface"*/}
-                            {/*                        defaultValue={"playerCamera"}*/}
-                            {/*                        onChange={this.selectDisplayOption}*/}
-                            {/*                        style={{fontSize: "15px"}}*/}
-                            {/*                    >*/}
-                            {/*                        <option value="camera">카메라</option>*/}
-                            {/*                        <option value="browser">화면 공유</option>*/}
-                            {/*                    </select>*/}
-                            {/*                    <select*/}
-                            {/*                        id="playerCameras"*/}
-                            {/*                        hidden={false}*/}
-                            {/*                        style={{*/}
-                            {/*                            fontSize  : "15px",*/}
-                            {/*                            color     : '#37474f',*/}
-                            {/*                            width     : '120px',*/}
-                            {/*                            marginLeft: '5px'*/}
-                            {/*                        }}*/}
-                            {/*                        onInput={this.onChangeVideoOption.bind(this)}*/}
-                            {/*                    >*/}
-                            {/*                    </select>*/}
-                            {/*                    */}
-                            {/*                    <span*/}
-                            {/*                        id="endSharing"*/}
-                            {/*                        style={{*/}
-                            {/*                            fontSize       : "15px",*/}
-                            {/*                            color          : '#37474f',*/}
-                            {/*                            backgroundColor: 'white',*/}
-                            {/*                            paddingLeft    : '5px',*/}
-                            {/*                            paddingRight   : '5px',*/}
-                            {/*                            // width     : '120px',*/}
-                            {/*                            marginLeft: '5px'*/}
-                            {/*                        }}*/}
-                            {/*                        hidden={true}*/}
-                            {/*                        onClick={this.pEndDeisplaySharing}>*/}
-                            {/*                        공유 중지*/}
-                            {/*                    </span>*/}
-                            {/*                </div>*/}
-                            {/*            </fieldset>*/}
-                            {/*        </Button>*/}
-                            {/*        */}
-                            {/*        <Button*/}
-                            {/*            style={{fontSize: "25px"}}*/}
-                            {/*            onClick={(e) => this.handleSubmitHandsUp(e)}*/}
-                            {/*        > 발표요청*/}
-                            {/*        </Button>*/}
-                            {/*        */}
-                            {/*        {this.state.audioOff ?*/}
-                            {/*            <Button*/}
-                            {/*                onClick={this.pOnAudioOnOff.bind(this)}*/}
-                            {/*                style={{display: 'block'}}>*/}
-                            {/*                <div><MicIcon></MicIcon></div>*/}
-                            {/*                <span>Mute</span>*/}
-                            {/*            </Button>*/}
-                            {/*            :*/}
-                            {/*            <Button*/}
-                            {/*                style={{display: 'block'}}*/}
-                            {/*                onClick={this.pOnAudioOnOff.bind(this)}>*/}
-                            {/*                <div><MicOffIcon></MicOffIcon></div>*/}
-                            {/*                <span>Unmute</span>*/}
-                            {/*            </Button>}*/}
-                            {/*        */}
-                            {/*        {this.state.videoOn ?*/}
-                            {/*            <Button*/}
-                            {/*                onClick={this.pOnVideoOnOff.bind(this)}*/}
-                            {/*                style={{display: 'block'}}>*/}
-                            {/*                <div><VideocamIcon></VideocamIcon></div>*/}
-                            {/*                <span>Start cam</span>*/}
-                            {/*            </Button>*/}
-                            {/*            :*/}
-                            {/*            <Button*/}
-                            {/*                style={{display: 'block'}}*/}
-                            {/*                onClick={this.pOnVideoOnOff.bind(this)}>*/}
-                            {/*                <div><VideocamOffIcon></VideocamOffIcon></div>*/}
-                            {/*                <span>Stop cam</span>*/}
-                            {/*            </Button>}*/}
-                            {/*        */}
-                            {/*        <Button*/}
-                            {/*            onClick={this.handelComplete.bind(this)}>*/}
-                            {/*            나가기*/}
-                            {/*        </Button>*/}
-                            {/*    */}
-                            {/*    </ButtonGroup>*/}
+                            <div
+                                id="BtnOptionBox"
+                            >
+                                <ButtonGroup variant="outlined" aria-label="outlined primary button group" size="large"
+                                             color="inherit">
+                                
+                                
+                                </ButtonGroup>
                             
                             
-                            {/*</div>*/}
+                            </div>
                         </div>
                     </div>
                     
