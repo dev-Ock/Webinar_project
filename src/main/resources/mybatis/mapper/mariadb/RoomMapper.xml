@@ -84,6 +84,12 @@
         WHERE stream_url = #{value}
     </select>
 
+    <select id="selectRoomMaximum" parameterType="String" resultType="String">
+        SELECT maximum
+        FROM rooms
+        WHERE id = #{roomId}
+    </select>
+
     <insert id="insertRoom" parameterType="BaseRoom" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO rooms (
             title,

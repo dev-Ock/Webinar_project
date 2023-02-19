@@ -99,5 +99,11 @@ public class RoomController {
         return result;
     }
 
+    // 삭제예정 getMaximum test용
+    @GetMapping("/maximum/{roomId}")
+    public int getMaximum(HttpServletRequest httpRequest, @PathVariable("roomId") String roomId){
+        int maximum = Integer.parseInt(roomService.getRoomMaximum(roomId));
+        return maximum;
+    }
 
 }

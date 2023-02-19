@@ -22,7 +22,7 @@ public class RoomService {
     private RoomUserNameRepository roomUserNameRepository;
 
     @Autowired
-    public RoomService(RoomRepository roomRepository, RoomUserNameRepository roomUserNameRepository){
+    public RoomService(RoomRepository roomRepository, RoomUserNameRepository roomUserNameRepository ){
 
         this.roomRepository = roomRepository;
         this.roomHistoryRepository = roomHistoryRepository;
@@ -118,5 +118,7 @@ public class RoomService {
         return roomRepository.updateRoomState(roomInfo);
     }
 
+    //selectRoomMaximum
+    public String getRoomMaximum(String roomId) { return roomRepository.selectRoomMaximum(roomId);}
 
 }
