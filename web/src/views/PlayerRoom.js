@@ -109,27 +109,38 @@ class PlayerRoom extends React.Component {
             room              : {},
             roomPlayerList    : {},
             // playerUrl        : '',
-            pannelRequestList   : [], //명단용
-            pannelRequestListBar: false,
+            pannelRequestList   : [], //명단용(퍼블리서용)
+            pannelRequestListBar: false,//명단용(퍼블리서용)
             view                : true,//필요없음
             pause               : false, //일시정지라서 필요없을 듯,
             playingStream       : false,
-            pannelRequest       : false
+            pannelRequest       : false //명단용(퍼블리서용)
         }
     }
     
     componentDidMount() {
         // SideMenu 최소화
         this.props.handleDrawerToggle();
-        
         // room 데이터 조회
         const roomId = sessionStorage.getItem(RoomViewRoomID);
         this.state.room = this.props.roomStore.getSelectedRoom(roomId);
-        console.log('this.state.room : ', this.state.room);
+        // console.log('this.state.room : ', this.state.room);
         // 방송 기본 세팅
         this.props.roomStore.playerSetRoom();
         // const stream = this.props.roomStore.setRoom();
-        // stream.then(data => this.setState({stream: data}));
+        // stream.then(data => this.setState({stream: data}));'
+        //플레이어 룸유저 데이터 조회
+        const playerId = this.props.authStore.loginUser.id
+        const getUserRoomData = this.props.roomUserStore.getSelectedRoomUser(
+            roomId , playerId
+        )
+        console.log('확인 데이터 getUserRoomData',getUserRoomData)
+        // getUserRoomData.then(
+        //     data =>{
+        //     console.log('로우 한개 확인 데이터', data, getUserRoomData)
+        // }
+        //     console.log('로우 한개 확인 데이터', getUserRoomData)
+        // ) //then 안써도 PromiseResult안에 데이터가 들어가 있었음.
         // 세미나 참여한 player 조회
         const selectPlayerList = this.props.roomUserStore.getRoomUserList(roomId);
         if (selectPlayerList !== undefined) {
@@ -241,8 +252,6 @@ class PlayerRoom extends React.Component {
     handleChange = (e, value) => {
         this.setState({tabValue: value})
     };
-    
-    
     render() {
         const {classes} = this.props;
         const {onRoom} = this.props.roomStore;
@@ -443,8 +452,8 @@ class PlayerRoom extends React.Component {
                             {/*    */}
                             {/*    */}
                             {/*    </ButtonGroup>*/}
-                            
-                            
+
+
                             {/*</div>*/}
                         </div>
                     </div>

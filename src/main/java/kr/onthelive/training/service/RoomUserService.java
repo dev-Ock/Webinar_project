@@ -27,6 +27,15 @@ public class RoomUserService {
         BaseRoomUser result =  roomUserRepository.selectRoomUser(id);
         return result;
     }
+    //room id & login id로 룸 유저 테이블 데이터 조회
+    public BaseRoomUser getRoomUserDetail(String roomId, String playerId){
+        BaseRoomUser roomUser = new BaseRoomUser();
+        roomUser.setRoomId(roomId);
+        roomUser.setPlayerId(playerId);
+        log.trace("RoomUserService 유저테이블조회 roomUser... {}", roomUser);
+        BaseRoomUser result =  roomUserRepository.selectRoomUserWithUrl(roomUser);
+        return result;
+    }
 
     // 모든 룸의 모든 유저 전체 조회
     public List<BaseRoomUser> readAllRoomUsers() {

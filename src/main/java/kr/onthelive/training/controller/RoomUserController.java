@@ -38,6 +38,12 @@ public class RoomUserController {
 //        final BaseRoomUser result = roomUserService.getRoomUser(id);
 //        return result;
 //    }
+    @GetMapping("/read/{roomId}/{playerId}")
+    public BaseRoomUser getRoomUser(HttpServletRequest httpRequest, @PathVariable("roomId") String roomId, @PathVariable("playerId") String playerId){
+        log.trace("controller getUserDetail 여기좀...{}{}", roomId,playerId);
+        final BaseRoomUser result = roomUserService.getRoomUserDetail(roomId,playerId);
+        return result;
+    }
 
     // roomId로 룸 유저 리스트 조회
     @GetMapping("/read/{roomId}")

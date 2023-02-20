@@ -46,6 +46,13 @@ export default class RoomUserStore {
         // console.log('this',this)
         const result = yield this.roomUserRepository.onCreateRoomUser(param);
         return result;
+    };
+    * getSelectedRoomUser(roomId, playerId){
+        console.log("RoomUserStore getSelectedRoomUser param : ",roomId, playerId)
+        const data = yield this.roomUserRepository.onGetRoomUserDetail(roomId, playerId);
+        console.log('로우한개데이터확인',data)
+        this.streamUser = data;
+        return this.streamUser;
     }
 
     // 전체 룸 유저 정보 조회 (현재 세미나에 참여중인 룸유저)
@@ -103,7 +110,7 @@ export default class RoomUserStore {
         return streamUser;
     }
     
-    //create room user history
+    //player room 에서 나가기 눌렀을 때 create room user history
     * onCreateRoomUserHistory(data){
         console.log("RoomUserStore onCreateRoomUser param : ",data)
         // console.log('this',this)
