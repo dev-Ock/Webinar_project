@@ -377,7 +377,19 @@ class PublisherRoom extends React.Component {
                         
                         <div style={{border: 'solid', height: '320px', overflow: 'auto', whiteSpace: 'nowrap'}}>
                             <div>
-                                <h3>&nbsp;&nbsp;패널 대기 리스트</h3>
+                                <h3 style={{display: 'inline-block', fontSize: '18px'}}>&nbsp;&nbsp;패널 대기 리스트</h3>
+                                &nbsp;&nbsp;
+                                {
+                                    this.state.pannelStreaming ?
+                                        <Button
+                                            color="inherit"
+                                            variant='outlined'
+                                            style={{display: 'inline-block', fontSize: '18px'}}
+                                            onClick={(e) => this.onPublisherSelection(e)}
+                                        >publisher 영상으로 복귀
+                                        </Button> :
+                                        ""
+                                }
                             </div>
                             
                             
@@ -410,10 +422,11 @@ class PublisherRoom extends React.Component {
                                                 </video>
                                                 <br/>
                                                 <Button
+                                                    color="inherit"
                                                     key={`pannelVideoButton-${i}`}
                                                     id={`pannelVideoButton-${user.streamUrl}`}
                                                     variant={"outlined"}
-                                                    style={{height: '30px', fontSize: '18px', color: '#455a64'}}
+                                                    style={{height: '30px', fontSize: '18px'}}
                                                     onClick={(e) => this.onPannelSelection(e, user)}
                                                 >
                                                     <h3> [{user.name}]</h3> 님을 패널로 선택
@@ -425,17 +438,7 @@ class PublisherRoom extends React.Component {
                         
                         </div>
                         <br/>
-                        {
-                            this.state.pannelStreaming ?
-                                <Button
-                                    variant={"outlined"}
-                                    style={{height: '30px', fontSize: '30px', color: '#455a64'}}
-                                    onClick={(e) => this.onPublisherSelection(e)}
-                                >
-                                    publisher 영상으로 복귀
-                                </Button> :
-                                ""
-                        }
+
                     
                     </div>
                     <div className={classes.gridView4}>
@@ -451,19 +454,19 @@ class PublisherRoom extends React.Component {
                                     {this.state.audioOff ?
                                         <Button onClick={this.onAudioOnOff.bind(this)} style={{display: 'block'}}>
                                             <div><MicIcon></MicIcon></div>
-                                            <span></span></Button> :
+                                            <span>On</span></Button> :
                                         <Button style={{display: 'block'}} onClick={this.onAudioOnOff.bind(this)}>
                                             <div><MicOffIcon></MicOffIcon></div>
-                                            <span></span></Button>}
+                                            <span>Off</span></Button>}
                                     {this.state.videoOn ?
                                         <Button onClick={this.onVideoOnOff.bind(this)} style={{display: 'block'}}>
                                             <div><VideocamIcon></VideocamIcon></div>
-                                            <span></span></Button> :
+                                            <span>On</span></Button> :
                                         <Button style={{display: 'block'}} onClick={this.onVideoOnOff.bind(this)}>
                                             <div><VideocamOffIcon></VideocamOffIcon></div>
-                                            <span></span></Button>}
+                                            <span>Off</span></Button>}
                                     {/*<Button startIcon={<SettingsIcon/>} style={{display: 'block'}}>*/}
-                                    <Button style={{display: 'block'}}>
+                                    <Button style={{display: 'block', cursor: 'auto'}} disableTouchRipple disableRipple focusRipple>
                                         <fieldset id="options"
                                                   style={{display: 'block', marginTop: '-8px', marginBottom: '-3px'}}>
                                             <legend>송출할 화면 선택</legend>
@@ -505,6 +508,7 @@ class PublisherRoom extends React.Component {
                                     {this.state.standBy
                                         ?
                                         <Button
+                                            style={{fontSize: "25px"}}
                                             onClick={this.onStandBy.bind(this)}>
                                             방송 준비 완료
                                         </Button>
@@ -513,13 +517,14 @@ class PublisherRoom extends React.Component {
                                         this.state.view
                                             ?
                                             <Button
-                                                style={{backgroundColor: 'orange'}}
+                                                style={{backgroundColor: 'orange', fontSize: "25px"}}
                                                 onClick={this.onServerPublisherConnection.bind(this)}>
                                                 방송 시작
                                             </Button>
                                             :
                                             <>
                                                 <Button
+                                                    style={{fontSize: "25px"}}
                                                     id={'pause'}
                                                     onClick={this.onPause.bind(this)}
                                                 >
@@ -529,6 +534,7 @@ class PublisherRoom extends React.Component {
                                             </>
                                     }
                                     <Button
+                                        style={{fontSize: "25px"}}
                                         id={'complete'}
                                         onClick={this.onComplete.bind(this)}
                                     >
