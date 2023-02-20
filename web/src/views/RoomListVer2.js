@@ -227,13 +227,17 @@ class RoomList extends React.Component {
                                                         WebkitLineClamp: '2',
                                                         WebkitBoxOrient: 'vertical',
                                                         paddingTop:'25px', paddingBottom:'10px'}} >
-                                                        { room.password
-                                                            ?
-                                                            <Typography style={{marginRight:'1px', color: '#607d8b', display:'inline-block'}}> <LockIcon/>  </Typography>
-                                                            :
-                                                            <Typography style={{display:'inline-block'}}> </Typography> }
+                                                        {/*{ room.password*/}
+                                                        {/*    ?*/}
+                                                        {/*    <Typography style={{marginRight:'1px', color: '#607d8b', display:'inline-block'}}> <LockIcon/>  </Typography>*/}
+                                                        {/*    :*/}
+                                                        {/*    <Typography style={{display:'inline-block'}}> </Typography> }*/}
+                                                        {/*<Tooltip title={<h2> {room.title} </h2>} arrow >*/}
+                                                        {/*    <Typography variant='body2' style={{color:'#455a64', fontWeight:'bolder', fontSize:'x-large', display:'inline-block'*/}
+                                                        {/*    }}> {room.title} </Typography>*/}
+                                                        {/*</Tooltip>*/}
                                                         <Tooltip title={<h2> {room.title} </h2>} arrow >
-                                                            <Typography variant='body2' style={{color:'#455a64', fontWeight:'bolder', fontSize:'x-large', display:'inline-block'
+                                                            <Typography variant='body2' style={{color:'#455a64', fontWeight:'bolder', fontSize:'x-large'
                                                             }}> {room.title} </Typography>
                                                         </Tooltip>
                                                     </CardContent>
@@ -262,16 +266,16 @@ class RoomList extends React.Component {
 
                                                 {/* 룸 추가정보: 만든이, (공개여부), 인원현황 */}
                                                 <CardActions style={{justifyContent: 'space-between', height:'44px', padding:'16px'}}>
-                                                    {/*{room.password*/}
-                                                    {/*    ?*/}
-                                                    {/*    <div style={{ color: '#607d8b'}}>*/}
-                                                    {/*        <div>*/}
-                                                    {/*            <LockIcon/>*/}
-                                                    {/*        </div>*/}
-                                                    {/*    </div>*/}
-                                                    {/*    :*/}
-                                                    {/*    ""*/}
-                                                    {/*}*/}
+                                                    {room.password
+                                                        ?
+                                                        <div style={{ color: '#607d8b'}}>
+                                                            <div>
+                                                                <LockIcon/>
+                                                            </div>
+                                                        </div>
+                                                        :
+                                                        ""
+                                                    }
                                                     {room.publisherId === sessionStorage.getItem(UserId) ?
                                                         <div style={{color: '#607d8b', marginLeft:'0px'}}><h3> 내가 만든 세미나 </h3></div>
                                                         :
@@ -342,14 +346,18 @@ class RoomList extends React.Component {
                                                         WebkitLineClamp: '2',
                                                         WebkitBoxOrient: 'vertical',
                                                         paddingTop:'25px', paddingBottom:'10px'}}>
-                                                        { room.password
-                                                            ?
-                                                            <Typography style={{marginRight:'1px', color: '#607d8b', display:'inline-block'}}> <LockIcon/>  </Typography>
-                                                            :
-                                                            <Typography style={{display:'inline-block'}}> </Typography> }
+                                                        {/*{ room.password*/}
+                                                        {/*    ?*/}
+                                                        {/*    <Typography style={{marginRight:'1px', color: '#607d8b', display:'inline-block'}}> <LockIcon/>  </Typography>*/}
+                                                        {/*    :*/}
+                                                        {/*    <Typography style={{display:'inline-block'}}> </Typography> }*/}
+                                                        {/*<Tooltip title={<h2> {room.title} </h2>} arrow>*/}
+                                                        {/*    <Typography variant='body2' style={{color:'#455a64', fontWeight:'bolder', fontSize:'x-large', display:'inline-block'*/}
+                                                        {/*        }} > {room.title} </Typography>*/}
+                                                        {/*</Tooltip>*/}
                                                         <Tooltip title={<h2> {room.title} </h2>} arrow>
-                                                            <Typography variant='body2' style={{color:'#455a64', fontWeight:'bolder', fontSize:'x-large', display:'inline-block'
-                                                                }} > {room.title} </Typography>
+                                                            <Typography variant='body2' style={{color:'#455a64', fontWeight:'bolder', fontSize:'x-large'
+                                                            }} > {room.title} </Typography>
                                                         </Tooltip>
                                                     </CardContent>
                                                     {/*룸 서브타이틀 : 세미나 운영자 이름*/}
@@ -377,16 +385,16 @@ class RoomList extends React.Component {
 
                                                 {/* 룸 추가정보: 만든이, (공개여부), 인원현황 */}
                                                 <CardActions style={{justifyContent: 'space-between', height:'44px', padding:'16px'}}>
-                                                    {/*{room.password*/}
-                                                    {/*    ?*/}
-                                                    {/*    <div style={{marginRight:'7px', color: '#607d8b'}}>*/}
-                                                    {/*        <div>*/}
-                                                    {/*            <LockIcon/>*/}
-                                                    {/*        </div>*/}
-                                                    {/*    </div>*/}
-                                                    {/*    :*/}
-                                                    {/*    ""*/}
-                                                    {/*}*/}
+                                                    {room.password
+                                                        ?
+                                                        <div style={{marginRight:'7px', color: '#607d8b'}}>
+                                                            <div>
+                                                                <LockIcon/>
+                                                            </div>
+                                                        </div>
+                                                        :
+                                                        ""
+                                                    }
                                                     <div></div>
                                                     {
                                                         <div style={{color: '#607d8b', marginLeft:'7px'}}><h3> {room.participants}/{room.maximum} </h3></div>
