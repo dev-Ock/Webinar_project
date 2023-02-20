@@ -113,6 +113,8 @@ export default class RoomStore {
     
     publishedRoomList = Object.assign([], EmptyRoomList);
     roomList = Object.assign([], EmptyRoomList);
+
+    roomListWithParticipants = Object.assign([], EmptyRoomList);
     roomMakeState = RoomMakeState.Empty;
     roomMake = Object.assign({}, EmptyRoom);
     onRoom = Object.assign({}, EmptyOnRoom);
@@ -132,6 +134,8 @@ export default class RoomStore {
         this.roomRepository = props.roomRepository;
         // this.roomUserRepository = props.roomUserRepository;
         this.roomHistoryRepository = props.roomHistoryRepository;
+
+        this.roomUserStore = props.roomUserStore;
         makeAutoObservable(this);
     }
     
