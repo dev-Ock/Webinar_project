@@ -426,7 +426,7 @@ class PlayerRoom extends React.Component {
                                         id={'complete'}
                                         onClick={this.handelComplete.bind(this)}
                                     >
-                                        방송 종료
+                                        시청 종료
                                     </Button>
                                 </ButtonGroup>
                             </div>
