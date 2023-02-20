@@ -84,7 +84,7 @@ const styles = theme => ({
     },
     gridView3    : {
         gridArea: 'view3',
-        height  : '100%',
+        padding : '0 50px 10px 50px'
     },
     gridView4    : {
         gridArea: 'view4',
@@ -274,8 +274,11 @@ class PlayerRoom extends React.Component {
                         </Box>
                     </div>
                     <div className={classes.gridView3}>
-                        <h2>PLAYER ROOM &nbsp; / &nbsp; Title
-                            : {onRoom.title} &nbsp; / &nbsp; Master: {onRoom.name}</h2>
+                        <h2>
+                            [PUBLISHER ROOM] ROOM &nbsp;
+                            Title : {onRoom.title} &nbsp; / &nbsp;
+                            Master: {onRoom.name}
+                        </h2>
                         <video
                             key={"playerVideoTag"}
                             id="playerVideoTag"
@@ -323,7 +326,7 @@ class PlayerRoom extends React.Component {
                                             <div><VideocamOffIcon></VideocamOffIcon></div>
                                             <span>mine</span></Button>}
                                     {/*<Button startIcon={<SettingsIcon/>} style={{display: 'block'}}>*/}
-                                    <Button style={{display: 'block'}}>
+                                    <Button style={{display: 'block', cursor: 'auto'}} disableTouchRipple disableRipple focusRipple>
                                         <fieldset id="options"
                                                   style={{display: 'block', marginTop: '-8px', marginBottom: '-3px'}}>
                                             <legend>송출할 화면 선택</legend>
@@ -432,17 +435,17 @@ class PlayerRoom extends React.Component {
                             </div>
                             
                             
-                            <div
-                                id="BtnOptionBox"
-                            >
-                                <ButtonGroup variant="outlined" aria-label="outlined primary button group" size="large"
-                                             color="inherit">
-                                
-                                
-                                </ButtonGroup>
+                            {/*<div*/}
+                            {/*    id="BtnOptionBox"*/}
+                            {/*>*/}
+                            {/*    <ButtonGroup variant="outlined" aria-label="outlined primary button group" size="large"*/}
+                            {/*                 color="inherit">*/}
+                            {/*    */}
+                            {/*    */}
+                            {/*    </ButtonGroup>*/}
                             
                             
-                            </div>
+                            {/*</div>*/}
                         </div>
                     </div>
                     
