@@ -98,8 +98,8 @@ class App extends React.Component {
                                         <Route path="/home" component={Home}/>
                                         <Route exact path="/" component={Home}/>
                                         <Route path="/room-make" component={RoomMake}/>
-                                        <Route path="/room-list" component={RoomList}/>
-                                        {/*<Route path="/room-list" component={RoomListVer2}/>*/}
+                                        {/*<Route path="/room-list" component={RoomList}/>*/}
+                                        <Route path="/room-list" component={RoomListVer2}/>
                                         <Route path="/room-history" component={RoomHistory}/>
                                         <Route path="/publisher-room" render={()=><PublisherRoom handleDrawerToggle={this.handleDrawerToggle}/>} />
                                         <Route path="/player-room" render={()=><PlayerRoom handleDrawerToggle={this.handleDrawerToggle}/>}/>
