@@ -163,7 +163,17 @@ class RoomList extends React.Component {
         const publisherRoomList = toJS(roomList).filter(room => room.publisherId === userId);
         const playerRoomList = toJS(roomList).filter(room => room.publisherId !== userId);
 
-        // const totalRooms = [...publisherRoomList, ...playerRoomList]
+        const totalRooms = [...publisherRoomList, ...playerRoomList]
+
+        const totalRoomList = totalRooms.map((obj) => {
+            let countParticipants = toJS(this.props.roomUserStore.roomUserList).filter((user) =>  obj.id === user.roomId )
+            obj["participants"] = countParticipants.length
+            return obj
+        })
+
+        const publisherRoomList2 = totalRoomList.filter(room => room.publisherId === userId);
+        const playerRoomList2 = totalRoomList.filter(room => room.publisherId !== userId);
+
         // console.log("totalRoomList : ", totalRoomList)
 
         return (
@@ -186,7 +196,7 @@ class RoomList extends React.Component {
                 </Toolbar>
                 <br/>
                 {
-                    publisherRoomList.length === 0
+                    publisherRoomList2.length === 0
                         ?
                         <div >
                             {/*<Toolbar>*/}
@@ -213,7 +223,7 @@ class RoomList extends React.Component {
                             </div>
                             <Grid container spacing={3}>
 
-                                {publisherRoomList
+                                {publisherRoomList2
                                     .slice(this.offset1, this.offset1 + this.state.limit1)
                                     .map(room =>
                                         <Grid item key={room.id} className={classes.card}>
@@ -325,13 +335,13 @@ class RoomList extends React.Component {
                     <br/>
                     <br/>
                     {
-                        playerRoomList.length === 0
+                        playerRoomList2.length === 0
                             ?
                             <div className={classes.mainContainer}><h1>시청할 수 있는 웨비나가 없습니다.</h1></div>
                             :
                             <Grid container spacing={3}>
 
-                                {playerRoomList
+                                {playerRoomList2
                                     .slice(this.offset2, this.offset2 + this.state.limit2)
                                     .map(room =>
                                         <Grid item key={room.id} className={classes.card}>
