@@ -285,9 +285,12 @@ export default class RoomStore {
         try{
             constraints = {
                 audio: true,
-                video: {
-                    width: {ideal: 320, max: 576},
-                },
+                // video: {
+                //     width: {ideal: 320, max: 576},
+                // },
+                // video: { width: { exact: 960 }, height: { exact: 540 } }
+                // video: { width: { exact: 1280 }, height: { exact: 720 } }
+                video: { width: { exact: 1920 }, height: { exact: 1080 } }
             };
     
             let stream = new MediaStream();
@@ -440,6 +443,8 @@ export default class RoomStore {
             let cameraConstraints = {
                 audio: true,
                 video: {deviceId: {exact: deviceId}},
+                // video: { width: { exact: 1280 }, height: { exact: 720 } }
+                
             };
     
             // const initialConstrains = {

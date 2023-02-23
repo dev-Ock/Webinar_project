@@ -318,6 +318,12 @@ class PublisherRoom extends React.Component {
         this.setState({pannelStreaming: true});
     }
     
+    // pannel 삭제
+    onPannelDelete = (e, i) => {
+        e.preventDefault();
+        this.props.roomStore.onPannelList.splice(i, 1);
+    }
+    
     // publisher stream으로 송출 stream을 세팅
     onPublisherSelection = async (e) => {
         e.preventDefault();
@@ -353,7 +359,7 @@ class PublisherRoom extends React.Component {
                                                 playsInline
                                                 style={{backgroundColor: 'black'}}
                                                 width={960}
-                                                height={720}
+                                                height={540}
                                             >
                                             </video>
                                         
@@ -431,6 +437,11 @@ class PublisherRoom extends React.Component {
                                                 >
                                                     <h3> [{user.name}]</h3> 님을 패널로 선택
                                                 </Button>
+                                                <Button
+                                                    key={`pannelDeleteButton-${i}`}
+                                                    id={`pannelDeleteButton-${user.streamUrl}`}
+                                                    onClick={(e)=> this.onPannelDelete(e, i)}
+                                                > 패널 삭제 </Button>
                                             </div>
                                         )
                                     })

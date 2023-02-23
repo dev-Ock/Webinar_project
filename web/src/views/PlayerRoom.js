@@ -260,6 +260,7 @@ class PlayerRoom extends React.Component {
                                             autoPlay
                                             controls
                                             playsInline
+                                            poster={waitImage}
                                             style={{backgroundColor: 'black'}}
                                             width={1000}
                                             height={750}

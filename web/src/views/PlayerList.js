@@ -63,7 +63,7 @@ const styles = (theme) => ({
     count   : {
         color: 'black',
         float: 'left',
-        width: '210px'
+        width: '250px'
     },
 
     table : {
