@@ -37,7 +37,22 @@ export default class RoomUserRepository extends Repository {
 
                 })
         })
-    }
+    } ;
+    //륨 유저 테이블 1명의 데이터 조회
+    onGetRoomUserDetail = (roomId, playerId) => {
+        return new Promise((resolve, reject) => {
+            this.getRequestPromise('get', this.requestPrefix + '/read' +`/${roomId}/${playerId}`)
+                .then(data => {
+                    console.log('RoomUserRepository onGetRoomUserDetail result : ', data)
+                    resolve(data);
+                })
+                .catch(error => {
+                    console.log('RoomUserRepository onGetRoomUserDetail error : ', error)
+                    reject(error);
+
+                })
+        })
+    };
 
     
     // 선택한 room의 player list 조회
