@@ -100,7 +100,7 @@ const styles = (theme) => ({
         [theme.breakpoints.up('lg')]: {
             gridTemplateColumns: '4fr 1fr',
             
-            gridTemplateRows: '800px 1fr 74px',
+            gridTemplateRows: '800px 0.8fr 60px',
             
             gridTemplateAreas: `
 
@@ -123,7 +123,7 @@ const styles = (theme) => ({
     },
     gridView3: {
         gridArea: 'view3',
-        padding : '0 50px 10px 50px'
+        padding : '0 50px 0px 50px'
     },
     gridView4: {
         gridArea: 'view4'
@@ -358,8 +358,8 @@ class PublisherRoom extends React.Component {
                                                 autoPlay
                                                 playsInline
                                                 style={{backgroundColor: 'black'}}
-                                                width={960}
-                                                height={540}
+                                                width={1280}
+                                                height={720}
                                             >
                                             </video>
                                         
@@ -381,7 +381,7 @@ class PublisherRoom extends React.Component {
                             State : {this.props.roomStore.onRoom.state}
                         </h2>
                         
-                        <div style={{border: 'solid', height: '320px', overflow: 'auto', whiteSpace: 'nowrap'}}>
+                        <div style={{border: 'solid', height: '250px', overflow: 'auto', whiteSpace: 'nowrap'}}>
                             <div>
                                 <h3 style={{display: 'inline-block', fontSize: '18px'}}>&nbsp;&nbsp;패널 대기 리스트</h3>
                                 &nbsp;&nbsp;
@@ -421,8 +421,8 @@ class PublisherRoom extends React.Component {
                                                     controls
                                                     autoPlay
                                                     playsInline
-                                                    width={250}
-                                                    height={200}
+                                                    width={230}
+                                                    height={135}
                                                     style={{backgroundColor: 'black'}}
                                                 >
                                                 </video>

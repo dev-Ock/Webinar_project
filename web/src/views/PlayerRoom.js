@@ -64,7 +64,7 @@ const styles = theme => ({
         },
         [theme.breakpoints.up('lg')]: {
             gridTemplateColumns: '4fr 1fr',
-            gridTemplateRows   : '800px 1fr 74px',
+            gridTemplateRows   : '800px 0.9fr 60px',
             gridTemplateAreas  : `
                                 'view1 view2'
                                 'view3 view2'
@@ -262,8 +262,8 @@ class PlayerRoom extends React.Component {
                                             playsInline
                                             poster={waitImage}
                                             style={{backgroundColor: 'black'}}
-                                            width={1000}
-                                            height={750}
+                                            width={1280}
+                                            height={720}
                                         >
                                         
                                         </video>
@@ -276,7 +276,7 @@ class PlayerRoom extends React.Component {
                     </div>
                     <div className={classes.gridView3}>
                         <h2>
-                            [PUBLISHER ROOM] ROOM &nbsp;
+                            [PLAYER ROOM] ROOM &nbsp;
                             Title : {onRoom.title} &nbsp; / &nbsp;
                             Master: {onRoom.name}
                         </h2>
